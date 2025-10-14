@@ -1,9 +1,11 @@
 # What to observe
 We want to observe revelant data that provides material for analysis of sources of interference.
 
-We make the folloing hypothesis:
+We make the hypothesis that he simulator is a white box. The following will be accessible:
 * The exact queue contents of the ddr is avaible for every cycle
 * Acces to *miss* and *hit* information for every cycle.
+* Statuses of every cache line
+* Statuses of every row and bank 
 
 
 Observables:
