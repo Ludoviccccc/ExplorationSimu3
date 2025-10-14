@@ -34,8 +34,8 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
 
             diversity_ratio_random = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
             diversity_ratio_imgep = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
-            axs[num_bank*row+j,2].scatter(content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core0']['miss_ratios_detailled'][:,row,j],label=label_algo, alpha = .5)
-            axs[num_bank*row+j,2].scatter(content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core0']['miss_ratios_detailled'][:,row,j],  label='random', alpha = .5)
+            axs[num_bank*row+j,2].scatter(content_imgep['core0']['miss_ratios_detailled'][:,row,j],  content_imgep['mutual']['miss_ratios_detailled'][:,row,j],label=label_algo, alpha = .5)
+            axs[num_bank*row+j,2].scatter(content_random['core0']['miss_ratios_detailled'][:,row,j],  content_random['mutual']['miss_ratios_detailled'][:,row,j],  label='random', alpha = .5)
             axs[num_bank*row+j,2].set_xlabel('miss ratio alone (S_0,)',fontsize=fontsize_label)
             axs[num_bank*row+j,2].set_ylabel('(S_0,S_1)', fontsize=fontsize_label)
             axs[num_bank*row+j,2].axline(xy1=(0, 0), slope=1, color='r', lw=2)
@@ -47,9 +47,9 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
 
             diversity_ratio_random = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
             diversity_ratio_imgep = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
-            axs[num_bank*row+j,3].scatter(content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core1']['miss_ratios_detailled'][:,row,j],label=label_algo, alpha = .5)
-            axs[num_bank*row+j,3].scatter(content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core1']['miss_ratios_detailled'][:,row,j],  label='random', alpha = .5)
-            axs[num_bank*row+j,3].set_xlabel('miss ratio alone (S_0,)',fontsize=fontsize_label)
+            axs[num_bank*row+j,3].scatter(content_imgep['core1']['miss_ratios_detailled'][:,row,j],  content_imgep['mutual']['miss_ratios_detailled'][:,row,j],label=label_algo, alpha = .5)
+            axs[num_bank*row+j,3].scatter(content_random['core1']['miss_ratios_detailled'][:,row,j],  content_random['mutual']['miss_ratios_detailled'][:,row,j],  label='random', alpha = .5)
+            axs[num_bank*row+j,3].set_xlabel('miss ratio alone (S_1,)',fontsize=fontsize_label)
             axs[num_bank*row+j,3].set_ylabel('(S_0,S_1)', fontsize=fontsize_label)
             axs[num_bank*row+j,3].axline(xy1=(0, 0), slope=1, color='r', lw=2)
             axs[num_bank*row+j,3].set_title(f'bank {j+1}, row {row}, imgep:{diversity_ratio_imgep}, rand:{diversity_ratio_random}', fontsize=fontsize3)

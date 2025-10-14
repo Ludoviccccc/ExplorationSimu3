@@ -11,7 +11,7 @@ from exploration.imgep.goal_generator import GoalGenerator
 from exploration.imgep.imgep import IMGEP
 
 
-from visu2 import comparaison3
+from visu import comparaison3
 if __name__=='__main__':
     N = 10000
     H_rand = History()
