@@ -8,6 +8,7 @@ from exploration.imgep.goal_generator import GoalGenerator
 import random
 
 from codegeneration import generate_instruction_sequence
+from exploration.random.func import RANDOM
 class IMGEP:
     """
     N: int. The experimental budget
@@ -24,12 +25,17 @@ class IMGEP:
                 G:GoalGenerator,
                 Pi:OptimizationPolicykNN,
                 periode:int = 1,
-                max_len:int = 50):
+                max_len:int = 50,
+                min_address_core0 = 0,
+                max_address_core0 = 10,
+                min_address_core1 = 11,
+                max_address_core1 = 21,
+                ):
         self.max_cycle = 60
-        self.min_address_core0 = 0
-        self.max_address_core0 = 10
-        self.min_address_core1 = 11
-        self.max_address_core1 = 21
+        self.min_address_core0 = min_address_core0
+        self.max_address_core0 = max_address_core0
+        self.min_address_core1 = min_address_core1
+        self.max_address_core1 = max_address_core1
         self.N = N
         self.env = E
         self.H = H
@@ -42,6 +48,7 @@ class IMGEP:
         self.start = 0
         self.periode_expl = 10
         self.k = 0
+        self.random_explor = RANDOM(self.N_init,self.env,self.H)
     def take(self,sample:dict,N_init:int): 
         """Takes the ``N_init`` first steps from the ``sample`` dictionnary to initialize the exploration. 
         Then the iterator i is set to N_init directly
@@ -55,17 +62,14 @@ class IMGEP:
     def __call__(self):
         """Performs the exploration.
         """
-        for i in range(self.start,self.N+1):
-            if i%100==0:
-                print(f"{i} iterations")
-            if i<self.N_init:
-                code0 = generate_instruction_sequence(None,max_cycle = self.max_cycle,min_address = self.min_address_core0,max_address = self.max_address_core0)
-                code1 = generate_instruction_sequence(None,max_cycle = self.max_cycle,min_address = self.min_address_core1,max_address = self.max_address_core1)
-                parameter = {'core0':code0,'core1':code1}
-            else:
-                if (i-self.N_init)%self.periode==0 and i>=self.N_init:
-                    module = random.choice(self.modules)
-                    goal = self.G(self.H, module = module)
-                parameter = self.Pi(goal,self.H, module)
+        if self.start==0:
+            self.random_explor()
+        for i in range(self.N_init,self.N):
+            if (i)%100==0 or i==self.N-1:
+                print(f'step {i}/{self.N-1}')
+            if (i-self.N_init)%self.periode==0 and i>=self.N_init:
+                module = random.choice(self.modules)
+                goal = self.G(self.H, module = module)
+            parameter = self.Pi(goal,self.H, module)
             observation = self.env(parameter)
             self.H.store({"program":parameter}|observation)

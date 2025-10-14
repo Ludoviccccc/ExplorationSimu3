@@ -13,7 +13,7 @@ from exploration.imgep.imgep import IMGEP
 
 from visu2 import comparaison3
 if __name__=='__main__':
-    N = 1001
+    N = 10000
     H_rand = History()
     E =Env(300)
     random_explor = RANDOM(N,E,H_rand)
@@ -24,19 +24,19 @@ if __name__=='__main__':
     G = GoalGenerator()
     #test optimized policy
     module = 1
-    Pi = OP()
+    Pi = OP(num_mutations = 3)
     goal = G(H_rand,module)
     theta = Pi(goal,H_rand,module)
     #test imgep
-    N_init = 200
+    N_init = 1000
     H = History()
     imgep = IMGEP(N,N_init,E,H,G,Pi)
     imgep()
     tab = H.as_array()
-    print('tab',tab[:,0])
+    #print('tab',tab[:,0])
     #imgep.memory_perf['mutual'].keys
     H.save_pickle('data_explor/imgep_run0.pickle')
     content_imgep = H.content()
     
-    comparaison3(content_rand['memory_perf'],content_imgep['memory_perf'], ['comp'])
+    comparaison3(content_rand['memory_perf'],content_imgep['memory_perf'], ['miss_ratios','time'])
     

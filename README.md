@@ -1,8 +1,9 @@
 # What to observe
 We want to observe revelant data that provides material for analysis of sources of interference.
 
-Hypothesis:
-The exact queue contents of the ddr is avaible.
+We make the folloing hypothesis:
+* The exact queue contents of the ddr is avaible for every cycle
+* Acces to *miss* and *hit* information for every cycle.
 
 
 Observables:
@@ -28,6 +29,17 @@ Observables:
    'bank_conflicts': True,
    'row_conflicts': False}}
 ```
+
+
+
+On pourra resumer un evenement de contention dans la ddr comme:
+
+{type: hit/miss 
+delay: delay,
+current location:row and bank 
+current command type
+previous location:row and bank 
+previous command type}
 
 
 

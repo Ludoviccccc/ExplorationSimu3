@@ -16,8 +16,17 @@ class OptimizationPolicykNN(Features):
                 num_bank = 4,
                 min_instr = 5,
                 max_instr = 50,
-                max_cycle = 60):
+                max_cycle = 60,
+                min_address_core0 = 0,
+                max_address_core0 = 10,
+                min_address_core1 = 11,
+                max_address_core1 = 21
+                ):
         super().__init__()
+        self.min_address_core0 = min_address_core0
+        self.max_address_core0 = max_address_core0
+        self.min_address_core1 = min_address_core1
+        self.max_address_core1 = max_address_core1
         self.k = k
         self.num_mutations = num_mutations
         self.max_cycle = max_cycle
@@ -31,6 +40,7 @@ class OptimizationPolicykNN(Features):
         closest_codes = self.select_closest_codes(H,goal, module) #most promising sample from the history
         output = {'core0':closest_codes['program']['core0'][0],
                 'core1':closest_codes['program']['core1'][0]}
+        output = self.light_code_mutation(output)
         return output
     def mix(self,programs):
         ll = np.random.randint(5,self.max_len)
@@ -61,6 +71,6 @@ class OptimizationPolicykNN(Features):
             output["program"]["core1"].append(H.memory_program["core1"][id_])
         return output
     def light_code_mutation(self,programs:dict[list[dict]]):
-        mutated0 = mutate_instruction_sequence(programs['core0'],num_mutations=5,max_cycle=self.max_cycle)
-        mutated1 = mutate_instruction_sequence(programs['core0'],num_mutations=5,max_cycle=self.max_cycle)
-        return mutated0,mutated1
+        mutated0 = mutate_instruction_sequence(programs['core0'],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core0,max_address=self.max_address_core0)
+        mutated1 = mutate_instruction_sequence(programs['core1'],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core1,max_address=self.max_address_core1)
+        return {'core0':mutated0,'core1':mutated1}
