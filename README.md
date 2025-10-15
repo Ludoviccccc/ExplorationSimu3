@@ -1,4 +1,4 @@
-![Alt text](all_images/svd/comp_global_ratios_iteration_10000.png)
+![Alt text](simulator_new.png')
 # What to observe
 We want to observe relevant data that provides material for analysis of sources of interference.
 
