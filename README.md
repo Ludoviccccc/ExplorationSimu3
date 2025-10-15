@@ -1,4 +1,4 @@
-![Alt text](simulator_new.png')
+![Alt text]('simulator_new.png')
 # What to observe
 We want to observe relevant data that provides material for analysis of sources of interference.
 
