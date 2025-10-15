@@ -5,7 +5,7 @@ def diversity(data:[np.ndarray,np.ndarray],bins:[np.ndarray, np.ndarray]):
     H,_,_ = np.histogram2d(data[0],data[1],bins)
     divers = np.sum(H>0)
     return divers
-def comparaison3(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2):
+def comparaison3(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
     fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28*num_row//2,20), layout='constrained')
     fontsize = 22
     fontsize_label = 32
@@ -14,7 +14,7 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
         for row in range(num_row):
             bins = np.arange(-1.0,1.0,0.05)
             axs[num_bank*row+j,0].hist(content_imgep['mutual']['miss_ratios_detailled'][:,row,j] - content_imgep['core0']['miss_ratios_detailled'][:,row,j],bins=bins,alpha = .5, label=label_algo)
-            axs[num_bank*row+j,0].set_yscale('log')
+            #axs[num_bank*row+j,0].set_yscale('log')
             axs[num_bank*row+j,0].hist(content_random['mutual']['miss_ratios_detailled'][:,row,j] - content_random['core0']['miss_ratios_detailled'][:,row,j],  bins=bins,alpha = .5, label='random')
         
             axs[num_bank*row+j,0].set_xlabel('miss ratio diff',fontsize=fontsize_label)
@@ -23,14 +23,14 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
                 axs[num_bank*row+j,0].legend(fontsize=fontsize)
             else:
                 axs[num_bank*row+j,0].legend()
-            axs[num_bank*row+j,0].set_yscale('log')
+            #axs[num_bank*row+j,0].set_yscale('log')
 
             axs[num_bank*row+j,1].hist(content_imgep['mutual']['miss_ratios_detailled'][:,row,j] - content_imgep['core1']['miss_ratios_detailled'][:,row,j],bins=bins,alpha = .5, label=label_algo)
             axs[num_bank*row+j,1].hist(content_random['mutual']['miss_ratios_detailled'][:,row,j] - content_random['core1']['miss_ratios_detailled'][:,row,j],  bins=bins,alpha = .5, label='random')
             axs[num_bank*row+j,1].set_xlabel('miss ratio diff', fontsize = fontsize_label)
             axs[num_bank*row+j,1].set_title(f'r[b{j+1},rw{row},(S_0,S_1)] - r[b{j+1},rw{row},(,S_1)]', fontsize=fontsize)
             axs[num_bank*row+j,1].legend()
-            axs[num_bank*row+j,1].set_yscale('log')
+            #axs[num_bank*row+j,1].set_yscale('log')
 
             diversity_ratio_random = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
             diversity_ratio_imgep = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
@@ -66,10 +66,12 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
         while os.path.isfile(f'{name[0]}_{k}.png'):
             k+=1
         plt.savefig(f'{name[0]}_{k}.png')
+    if show:
+        plt.show()
     plt.close()
     fig = plt.figure(figsize = (12,12))#, layout='constrained')
 
-    bins = np.arange(0,max(np.max(content_imgep['core0']['time_core0']),np.max(content_imgep['mutual']['time_core0'])),50)
+    bins = np.arange(0,max(np.max(content_imgep['core0']['time_core0']),np.max(content_imgep['mutual']['time_core0'])),5)
     diversity_time_rand = diversity([content_random['core0']['time_core0'],content_random['mutual']['time_core0']], [bins, bins])
     diversity_time_imgep = diversity([content_imgep['core0']['time_core0'],content_imgep['mutual']['time_core0']], [bins, bins])
 
@@ -85,7 +87,7 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
     ax1.grid(which='minor')
     ax1.set_title(f'imgep:{diversity_time_imgep}, rand:{diversity_time_rand}')
 
-    bins = np.arange(0,max(np.max(content_imgep['core1']['time_core1']),np.max(content_imgep['mutual']['time_core1'])),50)
+    bins = np.arange(0,max(np.max(content_imgep['core1']['time_core1']),np.max(content_imgep['mutual']['time_core1'])),5)
     diversity_time_rand = diversity([content_random['core1']['time_core1'],content_random['mutual']['time_core1']], [bins, bins])
     diversity_time_imgep = diversity([content_imgep['core1']['time_core1'],content_imgep['mutual']['time_core1']], [bins, bins])
 
@@ -104,8 +106,8 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
     ax2.set_title(f'imgep:{diversity_time_imgep}, rand:{diversity_time_rand}')
 
 
-    bins_hist= np.linspace(-200,1000,25)
-    bins = np.linspace(0,1000,21)
+    bins_hist= np.arange(-100,100,5)
+    bins = np.arange(0,100,5)
     ax3 = plt.subplot(323)
     ax3.hist(content_imgep['mutual']['time_core0'] - content_imgep['core0']['time_core0'], bins=bins_hist,alpha=.5, label='imgep')
     ax3.hist(content_random['mutual']['time_core0'] - content_random['core0']['time_core0'], bins=bins_hist,alpha=.5, label='random')
@@ -123,7 +125,7 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
 
 
     ax5 = plt.subplot(313)
-    bins = np.arange(0,max(np.max(content_imgep['mutual']['time_core0']),np.max(content_imgep['mutual']['time_core1'])),50)
+    bins = np.arange(0,max(np.max(content_imgep['mutual']['time_core0']),np.max(content_imgep['mutual']['time_core1'])),5)
     diversity_time_rand = diversity([content_random['mutual']['time_core0'],content_random['mutual']['time_core1']], [bins, bins])
     diversity_time_imgep = diversity([content_imgep['mutual']['time_core0'],content_imgep['mutual']['time_core1']], [bins, bins])
     ax5.scatter(content_imgep['mutual']['time_core0'],content_imgep['mutual']['time_core1'], label='imgep', alpha = .5)
@@ -142,6 +144,8 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
         while os.path.isfile(f'{name[1]}_{k}.png'):
             k+=1
         plt.savefig(f'{name[1]}_{k}.png',bbox_inches = 'tight',pad_inches = 0)
+    if show:
+        plt.show()
     plt.close()
 
 

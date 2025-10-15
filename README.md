@@ -1,5 +1,5 @@
 # What to observe
-We want to observe revelant data that provides material for analysis of sources of interference.
+We want to observe relevant data that provides material for analysis of sources of interference.
 
 We make the hypothesis that he simulator is a white box. The following will be accessible:
 * The exact queue contents of the ddr is avaible for every cycle
@@ -7,8 +7,10 @@ We make the hypothesis that he simulator is a white box. The following will be a
 * Statuses of every cache line
 * Statuses of every row and bank 
 
+![Alt text](simulator_new.png)
 
-Observables:
+## Observables:
+First I choose to consider events that allow to know if there is competition between the two coresin the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
 ```python
  {'cycle': 20,
   'type': 'DDR_MEMORY_CONTENTION',
@@ -31,17 +33,20 @@ Observables:
    'bank_conflicts': True,
    'row_conflicts': False}}
 ```
+Altough we might lose information we'll associate well defined vectors to these event, in order to work with metric spaces. This will allow to measure proximity between such events.
 
 
 
-On pourra resumer un evenement de contention dans la ddr comme:
 
+We'll also work with events such as :
+```
 {type: hit/miss 
 delay: delay,
 current location:row and bank 
 current command type
 previous location:row and bank 
 previous command type}
+```
 
 
 

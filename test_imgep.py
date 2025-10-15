@@ -1,4 +1,5 @@
 from simulator.sim3 import *
+import pickle
 from exploration.env.func import Experiment, Env
 from exploration.random.func import RANDOM
 import numpy as np
@@ -13,7 +14,7 @@ from exploration.imgep.imgep import IMGEP
 
 from visu import comparaison3
 if __name__=='__main__':
-    N = 10000
+    N = 1000
     H_rand = History()
     E =Env(300)
     random_explor = RANDOM(N,E,H_rand)
@@ -28,7 +29,7 @@ if __name__=='__main__':
     goal = G(H_rand,module)
     theta = Pi(goal,H_rand,module)
     #test imgep
-    N_init = 1000
+    N_init = 100
     H = History()
     imgep = IMGEP(N,N_init,E,H,G,Pi)
     imgep()
@@ -37,6 +38,10 @@ if __name__=='__main__':
     #imgep.memory_perf['mutual'].keys
     H.save_pickle('data_explor/imgep_run0.pickle')
     content_imgep = H.content()
+
+    with open('data_explor/imgep_run0.pickle_9.pkl') as f:
+        contentbis = pickle.load(f)
+    print('content', contentbis.keys())
     
     comparaison3(content_rand['memory_perf'],content_imgep['memory_perf'], ['miss_ratios','time'])
     

@@ -8,9 +8,12 @@ import numpy as np
 random.seed(0) # For reproducible results
 
 class Experiment:
-    def __init__(self):
-        self.num_banks = 4
-        self.num_addr = 20
+    def __init__(self,
+        num_banks = 4,
+        num_addr = 20,
+            ):
+        self.num_banks = num_banks
+        self.num_addr  = num_addr 
         self.num_rows = self.num_addr//16+1
         self.ddr_stats = {}
         self.time_values = {'core0':[0],'core1':[0]}
@@ -127,8 +130,13 @@ class Experiment:
                 'shared_resource_events': GlobalVar.shared_resource_events,
                 }
 class Env:
-    def __init__(self,cycles
+    def __init__(self,cycles,
+                 num_banks = 4,
+                 num_addr = 20,
                 ):
+        self.num_banks = num_banks
+        self.num_addr  = num_addr 
+        self.num_rows = self.num_addr//16+1
         self.cycles = cycles
     def __call__(self, parameter:dict)->dict:
         program  = Experiment()

@@ -7,6 +7,14 @@ from exploration.imgep.mutation import mutate_instruction_sequence, mutate_paire
 from exploration.history import History
 from exploration.imgep.features import Features
 
+
+def subsequence(cycle,parameter):
+    '''
+    returns the sequences of instructions up to the given cycle
+    '''
+    return {'core0':{k:parameter['core0'][k] for k in parameter['core0'] if k<=cycle},
+     'core1':{k:parameter['core1'][k] for k in parameter['core1'] if k<cycle}}
+
 class OptimizationPolicykNN(Features):
     def __init__(self,
                 k=1,

@@ -3,13 +3,17 @@ import pickle
 import os.path
 import copy
 class History:
-    def __init__(self, max_size = 100):
+    def __init__(self, max_size = 100,env=None):
         self.max_size = max_size
         self.memory_program = {"core0":[],"core1":[]}
         self.memory_perf = {'mutual':{},
                             'core0':{},
                             'core1':{}}
         self.memory_tab = []
+        self.j = 0
+        self.shared_resource_list = []
+        self.shared_resource_coords = []
+        self.env = env
     def eviction(self):
         if len(self.memory_program)>self.max_size:
             self.memory_program["core0"] = self.memory_program["core0"][-self.max_size:]
@@ -22,14 +26,28 @@ class History:
     def store(self,sample:dict[list]):
         #print("
         #for j in range(len(sample["program"]["core0"])):
+
+        keys_ = ['time_core0', 'time_core1', 'miss_ratios_detailled', 'miss_ratios_global', 'L1_miss_ratio_core0', 'L1_miss_ratio_core1', 'L2_miss_ratio']
         self.memory_program["core0"].append(sample["program"]["core0"])
         self.memory_program["core1"].append(sample["program"]["core1"])
         for key1 in self.memory_perf.keys():
             for key2 in sample[key1].keys():
-                if key2 in self.memory_perf[key1]:
+                if key2 in self.memory_perf[key1] and key2 in keys_:
                     self.memory_perf[key1][key2].append(sample[key1][key2])
-                else:
+                elif key2 in keys_:
                     self.memory_perf[key1][key2] = [sample[key1][key2]]
+                elif key2 in ['shared_resource_events']:
+                    if key2 in self.memory_perf[key1] and sample[key1][key2]!=[]:
+                        self.memory_perf[key1][key2][self.j] = sample[key1][key2]
+                    elif sample[key1][key2]!=[] :
+                        self.memory_perf[key1][key2] = {self.j:sample[key1][key2]}
+                    if sample[key1][key2]!=[]:
+                        for event in sample[key1][key2]:
+                            if event['type']=='DDR_MEMORY_CONTENTION':
+                                self.shared_resource_list.append(shared_ressource2vec(event,self.env))
+                                self.shared_resource_coords.append({'program':self.j,'cycle':event['cycle']})
+        self.j+=1
+
     def present_content(self):
         output  = {key:np.array(self.memory_perf[key]) for key in self.memory_perf.keys()}
         return output
@@ -73,3 +91,12 @@ class History:
         len_ = len(self.memory_perf['core0']['time_core0']) 
         tab = [np.array(self.memory_perf[core][key]).reshape(len_,-1) for key in keys for core in ['core0','core1','mutual'] if key in self.memory_perf[core] ]
         return np.concatenate(tab,axis=1)
+
+
+def shared_ressource2vec(in_,E):
+    count_banks = np.histogram(in_['details']['banks'],bins = range(E.num_banks+1))[0]/len(in_['details']['banks'])
+    count_rows = np.histogram(in_['details']['rows'],bins = range(E.num_rows+1))[0]/len(in_['details']['banks'])
+    ratios_core = np.array([sum(np.array(in_['initiators'])==1)/len(in_['initiators'])])
+    conflicts = np.array([1*in_['details']['bank_conflicts'],1*in_['details']['row_conflicts']])
+    out = np.concatenate((ratios_core,count_banks,count_rows,conflicts),axis=0)
+    return out
