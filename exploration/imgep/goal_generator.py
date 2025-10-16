@@ -12,5 +12,8 @@ class GoalGenerator:#(Features):
         stat = H.as_array()[:,module]
         min_ = stat.min(axis=-1)
         max_ = stat.max(axis=-1)
-        out = np.random.uniform((1-np.sign(min_)*0.6)*min_,4.0*max_)
+        if module<=4:
+            out = np.random.uniform((1-np.sign(min_)*0.6)*min_,4.0*max_)
+        else:
+            out = np.random.uniform(min_,max_)
         return out

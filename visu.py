@@ -5,7 +5,7 @@ def diversity(data:[np.ndarray,np.ndarray],bins:[np.ndarray, np.ndarray]):
     H,_,_ = np.histogram2d(data[0],data[1],bins)
     divers = np.sum(H>0)
     return divers
-def comparaison3(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
+def plot_ddr_miss_ratio_diversity(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
     fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28*num_row//2,20), layout='constrained')
     fontsize = 22
     fontsize_label = 32
@@ -18,7 +18,7 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
             axs[num_bank*row+j,0].hist(content_random['mutual']['miss_ratios_detailled'][:,row,j] - content_random['core0']['miss_ratios_detailled'][:,row,j],  bins=bins,alpha = .5, label='random')
         
             axs[num_bank*row+j,0].set_xlabel('miss ratio diff',fontsize=fontsize_label)
-            axs[num_bank*row+j,0].set_title(f'r[b{j+1},rw{row},(S_0,S_1)] - r[b{j+1},rw{row},(S_0,)]', fontsize=fontsize)
+            axs[num_bank*row+j,0].set_title(f'[b{j+1},rw{row}][(S_0,S_1)]-(S_0,)]', fontsize=fontsize)
             if row==0 and j==0:
                 axs[num_bank*row+j,0].legend(fontsize=fontsize)
             else:
@@ -28,7 +28,7 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
             axs[num_bank*row+j,1].hist(content_imgep['mutual']['miss_ratios_detailled'][:,row,j] - content_imgep['core1']['miss_ratios_detailled'][:,row,j],bins=bins,alpha = .5, label=label_algo)
             axs[num_bank*row+j,1].hist(content_random['mutual']['miss_ratios_detailled'][:,row,j] - content_random['core1']['miss_ratios_detailled'][:,row,j],  bins=bins,alpha = .5, label='random')
             axs[num_bank*row+j,1].set_xlabel('miss ratio diff', fontsize = fontsize_label)
-            axs[num_bank*row+j,1].set_title(f'r[b{j+1},rw{row},(S_0,S_1)] - r[b{j+1},rw{row},(,S_1)]', fontsize=fontsize)
+            axs[num_bank*row+j,1].set_title(f'r[b{j+1},rw{row}][(S_0,S_1)-(,S_1)]', fontsize=fontsize)
             axs[num_bank*row+j,1].legend()
             #axs[num_bank*row+j,1].set_yscale('log')
 
@@ -59,16 +59,18 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
             axs[num_bank*row+j,3].grid()
 
     if title:
-        fig.suptitle(title[0],fontsize = fontsize_label)
+        fig.suptitle(title,fontsize = fontsize_label)
     if name:
-        #plt.savefig(name[0])
         k = 0
-        while os.path.isfile(f'{name[0]}_{k}.png'):
+        while os.path.isfile(f'{name}_{k}.png'):
             k+=1
-        plt.savefig(f'{name[0]}_{k}.png')
+        plt.savefig(f'{name}_{k}.png')
     if show:
         plt.show()
     plt.close()
+
+
+def plot_time_diversity(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
     fig = plt.figure(figsize = (12,12))#, layout='constrained')
 
     bins = np.arange(0,max(np.max(content_imgep['core0']['time_core0']),np.max(content_imgep['mutual']['time_core0'])),5)
@@ -138,12 +140,12 @@ def comparaison3(content_random, content_imgep = None, name = None, title = None
     ax5.grid(which='minor')
     ax5.set_title(f'imgep:{diversity_time_imgep}, rand:{diversity_time_rand}')
     if title:
-        fig.suptitle(title[1],fontsize = 15,y = .95)
+        fig.suptitle(title,fontsize = 15,y = .95)
     if name:
         k = 0
-        while os.path.isfile(f'{name[1]}_{k}.png'):
+        while os.path.isfile(f'{name}_{k}.png'):
             k+=1
-        plt.savefig(f'{name[1]}_{k}.png',bbox_inches = 'tight',pad_inches = 0)
+        plt.savefig(f'{name}_{k}.png',bbox_inches = 'tight',pad_inches = 0)
     if show:
         plt.show()
     plt.close()
@@ -167,24 +169,3 @@ def comparaison_ratios_iterations(contents:list[tuple], name = None,k = None):
     if name:
         plt.savefig(name)
     plt.close()
-
-        #plt.show()
-def comparaison_ratios_global_iterations(list_args:list[tuple], name = None,k = None):
-    plt.figure(figsize = (25,20))
-    bins = np.arange(-1.0,1.0,0.05)
-    for label, content in list_args:
-        ll = len(content['miss_ratios_global0'])
-        print('together',len(content['miss_ratios_global0']))
-        print('0 alone',len(content['miss_ratios_global']))
-        diversity_ratio = [diversity([content['miss_ratios_global0'][:k],  content['miss_ratios_global'][:k]], [bins, bins]) for k in range(0,ll+1,100)]
-        #print('k', k)
-        print('name', name)
-        plt.plot(range(0,ll+1,100),diversity_ratio, label=label)
-        plt.xlabel('iteration',fontsize=18)
-        plt.ylabel('diversity',fontsize=18)
-        plt.legend()
-        plt.title(f'Global miss ratio diversity, Mutual Vs Isolation', fontsize=20)
-    if name:
-        plt.savefig(name)
-    plt.close()
-    

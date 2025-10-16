@@ -14,18 +14,9 @@ class History:
         self.shared_resource_list = []
         self.shared_resource_coords = []
         self.env = env
-    def eviction(self):
-        if len(self.memory_program)>self.max_size:
-            self.memory_program["core0"] = self.memory_program["core0"][-self.max_size:]
-            self.memory_program["core1"] = self.memory_program["core1"][-self.max_size:]
-    def purge(self):
-        self.memory_program["core0"] = [] 
-        self.memory_program["core1"] = []
     def __len__(self):
         return len(self.memory_program["core0"])
     def store(self,sample:dict[list]):
-        #print("
-        #for j in range(len(sample["program"]["core0"])):
 
         keys_ = ['time_core0', 'time_core1', 'miss_ratios_detailled', 'miss_ratios_global', 'L1_miss_ratio_core0', 'L1_miss_ratio_core1', 'L2_miss_ratio']
         self.memory_program["core0"].append(sample["program"]["core0"])
@@ -88,9 +79,12 @@ class History:
     
     def as_array(self):
         keys = ['time_core0', 'time_core1', 'miss_ratios_detailled', 'miss_ratios_global', 'L1_miss_ratio_core0', 'L1_miss_ratio_core1', 'L2_miss_ratio']
-        len_ = len(self.memory_perf['core0']['time_core0']) 
-        tab = [np.array(self.memory_perf[core][key]).reshape(len_,-1) for key in keys for core in ['core0','core1','mutual'] if key in self.memory_perf[core] ]
-        return np.concatenate(tab,axis=1)
+        len_ = self.j
+        if len_>0:
+            tab = [np.array(self.memory_perf[core][key]).reshape(len_,-1) for key in keys for core in ['core0','core1','mutual'] if key in self.memory_perf[core] ]
+            return np.concatenate(tab,axis=1)
+        else:
+            return np.array([])
 
 
 def shared_ressource2vec(in_,E):

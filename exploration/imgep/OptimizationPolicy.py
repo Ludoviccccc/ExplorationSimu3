@@ -6,7 +6,8 @@ sys.path.append("../../")
 from exploration.imgep.mutation import mutate_instruction_sequence, mutate_paire_instructions
 from exploration.history import History
 from exploration.imgep.features import Features
-
+from exploration.imgep.mix import mix_sequences
+from exploration.imgep.mixxx import random_mix_sequences
 
 def subsequence(cycle,parameter):
     '''
@@ -19,7 +20,6 @@ class OptimizationPolicykNN(Features):
     def __init__(self,
                 k=1,
                 num_mutations = 1,
-                max_len=50,
                 num_addr = 20,
                 num_bank = 4,
                 min_instr = 5,
@@ -28,9 +28,11 @@ class OptimizationPolicykNN(Features):
                 min_address_core0 = 0,
                 max_address_core0 = 10,
                 min_address_core1 = 11,
-                max_address_core1 = 21
+                max_address_core1 = 21,
+                segment_method=True,
                 ):
         super().__init__()
+        self.segment_method = segment_method
         self.min_address_core0 = min_address_core0
         self.max_address_core0 = max_address_core0
         self.min_address_core1 = min_address_core1
@@ -38,7 +40,6 @@ class OptimizationPolicykNN(Features):
         self.k = k
         self.num_mutations = num_mutations
         self.max_cycle = max_cycle
-        self.max_len = max_len
         self.num_bank = num_bank #this attribute is used by Features
         self.num_addr = num_addr
         self.min_instr = min_instr
@@ -46,15 +47,17 @@ class OptimizationPolicykNN(Features):
 
     def __call__(self,goal:np.ndarray,H:History, module:int)->dict:
         closest_codes = self.select_closest_codes(H,goal, module) #most promising sample from the history
-        output = {'core0':closest_codes['program']['core0'][0],
-                'core1':closest_codes['program']['core1'][0]}
+        output = {'core0':closest_codes['program']['core0'],
+                'core1':closest_codes['program']['core1']}
+        output = self.mix(output)
         output = self.light_code_mutation(output)
         return output
-    def mix(self,programs):
-        ll = np.random.randint(5,self.max_len)
-        mix0, mix1 = mix_instruction_lists(programs["program"]["core0"],ll), mix_instruction_lists(programs["program"]["core1"],ll)
-        output = self.light_code_mutation({"core0":mix0[:self.max_len],"core1":mix1[:self.max_len]}) #expansion strategie: small random mutation
-        return output 
+    def mix(self,programs:list[dict]):
+        if self.segment_method:
+            mix0, mix1 = mix_sequences(programs["core0"],max_cycle=self.max_cycle), mix_sequences(programs["core1"],max_cycle=self.max_cycle)
+        else:
+            mix0, mix1 = random_mix_sequences(programs["core0"],max_cycle=self.max_cycle), mix_sequences(programs["core1"],max_cycle=self.max_cycle)
+        return {'core0':[mix0],'core1':[mix1]}
     def loss(self,goal:np.ndarray, elements:np.ndarray):
         if type(goal)!=float:
             a = goal.reshape(-1,1) 
@@ -79,6 +82,6 @@ class OptimizationPolicykNN(Features):
             output["program"]["core1"].append(H.memory_program["core1"][id_])
         return output
     def light_code_mutation(self,programs:dict[list[dict]]):
-        mutated0 = mutate_instruction_sequence(programs['core0'],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core0,max_address=self.max_address_core0)
-        mutated1 = mutate_instruction_sequence(programs['core1'],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core1,max_address=self.max_address_core1)
+        mutated0 = mutate_instruction_sequence(programs['core0'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core0,max_address=self.max_address_core0)
+        mutated1 = mutate_instruction_sequence(programs['core1'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core1,max_address=self.max_address_core1)
         return {'core0':mutated0,'core1':mutated1}

@@ -25,17 +25,7 @@ class IMGEP:
                 G:GoalGenerator,
                 Pi:OptimizationPolicykNN,
                 periode:int = 1,
-                max_len:int = 50,
-                min_address_core0 = 0,
-                max_address_core0 = 10,
-                min_address_core1 = 11,
-                max_address_core1 = 21,
                 ):
-        self.max_cycle = 60
-        self.min_address_core0 = min_address_core0
-        self.max_address_core0 = max_address_core0
-        self.min_address_core1 = min_address_core1
-        self.max_address_core1 = max_address_core1
         self.N = N
         self.env = E
         self.H = H
@@ -44,28 +34,23 @@ class IMGEP:
         self.Pi = Pi
         self.periode = periode
         self.modules = range(40)
-        self.max_len = max_len
         self.start = 0
-        self.periode_expl = 10
-        self.k = 0
         self.random_explor = RANDOM(self.N_init,self.env,self.H)
-    def take(self,sample:dict,N_init:int): 
-        """Takes the ``N_init`` first steps from the ``sample`` dictionnary to initialize the exploration. 
-        Then the iterator i is set to N_init directly
+    def take(self,sample:dict,start:int): 
+        """Takes the ``start`` first steps from the ``sample`` dictionnary to initialize the exploration. 
+        Then the iterator i is set to ``start`` directly
         """
-        print("sampl", sample.keys())
-        for key in sample["memory_perf"].keys():
-            self.H.memory_perf[key]= list(sample["memory_perf"][key][:N_init])
-        self.H.memory_program["core0"] = sample["memory_program"]["core0"][:N_init]
-        self.H.memory_program["core1"] = sample["memory_program"]["core1"][:N_init]
-        self.start = N_init
+        self.start = start
+        self.H.memory_perf = sample["memory_perf"]
+        self.H.memory_program["core0"] = sample["memory_program"]["core0"]
+        self.H.memory_program["core1"] = sample["memory_program"]["core1"]
     def __call__(self):
         """Performs the exploration.
         """
         if self.start==0:
             self.random_explor()
         for i in range(self.N_init,self.N):
-            if (i)%100==0 or i==self.N-1:
+            if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
             if (i-self.N_init)%self.periode==0 and i>=self.N_init:
                 module = random.choice(self.modules)
