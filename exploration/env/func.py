@@ -130,6 +130,7 @@ class Experiment:
     def output_data(self):
         return {'time_core0':max(self.time_values['core0']),
                 'time_core1':max(self.time_values['core1']),
+                'miss_nb_detailled':self.miss_tab,
                 'miss_ratios_detailled':self.ratios_tab,
                 'miss_ratios_global': self.miss_ratio_global,
                 'L1_miss_ratio_core0':self.cache_stats_core_0['L1']['miss_rate'],

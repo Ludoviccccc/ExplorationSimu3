@@ -80,6 +80,8 @@ class History:
         len_ = self.j
         if len_>0:
             tab = [np.array(self.memory_perf[core][key]).reshape(len_,-1) for key in keys for core in ['core0','core1','mutual'] if key in self.memory_perf[core] ]
+            tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core0']['miss_ratios_detailled']).reshape(len_,-1)))
+            tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core1']['miss_ratios_detailled']).reshape(len_,-1)))
             return np.concatenate(tab,axis=1)
         else:
             return np.array([])

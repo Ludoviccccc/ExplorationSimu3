@@ -12,30 +12,42 @@ We make the hypothesis that the simulator is a white box. The following will be 
 ## Observables:
 First I choose to consider events that allow to know if there is competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
 ```python
- {'cycle': 20,
-  'type': 'DDR_MEMORY_CONTENTION',
-  'resource': 'DDR_MEMORY',
-  'initiators': [0, 1],
-  'details': {'banks': [0, 0],
-   'rows': [0, 0],
-   'operations': ['read', 'read'],
-   'statuses': ['ROW HIT', 'waiting'],
-   'bank_conflicts': True,
-   'row_conflicts': False}},
- {'cycle': 24,
-  'type': 'DDR_MEMORY_CONTENTION',
-  'resource': 'DDR_MEMORY',
-  'initiators': [0, 1, 1],
-  'details': {'banks': [2, 0, 2],
-   'rows': [0, 0, 0],
-   'operations': ['read', 'read', 'read'],
-   'statuses': ['ROW HIT', 'waiting', 'waiting'],
-   'bank_conflicts': True,
-   'row_conflicts': False}}
+{'cycle': 7,
+   'type': 'DDR_MEMORY_CONTENTION',
+   'resource': 'DDR_MEMORY',
+   'initiators': [0, 1],
+   'details': {'banks': [3, 3],
+    'rows': [0, 1],
+    'operations': ['read', 'read'],
+    'statuses': ['ROW MISS', 'waiting'],
+    'bank_conflicts': True,
+    'row_conflicts': True}}
+
+{'cycle': 35,
+   'type': 'DDR_MEMORY_CONTENTION',
+   'resource': 'DDR_MEMORY',
+   'initiators': [1, 0, 1],
+   'details': {'banks': [0, 2, 0],
+    'rows': [1, 0, 0],
+    'operations': ['read', 'read', 'read'],
+    'statuses': ['ROW HIT', 'waiting', 'waiting'],
+    'bank_conflicts': True,
+    'row_conflicts': True}}
 ```
 Altough we might lose information we'll associate well defined vectors to these event, in order to work with metric spaces. This will allow to measure proximity between such events:
 ```
-associated vectors
+(array([0.5, 0. , 0. , 0. , 1. , 0.5, 0.5, 1. , 1. ]),
+ {'ratio_cores': array([0.5]),
+  'count_banks': array([0., 0., 0., 1.]),
+  'count_rows': array([0.5, 0.5]),
+  'conflicts_bank_row': array([1, 1])})
+
+(array([0.66666667, 0.66666667, 0.        , 0.33333333, 0.        ,
+        0.66666667, 0.33333333, 1.        , 1.        ]),
+ {'ratio_cores': array([0.66666667]),
+  'count_banks': array([0.66666667, 0.        , 0.33333333, 0.        ]),
+  'count_rows': array([0.66666667, 0.33333333]),
+  'conflicts_bank_row': array([1, 1])})
 ```
 
 

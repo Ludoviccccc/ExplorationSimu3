@@ -9,12 +9,11 @@ from exploration.imgep.features import Features
 from exploration.imgep.mix import mix_sequences
 from exploration.imgep.mixxx import random_mix_sequences
 
-def subsequence(cycle,parameter):
+def subsequence(cycle,parameter:dict):
     '''
     returns the sequences of instructions up to the given cycle
     '''
-    return {'core0':{k:parameter['core0'][k] for k in parameter['core0'] if k<=cycle},
-     'core1':{k:parameter['core1'][k] for k in parameter['core1'] if k<cycle}}
+    return {k:parameter[k] for k in parameter if k<=cycle}
 
 class OptimizationPolicykNN(Features):
     def __init__(self,
@@ -58,7 +57,7 @@ class OptimizationPolicykNN(Features):
         if type(goal)!=float:
             a = goal.reshape(-1,1) 
         else:
-            a = np.array([goal]).reshape(-1,1) 
+            a = np.array([goal]).reshape(-1,1)#size (dim,N), N=1 individual
         out = np.sum((a -elements)**2,axis=0)
         return out
     def feature2closest_code(self,features,signature:np.ndarray)->np.ndarray:
@@ -72,9 +71,9 @@ class OptimizationPolicykNN(Features):
         assert len(H.memory_program)>0, "history empty"
         output = {"program": {"core0":[],"core1":[]},}
         if module==H.as_array().shape[-1]:
-            features = np.array(H.shared_resource_list)
+            features = np.array(H.shared_resource_list).T # to get size (dim,N), with N individual, vectors 
             idx = self.feature2closest_code(features,signature)
-            idx = [(H.shared_resource_coords['program'][id_],H.shared_resource_coords['cycle'][id_]) for id_ in idx]
+            idx = [(H.shared_resource_coords[id_]['program'],H.shared_resource_coords[id_]['cycle']) for id_ in idx]
             for id_,cycle in idx:
                 output["program"]["core0"].append(subsequence(cycle,H.memory_program["core0"][id_]))
                 output["program"]["core1"].append(subsequence(cycle,H.memory_program["core1"][id_]))
