@@ -36,14 +36,11 @@ First I choose to consider events that allow to know if there is competition bet
 ```
 Altough we might lose information we'll associate well defined vectors to these event, in order to work with metric spaces. This will allow to measure proximity between such events:
 ```
-(array([0.5, 0. , 0. , 0. , 1. , 0.5, 0.5, 1. , 1. ]),
  {'ratio_cores': array([0.5]),
   'count_banks': array([0., 0., 0., 1.]),
   'count_rows': array([0.5, 0.5]),
   'conflicts_bank_row': array([1, 1])})
 
-(array([0.66666667, 0.66666667, 0.        , 0.33333333, 0.        ,
-        0.66666667, 0.33333333, 1.        , 1.        ]),
  {'ratio_cores': array([0.66666667]),
   'count_banks': array([0.66666667, 0.        , 0.33333333, 0.        ]),
   'count_rows': array([0.66666667, 0.33333333]),
