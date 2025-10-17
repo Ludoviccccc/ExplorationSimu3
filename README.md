@@ -64,4 +64,5 @@ previous command type}
 ```
 # Temporary exploration results
 
-
+[!Alt text](illustrations/miss_ratios_k_1_s_1_4.png)
+[!Alt text](illustrations/time_k_1_s_1_3.png)
