@@ -1,5 +1,5 @@
 # Simulator description
-A description of the simulator can be find in [text](https://github.com/Ludoviccccc/Simu3)
+A description of the simulator can be find in [Simu3](https://github.com/Ludoviccccc/Simu3)
 ![Alt text](illustrations/simulator_new.png)
 # What to observe
 We want to observe relevant data that provides material for analysis of sources of interference.
