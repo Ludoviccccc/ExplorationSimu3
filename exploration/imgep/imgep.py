@@ -25,6 +25,10 @@ class IMGEP:
                 G:GoalGenerator,
                 Pi:OptimizationPolicykNN,
                 periode:int = 1,
+                min_address_core0=0,
+                max_address_core0=10,
+                min_address_core1=11,
+                max_address_core1=21,
                 ):
         self.N = N
         self.env = E
@@ -33,9 +37,9 @@ class IMGEP:
         self.N_init = N_init
         self.Pi = Pi
         self.periode = periode
-        self.modules = range(40)
+        self.modules = None
         self.start = 0
-        self.random_explor = RANDOM(self.N_init,self.env,self.H)
+        self.random_explor = RANDOM(self.N_init,self.env,self.H,min_address_core0,max_address_core0,min_address_core1,max_address_core1)
     def take(self,sample:dict,start:int): 
         """Takes the ``start`` first steps from the ``sample`` dictionnary to initialize the exploration. 
         Then the iterator i is set to ``start`` directly
@@ -49,6 +53,7 @@ class IMGEP:
         """
         if self.start==0:
             self.random_explor()
+        self.modules = range(self.H.as_array().shape[1])#average data + shared events
         for i in range(self.N_init,self.N):
             if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')

@@ -22,8 +22,6 @@ class OptimizationPolicykNN(Features):
                 num_mutations = 1,
                 num_addr = 20,
                 num_bank = 4,
-                min_instr = 5,
-                max_instr = 50,
                 max_cycle = 60,
                 min_address_core0 = 0,
                 max_address_core0 = 10,
@@ -42,8 +40,6 @@ class OptimizationPolicykNN(Features):
         self.max_cycle = max_cycle
         self.num_bank = num_bank #this attribute is used by Features
         self.num_addr = num_addr
-        self.min_instr = min_instr
-        self.max_instr = max_instr
 
     def __call__(self,goal:np.ndarray,H:History, module:int)->dict:
         closest_codes = self.select_closest_codes(H,goal, module) #most promising sample from the history
@@ -75,11 +71,19 @@ class OptimizationPolicykNN(Features):
     def select_closest_codes(self,H:History,signature: np.ndarray,module:int)->dict:
         assert len(H.memory_program)>0, "history empty"
         output = {"program": {"core0":[],"core1":[]},}
-        features = H.as_array()[:,module]
-        idx = self.feature2closest_code(features,signature)
-        for id_ in idx:
-            output["program"]["core0"].append(H.memory_program["core0"][id_])
-            output["program"]["core1"].append(H.memory_program["core1"][id_])
+        if module==H.as_array().shape[-1]:
+            features = np.array(H.shared_resource_list)
+            idx = self.feature2closest_code(features,signature)
+            idx = [(H.shared_resource_coords['program'][id_],H.shared_resource_coords['cycle'][id_]) for id_ in idx]
+            for id_,cycle in idx:
+                output["program"]["core0"].append(subsequence(cycle,H.memory_program["core0"][id_]))
+                output["program"]["core1"].append(subsequence(cycle,H.memory_program["core1"][id_]))
+        else:
+            features = H.as_array()[:,module]
+            idx = self.feature2closest_code(features,signature)
+            for id_ in idx:
+                output["program"]["core0"].append(H.memory_program["core0"][id_])
+                output["program"]["core1"].append(H.memory_program["core1"][id_])
         return output
     def light_code_mutation(self,programs:dict[list[dict]]):
         mutated0 = mutate_instruction_sequence(programs['core0'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core0,max_address=self.max_address_core0)

@@ -18,7 +18,7 @@ class Experiment:
         self.ddr_stats = {}
         self.time_values = {'core0':[0],'core1':[0]}
         # Instantiate the DDR Memory
-        self.ddr_memory_physical = DDRMemory(num_banks=4)
+        self.ddr_memory_physical = DDRMemory(num_banks=self.num_banks)
 
         # Instantiate the DDR Memory Controller, connected to the physical DDR
         self.ddr_controller = DDRMemoryController(
@@ -36,10 +36,16 @@ class Experiment:
 
         # Create cache configurations
         l1_conf = {'size': 32, 'line_size': 4, 'assoc': 2}
-        l2_conf = {'size': 1024, 'line_size': 4, 'assoc': 16}
+        l2_conf = {'size': 512, 'line_size': 4, 'assoc': 16}
+
 
         # Create shared L2 Cache, connected to the Interconnect
         shared_l2 = CacheLevel("L2", core_id="anycore", memory=self.interconnect, **l2_conf)
+
+        self.num_set = shared_l2.num_sets 
+        self._index = shared_l2._index
+        #shared_l2.num_tags = shared_l2._tag(self.num_addr)
+        #shared_l2.tab_miss = self.
 
         # Create Core-specific Multi-Level Caches, connected to the shared L2
         self.mem_core0 = MultiLevelCache(0, l1_conf, shared_l2)
@@ -106,8 +112,8 @@ class Experiment:
 
         denominator = miss + hits
         denominator[denominator==0] = -1
-        self.ratios = miss/(denominator)
-        self.ratios[self.ratios<0] = -1
+        #self.ratios = miss/(denominator)
+        #self.ratios[self.ratios<0] = -1
         self.analyze_interference_events = analyze_shared_resource_contention()
         if (np.sum(miss)+np.sum(hits))==0:
             self.miss_ratio_global =0
@@ -118,6 +124,9 @@ class Experiment:
         denominator_tab[denominator_tab==0] = -1
         self.ratios_tab = self.miss_tab/(denominator_tab)
         self.ratios_tab[self.ratios_tab<0] = -1
+
+        #details for shared cache miss ratio
+        #self.cache_miss_ratio_tab = sel
     def output_data(self):
         return {'time_core0':max(self.time_values['core0']),
                 'time_core1':max(self.time_values['core1']),
@@ -126,6 +135,7 @@ class Experiment:
                 'L1_miss_ratio_core0':self.cache_stats_core_0['L1']['miss_rate'],
                 'L1_miss_ratio_core1':self.cache_stats_core_1['L1']['miss_rate'],
                 'L2_miss_ratio':self.cache_stats_core_1['L2']['miss_rate'],
+                'L2_cache_miss_detailled':self.cache_stats_core_0['L2']['cache_miss_detailled'],
                 'contention_events': self.analyze_interference_events,
                 'shared_resource_events': GlobalVar.shared_resource_events,
                 }
@@ -139,9 +149,9 @@ class Env:
         self.num_rows = self.num_addr//16+1
         self.cycles = cycles
     def __call__(self, parameter:dict)->dict:
-        program  = Experiment()
-        program0 = Experiment()
-        program1 = Experiment()
+        program  = Experiment(num_banks=self.num_banks,num_addr=self.num_addr)
+        program0 = Experiment(num_banks=self.num_banks,num_addr=self.num_addr)
+        program1 = Experiment(num_banks=self.num_banks,num_addr=self.num_addr)
         program.load_instr(parameter["core0"], parameter["core1"])
         program0.load_instr(parameter["core0"],[])
         program1.load_instr([],parameter["core1"])

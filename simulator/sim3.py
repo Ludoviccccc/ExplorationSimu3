@@ -13,6 +13,7 @@ from os import altsep
 import random
 import heapq
 from enum import Enum, auto
+import numpy as np
 
 # ==========================================================
 # Global clock
@@ -540,6 +541,9 @@ class CacheLevel:
         self.write_allocate = write_allocate
         self.hits = 0
         self.misses = 0
+        
+        self.miss_tab = np.zeros((self.num_sets,assoc))
+        self.hit_tab = np.zeros((self.num_sets,assoc))
 
     # Extract the set index from the address
     #  addr = [ tag ][ idx ][ offset ]
@@ -578,6 +582,7 @@ class CacheLevel:
                 
                 # Count hits
                 self.hits += 1
+                self.hit_tab[index,i] += 1
                 
                 # Update the pLRU tree to point away from the MRU
                 plru.update_on_access(i)
@@ -596,6 +601,7 @@ class CacheLevel:
         
         # Count misses
         self.misses += 1
+        self.miss_tab[index,i] += 1
         
         # Choose victim line using PLRU and fetch from lower memory
         victim_idx = plru.get_victim()
@@ -712,11 +718,16 @@ class CacheLevel:
 
     def stats(self):
         total = self.hits + self.misses
+        denominator = self.miss_tab + self.hit_tab
+        denominator[denominator==0] = -1
+        self.cache_miss_tab = self.miss_tab/(denominator)
+        self.cache_miss_tab[self.cache_miss_tab<=0] = 0
         return {
-            "level": self.level,
-            "hits": self.hits,
-            "misses": self.misses,
-            "miss_rate": self.misses / total if total else 0
+            'level': self.level,
+            'hits': self.hits,
+            'misses': self.misses,
+            'miss_rate': self.misses / total if total else 0,
+            'cache_miss_detailled':self.cache_miss_tab,
         }
 
 # ---------------------------------------------------------
