@@ -7,7 +7,8 @@ We make the hypothesis that the simulator is a white box. The following will be 
 * Acces to *miss* and *hit* information for every cycle.
 * Statuses of every cache line
 * Statuses of every row and bank 
-
+## Parameter space
+to define
 
 ## Observables:
 First I choose to consider events that allow to know if there is competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
