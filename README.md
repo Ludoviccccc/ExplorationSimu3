@@ -62,6 +62,6 @@ current command type
 previous location:row and bank 
 previous command type}
 ```
-
+# Temporary exploration results
 
 
