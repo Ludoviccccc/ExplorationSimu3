@@ -112,8 +112,8 @@ class Experiment:
 
         denominator = miss + hits
         denominator[denominator==0] = -1
-        #self.ratios = miss/(denominator)
-        #self.ratios[self.ratios<0] = -1
+        self.ratios = miss/(denominator)
+        self.ratios[self.ratios<=0] = 0
         self.analyze_interference_events = analyze_shared_resource_contention()
         if (np.sum(miss)+np.sum(hits))==0:
             self.miss_ratio_global =0
@@ -132,7 +132,7 @@ class Experiment:
                 'time_core1':max(self.time_values['core1']),
                 'miss_nb_detailled':self.miss_tab,
                 'miss_ratios_detailled':self.ratios_tab,
-                'miss_ratios_global': self.miss_ratio_global,
+                'miss_ratios_global': self.ratios,
                 'L1_miss_ratio_core0':self.cache_stats_core_0['L1']['miss_rate'],
                 'L1_miss_ratio_core1':self.cache_stats_core_1['L1']['miss_rate'],
                 'L2_miss_ratio':self.cache_stats_core_1['L2']['miss_rate'],

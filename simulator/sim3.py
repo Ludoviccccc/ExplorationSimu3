@@ -727,7 +727,7 @@ class CacheLevel:
             'hits': self.hits,
             'misses': self.misses,
             'miss_rate': self.misses / total if total else 0,
-            'cache_miss_detailled':self.cache_miss_tab,
+            'cache_miss_detailled':self.miss_tab,
         }
 
 # ---------------------------------------------------------

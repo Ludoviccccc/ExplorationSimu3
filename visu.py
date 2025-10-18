@@ -159,8 +159,8 @@ def comparaison_ratios_iterations(contents:list[tuple], name = None,k = None):
     for j in range(4):
         for row in range(2):
             for label, content in contents:
-                ll = len(content['miss_ratios_core0_detailled'])
-                diversity_ratio = [diversity([content['miss_ratios_core0_detailled'][:k,row,j],  content['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
+                ll = len(content['core0']['miss_ratios_detailled'])
+                diversity_ratio = [diversity([content['core0']['miss_ratios_detailled'][:k,row,j],  content['mutual']['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
                 axs[j+row*4].plot(range(0,ll+1,100),diversity_ratio, label=label)
                 axs[j+row*4].set_xlabel('iteration',fontsize=18)
                 axs[j+row*4].set_ylabel('diversity',fontsize=18)
@@ -168,4 +168,25 @@ def comparaison_ratios_iterations(contents:list[tuple], name = None,k = None):
                 axs[j+row*4].set_title(f'Mutual Vs Isolation bank {j},row {row}', fontsize=20)
     if name:
         plt.savefig(name)
+    plt.close()
+
+
+def diversity_time_iteration(content_random,content_imgep,title=None, folder="images"):
+    count_bins = lambda content: np.arange(0,max(np.max(content['mutual']['time_core0']),np.max(content['mutual']['time_core1'])),5)
+    ll = len(content_random['core0']['miss_ratios_detailled'])
+    bins = count_bins(content_random)
+    plt.figure()
+    diversity_time_random = [diversity([content_random['mutual']['time_core0'][:k],content_random['mutual']['time_core1'][:k]], [bins, bins]) for k in range(0,ll,100)]
+    plt.plot(range(0,ll,100),diversity_time_random, label='random')
+    diversity_time_imgep = [diversity([content_imgep['mutual']["time_core0"][:k],content_imgep['mutual']["time_core1"][:k]],[bins, bins]) for k in range(0,ll,100)]
+    plt.plot(range(0,ll,100),diversity_time_imgep, label=f"imgep k = 1")
+    plt.xlabel("iteration")
+    plt.ylabel("diversity")
+    if title:
+        plt.title(title)
+    else:
+        plt.title("time")
+    plt.legend()
+    if title:
+        plt.savefig(f"{folder}/{title}")
     plt.close()
