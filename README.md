@@ -1,7 +1,9 @@
 # Simulator description
 A description of the simulator can be found in [Simu3](https://github.com/Ludoviccccc/Simu3)
 ![Alt text](illustrations/simulator_new.png)
-# What to observe
+# Some tests for the behavior of the simulator
+* Note book [lien](www)
+## What to observe
 We want to observe relevant data that provides material for analysis of sources of interference.
 
 We make the hypothesis that the simulator is a white box. The following will be accessible:
@@ -37,7 +39,7 @@ First I choose to consider events that allow to know if there is competition bet
     'bank_conflicts': True,
     'row_conflicts': True}}
 ```
-Altough we might lose information we'll associate well defined vectors to these event, in order to work with metric spaces. This will allow to measure proximity between such events:
+* Altough we might lose information we'll associate well defined vectors to these event, in order to work with metric spaces. This will allow to measure proximity between such events:
 ```python
  {'ratio_cores': array([0.5]),
   'count_banks': array([0., 0., 0., 1.]),#distribution among the banks
@@ -49,7 +51,7 @@ Altough we might lose information we'll associate well defined vectors to these 
   'count_rows': array([0.66666667, 0.33333333]),#distribution among the rows
   'conflicts_bank_row': array([1, 1])})
 ```
-
+* We can either choose L2 norm to conceive distance between these vectors or use some kind of conbination, e.g use KL divergence to model distances between the distributions, and use L2/L1 norm for the rest.
 
 
 
