@@ -16,7 +16,7 @@ class History:
     def __len__(self):
         return len(self.memory_program["core0"])
     def store(self,sample:dict[list]):
-        keys_ = list(sample['mutual'].keys())[:-2]
+        keys_ = list(sample['mutual'].keys())[:-3]# 3 --> no L2_cache_miss_detailled, probably takes to much memory
         self.memory_program["core0"].append(sample["program"]["core0"])
         self.memory_program["core1"].append(sample["program"]["core1"])
         for key1 in self.memory_perf.keys():

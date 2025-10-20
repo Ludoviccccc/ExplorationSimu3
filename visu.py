@@ -5,8 +5,55 @@ def diversity(data:[np.ndarray,np.ndarray],bins:[np.ndarray, np.ndarray]):
     H,_,_ = np.histogram2d(data[0],data[1],bins)
     divers = np.sum(H>0)
     return divers
+def hist_diversity(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,):
+    A_core0_rand = []
+    B_core0_rand = []
+    A_core0_imgep = []
+    B_core0_imgep = []
+    A_core1_rand = []
+    B_core1_rand = []
+    A_core1_imgep = []
+    B_core1_imgep = []
+    bins = np.arange(-1.0,1.0,0.05)
+    for j in range(num_bank):
+        for row in range(num_row):
+            diversity_ratio_random0 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+            diversity_ratio_imgep0 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+            A_core0_rand.append(diversity_ratio_random0)
+            A_core0_imgep.append(diversity_ratio_imgep0)
+            B_core0_rand.append(f'b{j},r{row}')
+            B_core0_imgep.append(f'b{j},r{row}')
+
+            diversity_ratio_random1 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+            diversity_ratio_imgep1 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+            A_core1_rand.append(diversity_ratio_random1)
+            A_core1_imgep.append(diversity_ratio_imgep1)
+            B_core1_rand.append(f'b{j},r{row}')
+            B_core1_imgep.append(f'b{j},r{row}')
+
+    plt.figure(figsize=(18,5), layout='constrained') 
+    plt.bar(B_core0_imgep,A_core0_imgep,label='imgep')
+    plt.bar(B_core0_rand,A_core0_rand,alpha=.5, label='random')
+    plt.legend()
+    plt.xlabel(f'core 0, bank b, row r')
+    plt.ylabel(f'diversity')
+    plt.title('diversity isolation vs mutual, core 0')
+    plt.grid()
+    plt.savefig('images/diversity_bar_core0')
+    plt.show()
+
+    plt.figure(figsize=(18,5), layout='constrained') 
+    plt.bar(B_core1_imgep,A_core1_imgep,label='imgep')
+    plt.bar(B_core1_rand,A_core1_rand,alpha=.5, label='random')
+    plt.legend()
+    plt.xlabel(f'core 1, bank b, row r')
+    plt.ylabel(f'diversity')
+    plt.title('diversity isolation vs mutual, core 1')
+    plt.grid()
+    plt.savefig('images/diversity_bar_core1')
+    plt.show()
 def plot_ddr_miss_ratio_diversity(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
-    fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28*num_row//2,20), layout='constrained')
+    fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28*num_row//2,100), layout='constrained')
     fontsize = 22
     fontsize_label = 32
     fontsize3 = 22

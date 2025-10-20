@@ -22,7 +22,7 @@ if __name__=="__main__":
 
     N = 10000
     N_init = 1000
-    k_values = [1]
+    k_values = [2]
     num_mutations = 1
     periode = 1
     min_address_core0 = 0
