@@ -152,6 +152,7 @@ For any event we will track we synthetize a vector. Thus, we generate vectors an
 ## Mixing sequence operator
 ## Mutation Operator
 ## Goal achievement strategy policy $\Pi$
+![Alt text](illustrations/achievment_strategy.png)
 ## Use of learning progress to target goals effiently
 apply alp
 # Temporary exploration results
