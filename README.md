@@ -157,10 +157,10 @@ For any event we will track we synthetize a vector. Thus, we generate vectors an
 ## Mixing sequence operator
 ## Mutation Operator
 ## Goal achievement strategy policy $\Pi$
-Same strategy with kNN here.
 ![Alt text](illustrations/achievement_strategy.png)
 ## Use of learning progress to target goals effiently
 apply alp
+* citer papier
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
 
@@ -169,7 +169,6 @@ Run of 10000 iterations, 1000 for initialization.
 
 ![Alt text](illustrations/diversity_bar_core0.png)
 ![Alt text](illustrations/diversity_bar_core1.png)
-![Alt text](illustrations/miss_ratios_k_2_s_1_12.png)
 ![Alt text](illustrations/time_k_2_s_1_1.png)
 ![Alt text](illustrations/comparaison_iteration_ddr_miss_ratio.png)
 ## Acceleration phenomena
