@@ -2,7 +2,7 @@
 A description of the simulator can be found in [Simu3](https://github.com/Ludoviccccc/Simu3)
 ![Alt text](illustrations/simulator_new.png)
 # Some tests for the behavior of the simulator
-* Note book [lien](www)
+* Notebook [lien](test_simulator.ipynb)
 1 core, 2 read cycles,same index, same tag, same bank, different rows, no dependency
 * 1st RD => cache miss => DDR reads transaction 
 * 2nd RD => cache miss => DDR reads transaction 
@@ -28,10 +28,40 @@ ddr hits [[0. 0. 0. 0.]
 ddr miss [[1. 0. 0. 0.]
  [1. 0. 0. 0.]]
 DDR miss ratio:
-
 	bank 0 	bank 1 	bank 2 	bank 3
 row 0 	1.0 	-0.0 	-0.0 	-0.0
 row 1 	1.0 	-0.0 	-0.0 	-0.0
+```
+
+* 1 core, 2 read cycles, same cache line, no dependency
+* 1st RD => cache miss => DDR reads transaction 
+* 2nd RD => cache hit => no DDR transaction
+```python
+# Create instruction sequences
+GlobalVar.clear_history()
+inst0 = { 0: ('read', 0), 60: ('read', 0) }
+inst1 = {}
+
+exp=Experiment()
+exp.load_instr(inst0, inst1)
+results = exp.simulate(200, display_stats=True)
+print('DDR miss ratio:')
+pd.DataFrame(results['miss_ratios_detailled'],columns=[f'bank {j}' for j in range(4)],index = [f'row {j}' for j in range(2)])
+```
+output
+```
+--- Simulation Stats ---
+core0 {'level': 'L1', 'hits': 0, 'misses': 2, 'miss_rate': 1.0}
+core1 {'level': 'L1', 'hits': 0, 'misses': 0, 'miss_rate': 0}
+shared cache L2 {'level': 'L2', 'hits': 0, 'misses': 2, 'miss_rate': 1.0}
+ddr hits [[1. 0. 0. 0.]
+ [0. 0. 0. 0.]]
+ddr miss [[1. 0. 0. 0.]
+ [0. 0. 0. 0.]]
+DDR miss ratio:
+	bank 0 	bank 1 	bank 2 	bank 3
+row 0 	0.5 	-0.0 	-0.0 	-0.0
+row 1 	-0.0 	-0.0 	-0.0 	-0.0
 ```
 
 ## What to observe
