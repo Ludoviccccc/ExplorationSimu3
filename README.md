@@ -3,7 +3,7 @@ A description of the simulator can be found in [Simu3](https://github.com/Ludovi
 ![Alt text](illustrations/simulator_new.png)
 # Some tests for the behavior of the simulator
 
-* Notebook [lien](test_simulator.ipynb)
+* this following notebook gathers tests [lien](test_simulator.ipynb)
 * 1 core, 2 read cycles,same index, same tag, same bank, different rows, no dependency
 * 1st RD => cache miss => DDR reads transaction 
 * 2nd RD => cache miss => DDR reads transaction 
@@ -64,7 +64,31 @@ DDR miss ratio:
 row 0 	0.5 	-0.0 	-0.0 	-0.0
 row 1 	-0.0 	-0.0 	-0.0 	-0.0
 ```
-
+#Apply Intrinsically motivated Goal exploration process
+## Parameter space
+We use a set of 101 adresses from 0 to 100. We divide in two parts this set for core 0 and 1.
+* Core 1: addresses from 0 to 49
+* Core 2: addresses from 50 to 100
+Sequences will look like this:
+```python
+{4: ('write', 3),
+ 6: ('write', 14),
+ 8: ('write', 15),
+ 9: ('read', 7),
+ 16: ('write', 0),
+ 18: ('read', 11),
+ 19: ('read', 17),
+ 34: ('write', 10),
+ 38: ('read', 6),
+ 39: ('write', 1),
+ 43: ('write', 17),
+ 45: ('read', 10),
+ 46: ('read', 10),
+ 48: ('read', 17),
+ 51: ('read', 2),
+ 56: ('write', 2),
+ 60: ('write', 10)}
+```
 ## What to observe
 We want to observe relevant data that provides material for analysis of sources of interference.
 
@@ -73,11 +97,7 @@ We make the hypothesis that the simulator is a white box. The following will be 
 * Acces to *miss* and *hit* information for every cycle.
 * Statuses of every cache line
 * Statuses of every row and bank 
-## Parameter space
-We use a set of 101 adresses from 0 to 100. We divide in two parts this set for core 0 and 1.
-* Core 1: addresses from 0 to 49
-* Core 2: addresses from 50 to 100
-## Observables:
+## What to discover
 First I choose to consider events that inform of competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
 ```python
 {'cycle': 7,
