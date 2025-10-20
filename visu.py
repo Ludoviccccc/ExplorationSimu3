@@ -56,7 +56,7 @@ def hist_diversity(content_random, content_imgep = None, name = None, title = No
     plt.savefig('images/diversity_bar_core1')
     plt.show()
 def plot_ddr_miss_ratio_diversity(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
-    fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28*num_row//2,100), layout='constrained')
+    fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28,80), layout='constrained')
     fontsize = 22
     fontsize_label = 32
     fontsize3 = 22
