@@ -147,8 +147,11 @@ current command type
 previous location:row and bank 
 previous command type}
 ```
-# Goal generation
+## Goal generation
 For any event we will track we synthetize a vector. Thus, we generate vectors and not event as goals
+## Mixing sequence operator
+## Mutation Operator
+## Goal achivement strategy policy
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
 ![Alt text](illustrations/diversity_bar_core0.png)
