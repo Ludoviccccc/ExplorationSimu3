@@ -3,6 +3,8 @@ A description of the simulator can be found in [Simu3](https://github.com/Ludovi
 ![Alt text](illustrations/simulator_new.png)
 # Some tests for the behavior of the simulator
 * Note book [lien](www)
+
+# Acceleration phenomena
 ## What to observe
 We want to observe relevant data that provides material for analysis of sources of interference.
 

@@ -88,12 +88,21 @@ class Experiment:
 
         self.cache_stats_core_0 = self.mem_core0.stats()
         self.cache_stats_core_1 = self.mem_core1.stats()
+        self.reorder()
         if display_stats:
             # Report results
             print("\n--- Simulation Stats ---")
-            print(self.cache_stats_core_0)
-            print(self.cache_stats_core_1)
-        self.reorder()
+            dict0 = self.cache_stats_core_0['L1'].copy()
+            dict1 = self.cache_stats_core_1['L1'].copy()
+            display_dict = self.cache_stats_core_0['L2'].copy()
+            del dict0['cache_miss_detailled']
+            del dict1['cache_miss_detailled']
+            del display_dict['cache_miss_detailled']
+            print('core0',dict0)
+            print('core1',dict1)
+            print('shared cache L2',display_dict)
+            print('ddr hits', self.hits_tab)
+            print('ddr miss', self.miss_tab)
         return self.output_data()
     def reorder(self):
         hits = np.zeros(self.num_banks)

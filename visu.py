@@ -37,7 +37,7 @@ def hist_diversity(content_random, content_imgep = None, name = None, title = No
     plt.legend()
     plt.xlabel(f'core 0, bank b, row r')
     plt.ylabel(f'diversity')
-    plt.title('diversity isolation vs mutual, core 0')
+    #plt.title('diversity isolation vs mutual, core 0')
     plt.grid()
     if title:
         plt.title(title)
@@ -50,7 +50,6 @@ def hist_diversity(content_random, content_imgep = None, name = None, title = No
     plt.legend()
     plt.xlabel(f'core 1, bank b, row r')
     plt.ylabel(f'diversity')
-    plt.title('diversity isolation vs mutual, core 1')
     plt.grid()
     if title:
         plt.title(title)
