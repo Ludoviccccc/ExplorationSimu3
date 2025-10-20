@@ -46,9 +46,9 @@ First I choose to consider events that allow to know if there is competition bet
   'count_rows': array([0.5, 0.5]),#distribution among the rows
   'conflicts_bank_row': array([1, 1])})
 
- {'ratio_cores': array([0.66666667]),
-  'count_banks': array([0.66666667, 0.        , 0.33333333, 0.        ]),#distribution among the banks
-  'count_rows': array([0.66666667, 0.33333333]),#distribution among the rows
+ {'ratio_cores': array([0.667]),
+  'count_banks': array([0.667, 0., 0.333, 0.]),#distribution among the banks
+  'count_rows': array([0.667, 0.333]),#distribution among the rows
   'conflicts_bank_row': array([1, 1])})
 ```
 * We can either choose L2 norm to conceive distance between these vectors or use some kind of conbination, e.g use KL divergence to model distances between the distributions, and use L2/L1 norm for the rest.
