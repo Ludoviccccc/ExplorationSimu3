@@ -75,8 +75,8 @@ We make the hypothesis that the simulator is a white box. The following will be 
 * Statuses of every row and bank 
 ## Parameter space
 We use a set of 101 adresses from 0 to 100. We divide in two parts this set for core 0 and 1.
-Core 1: addresses from 0 to 49
-Core 2: addresses from 50 to 100
+* Core 1: addresses from 0 to 49
+* Core 2: addresses from 50 to 100
 ## Observables:
 First I choose to consider events that inform of competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
 ```python
