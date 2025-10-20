@@ -210,8 +210,10 @@ def comparaison_ratios_iterations(contents:list[tuple], name = None,k = None,num
         for row in range(num_rows):
             for label, content in contents:
                 ll = len(content['core0']['miss_ratios_detailled'])
-                diversity_ratio = [diversity([content['core0']['miss_ratios_detailled'][:k,row,j],  content['mutual']['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
-                axs[j+row*num_banks].plot(range(0,ll+1,100),diversity_ratio, label=label)
+                diversity_ratio_core0 = [diversity([content['core0']['miss_ratios_detailled'][:k,row,j],  content['mutual']['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
+                diversity_ratio_core1 = [diversity([content['core1']['miss_ratios_detailled'][:k,row,j],  content['mutual']['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
+                axs[j+row*num_banks].plot(range(0,ll+1,100),diversity_ratio_core0, label=label+'_core0')
+                axs[j+row*num_banks].plot(range(0,ll+1,100),diversity_ratio_core1, label=label+'_core1')
                 axs[j+row*num_banks].set_xlabel('iteration',fontsize=18)
                 axs[j+row*num_banks].set_ylabel('diversity',fontsize=18)
                 axs[j+row*num_banks].legend()
