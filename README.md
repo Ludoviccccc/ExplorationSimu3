@@ -2,8 +2,9 @@
 A description of the simulator can be found in [Simu3](https://github.com/Ludoviccccc/Simu3)
 ![Alt text](illustrations/simulator_new.png)
 # Some tests for the behavior of the simulator
+
 * Notebook [lien](test_simulator.ipynb)
-1 core, 2 read cycles,same index, same tag, same bank, different rows, no dependency
+*1 core, 2 read cycles,same index, same tag, same bank, different rows, no dependency
 * 1st RD => cache miss => DDR reads transaction 
 * 2nd RD => cache miss => DDR reads transaction 
 ```python
