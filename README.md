@@ -3,8 +3,37 @@ A description of the simulator can be found in [Simu3](https://github.com/Ludovi
 ![Alt text](illustrations/simulator_new.png)
 # Some tests for the behavior of the simulator
 * Note book [lien](www)
+1 core, 2 read cycles,same index, same tag, same bank, different rows, no dependency
+* 1st RD => cache miss => DDR reads transaction 
+* 2nd RD => cache miss => DDR reads transaction 
+```python
+GlobalVar.clear_history()
+# Create instruction sequences
+inst0 = { 0: ('read', 0), 60: ('read', 20) }
+inst1 = {  }
+exp=Experiment()
+exp.load_instr(inst0, inst1)
+results = exp.simulate(200,display_stats=True)
+import pandas as pd
+print('DDR miss ratio:')
+pd.DataFrame(results['miss_ratios_detailled'],columns=[f'bank {j}' for j in range(4)],index = [f'row {j}' for j in range(2)])
+```
+produces:
+```
+core0 {'level': 'L1', 'hits': 0, 'misses': 2, 'miss_rate': 1.0}
+core1 {'level': 'L1', 'hits': 0, 'misses': 0, 'miss_rate': 0}
+shared cache L2 {'level': 'L2', 'hits': 0, 'misses': 2, 'miss_rate': 1.0}
+ddr hits [[0. 0. 0. 0.]
+ [0. 0. 0. 0.]]
+ddr miss [[1. 0. 0. 0.]
+ [1. 0. 0. 0.]]
+DDR miss ratio:
 
-# Acceleration phenomena
+	bank 0 	bank 1 	bank 2 	bank 3
+row 0 	1.0 	-0.0 	-0.0 	-0.0
+row 1 	1.0 	-0.0 	-0.0 	-0.0
+```
+
 ## What to observe
 We want to observe relevant data that provides material for analysis of sources of interference.
 
@@ -14,9 +43,11 @@ We make the hypothesis that the simulator is a white box. The following will be 
 * Statuses of every cache line
 * Statuses of every row and bank 
 ## Parameter space
-We use a set of 101 adresses from 1 to 100. We divide in two parts this set for core 0 and 1.
+We use a set of 101 adresses from 0 to 100. We divide in two parts this set for core 0 and 1.
+Core 1: addresses from 0 to 49
+Core 2: addresses from 50 to 100
 ## Observables:
-First I choose to consider events that allow to know if there is competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
+First I choose to consider events that inform of competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
 ```python
 {'cycle': 7,
    'type': 'DDR_MEMORY_CONTENTION',
@@ -72,3 +103,4 @@ Run of 10000 iterations, 1000 for initialization.
 ![Alt text](illustrations/miss_ratios_k_2_s_1_12.png)
 ![Alt text](illustrations/time_k_2_s_1_1.png)
 ![Alt text](illustrations/comparaison_iteration_ddr_miss_ratio.png)
+## Acceleration phenomena
