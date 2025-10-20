@@ -148,7 +148,7 @@ previous location:row and bank
 previous command type}
 ```
 ## Goal generation
-For any event we will track we synthetize a vector. Thus, we generate vectors and not event as goals
+For any event we will track we synthetize a vector. Thus, we generate vectors and not events as goals
 ## Mixing sequence operator
 ## Mutation Operator
 ## Goal achievement strategy policy $\Pi$
