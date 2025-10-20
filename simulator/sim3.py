@@ -885,7 +885,8 @@ def analyze_shared_resource_contention():
                 details = {
                     'set_indices': [access['set_index'] for access in accesses],
                     'operations': [access['operation'] for access in accesses],
-                    'addresses': [access['addr'] for access in accesses]
+                    'addresses': [access['addr'] for access in accesses],
+                    'ways':[access['way'] for access in accesses],
                 }
                 GlobalVar.log_shared_resource_event(
                     'L2_CACHE_CONTENTION', 'L2_CACHE', list(cores_involved), details,cycle

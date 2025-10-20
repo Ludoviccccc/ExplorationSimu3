@@ -44,7 +44,8 @@ class OptimizationPolicykNN(Features):
         closest_codes = self.select_closest_codes(H,goal, module) #most promising sample from the history
         output = {'core0':closest_codes['program']['core0'],
                 'core1':closest_codes['program']['core1']}
-        output = self.mix(output)
+        if self.k>1:
+            output = self.mix(output)
         output = self.light_code_mutation(output)
         return output
     def mix(self,programs:list[dict]):
