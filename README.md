@@ -149,14 +149,24 @@ previous command type}
 ```
 ## Goal generation
 For any event we will track we synthetize a vector. Thus, we generate vectors and not events as goals
+* Periodically set the sampling boundaries based on the history $\mathcal{H}$, allowing to sample new goals *e.g*:
+	* $\mbox{min}_{\mathcal{T}} g:= (\mbox{min } g_1,\cdots,\mbox{min } g_6)$
+ 	* $\mbox{max}_{\mathcal{T}} g:= (\mbox{max } g_1,\cdots,\mbox{max } g_6)$
+ * Periodically sample goal uniformly in a slightly larger set, using two factors *e.g* $f_1 = 0.8,f_2 = 1.2$, $g\sim\mathcal{U}([f_1\mbox{min } g_1,f_2\mbox{max } g_2])\otimes\cdots\otimes\mathcal{U}([f_1\mbox{min } g_6,f_2\mbox{max }g_6])$
+
 ## Mixing sequence operator
 ## Mutation Operator
 ## Goal achievement strategy policy $\Pi$
+Same strategy with kNN here.
 ![Alt text](illustrations/achievment_strategy.png)
 ## Use of learning progress to target goals effiently
 apply alp
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
+
+* I will compare k-NN goal strategy achievement IMGEP with:
+* a random exploration : the warm up for imgep is done by selecting the $Ninit$ first iterations.
+
 ![Alt text](illustrations/diversity_bar_core0.png)
 ![Alt text](illustrations/diversity_bar_core1.png)
 ![Alt text](illustrations/miss_ratios_k_2_s_1_12.png)
