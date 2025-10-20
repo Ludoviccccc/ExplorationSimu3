@@ -64,6 +64,7 @@ previous location:row and bank
 previous command type}
 ```
 # Temporary exploration results
-
+![Alt text](illustrations/diversity_bar_core0.png)
+![Alt text](illustrations/diversity_bar_core1.png)
 ![Alt text](illustrations/miss_ratios_k_1_s_1_4.png)
 ![Alt text](illustrations/time_k_1_s_1_3.png)
