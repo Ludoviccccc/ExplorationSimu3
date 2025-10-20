@@ -64,7 +64,7 @@ DDR miss ratio:
 row 0 	0.5 	-0.0 	-0.0 	-0.0
 row 1 	-0.0 	-0.0 	-0.0 	-0.0
 ```
-#Apply Intrinsically motivated Goal exploration process
+# Apply Intrinsically motivated Goal exploration process
 ## Parameter space
 We use a set of 101 adresses from 0 to 100. We divide in two parts this set for core 0 and 1.
 * Core 1: addresses from 0 to 49
