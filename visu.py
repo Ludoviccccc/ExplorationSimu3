@@ -39,6 +39,8 @@ def hist_diversity(content_random, content_imgep = None, name = None, title = No
     plt.ylabel(f'diversity')
     plt.title('diversity isolation vs mutual, core 0')
     plt.grid()
+    if title:
+        plt.title(title)
     plt.savefig('images/diversity_bar_core0')
     plt.show()
 
@@ -50,6 +52,8 @@ def hist_diversity(content_random, content_imgep = None, name = None, title = No
     plt.ylabel(f'diversity')
     plt.title('diversity isolation vs mutual, core 1')
     plt.grid()
+    if title:
+        plt.title(title)
     plt.savefig('images/diversity_bar_core1')
     plt.show()
 def plot_ddr_miss_ratio_diversity(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
