@@ -39,5 +39,5 @@ if __name__=='__main__':
             content_imgep = load(name)
             #plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'images/miss_ratios_k_{k}_s_{s}', show=False,num_row=7)
             #hist_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'images/time_k_{k}_s_{s}',num_row=7,title=f'i diveristy ddr miss ratio for imgep k={k}. mutual vs isolation')
-            comparaison_ratios_iterations([('random',content_rand['memory_perf']),('imgep',content_imgep['memory_perf'])],name='images/comparaison_iteration_ddr_miss_ratio')
-            diversity_time_iteration(content_rand['memory_perf'],content_imgep['memory_perf'],title='iteration_time')
+            comparaison_ratios_iterations([('random',content_rand['memory_perf']),('imgep',content_imgep['memory_perf'])],name='images/comparaison_iteration_ddr_miss_ratio',num_rows=7)
+            #diversity_time_iteration(content_rand['memory_perf'],content_imgep['memory_perf'],title='iteration_time')
