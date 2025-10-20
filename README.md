@@ -158,7 +158,7 @@ For any event we will track we synthetize a vector. Thus, we generate vectors an
 ## Mutation Operator
 ## Goal achievement strategy policy $\Pi$
 Same strategy with kNN here.
-![Alt text](illustrations/achievment_strategy.png)
+![Alt text](illustrations/achievement_strategy.png)
 ## Use of learning progress to target goals effiently
 apply alp
 # Temporary exploration results
