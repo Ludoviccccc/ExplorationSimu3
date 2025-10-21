@@ -161,7 +161,9 @@ In order to conserve interference patterns, we use a mixing sequence operator th
 ## Mutation Operator
 With a given number of actions as argument. The program either `add`,`delete` or `modify` an instruction. The modification can either be changing the `type`,`address` or both. See [mutation.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/mutation.py)
 ## Goal achievement strategy policy $\Pi$
+
 ![Alt text](illustrations/achievement_strategy.png)
+The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequencesby selecting the closest observations in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
 ## Use of learning progress to target goals effiently
 apply alp
 * citer papier
