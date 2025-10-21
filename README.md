@@ -155,6 +155,7 @@ For any event we will track we synthetize a vector. Thus, we generate vectors an
  * Periodically sample goal uniformly in a slightly larger set, using two factors *e.g* $f_1 = 0.8,f_2 = 1.2$, $g\sim\mathcal{U}([f_1\mbox{min } g_1,f_2\mbox{max } g_2])\otimes\cdots\otimes\mathcal{U}([f_1\mbox{min } g_6,f_2\mbox{max }g_6])$
 
 ## Mixing sequence operator
+In order to conserve interference patterns, we use a mixing sequence operator that selects segments of the disctincs programs to produce another one
 ## Mutation Operator
 ## Goal achievement strategy policy $\Pi$
 ![Alt text](illustrations/achievement_strategy.png)
