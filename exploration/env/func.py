@@ -145,8 +145,8 @@ class Experiment:
                 #'L1_miss_ratio_core0':self.cache_stats_core_0['L1']['miss_rate'],
                 #'L1_miss_ratio_core1':self.cache_stats_core_1['L1']['miss_rate'],
                 'L2_miss_ratio':self.cache_stats_core_1['L2']['miss_rate'],
-                'L2_cache_miss_detailled':self.cache_stats_core_0['L2']['cache_miss_detailled'],
-                'contention_events': self.analyze_interference_events,
+                #'L2_cache_miss_detailled':self.cache_stats_core_0['L2']['cache_miss_detailled'],
+                #'contention_events': self.analyze_interference_events,
                 'shared_resource_events': GlobalVar.shared_resource_events,
                 }
 class Env:
@@ -172,6 +172,8 @@ class Env:
         out['core1'] = program1.simulate(self.cycles)
         GlobalVar.clear_history()
         out['mutual'] = program.simulate(self.cycles)
+        out['mutual']['miss_ratios_diff_core0'] = np.array(out['mutual']['miss_ratios_detailled'] - out['core0']['miss_ratios_detailled'])
+        out['mutual']['miss_ratios_diff_core1'] = np.array(out['mutual']['miss_ratios_detailled'] - out['core1']['miss_ratios_detailled'])
         GlobalVar.clear_history()
         del out['core0']['time_core1']
         del out['core1']['time_core0']

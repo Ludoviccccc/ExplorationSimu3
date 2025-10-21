@@ -8,7 +8,7 @@ from simulator.sim3 import print_contention_analysis
 import pandas as pd
 from exploration.history import History
 
-from visu import plot_ddr_miss_ratio_diversity, plot_time_diversity
+from visualisation.visu import plot_ddr_miss_ratio_diversity, plot_time_diversity
 import os
 
 

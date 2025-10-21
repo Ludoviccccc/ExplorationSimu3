@@ -8,9 +8,9 @@ from simulator.sim3 import print_contention_analysis
 import pandas as pd
 from exploration.history import History
 
-from visu import plot_ddr_miss_ratio_diversity, plot_time_diversity, comparaison_ratios_iterations,diversity_time_iteration,hist_diversity
+from visualisation.visu import plot_ddr_miss_ratio_diversity, plot_time_diversity, comparaison_ratios_iterations,diversity_time_iteration,hist_diversity
 import os
-
+#from rr2 import plot_ddr_miss_ratio_diversity_plotly
 
 
 
@@ -37,7 +37,8 @@ if __name__=='__main__':
         for s in [1]:  
             name = f'data_explor/imgep_run_{k}_{N}_s_{s}'
             content_imgep = load(name)
-            #plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'images/miss_ratios_k_{k}_s_{s}', show=False,num_row=7)
-            #hist_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'images/time_k_{k}_s_{s}',num_row=7,title=f'i diveristy ddr miss ratio for imgep k={k}. mutual vs isolation')
+            plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'images/miss_ratios_k_{k}_s_{s}', show=False,num_row=7)
+            hist_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'images/time_k_{k}_s_{s}',num_row=7,title=f'diveristy ddr miss ratio for imgep k={k}. mutual vs isolation')
             comparaison_ratios_iterations([('random',content_rand['memory_perf']),('imgep',content_imgep['memory_perf'])],name='images/comparaison_iteration_ddr_miss_ratio',num_rows=7)
-            #diversity_time_iteration(content_rand['memory_perf'],content_imgep['memory_perf'],title='iteration_time')
+            diversity_time_iteration(content_rand['memory_perf'],content_imgep['memory_perf'],title='iteration_time')
+            plot_time_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], f'images/time_k_{k}_s_{s}', show=False)

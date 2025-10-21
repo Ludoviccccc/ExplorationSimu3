@@ -169,6 +169,6 @@ Run of 10000 iterations, 1000 for initialization.
 
 ![Alt text](illustrations/diversity_bar_core0.png)
 ![Alt text](illustrations/diversity_bar_core1.png)
-![Alt text](illustrations/time_k_2_s_1_1.png)
+![Alt text](illustrations/time_k_2_s_1_7.png)
 ![Alt text](illustrations/comparaison_iteration_ddr_miss_ratio.png)
 ## Acceleration phenomena

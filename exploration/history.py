@@ -13,19 +13,26 @@ class History:
         self.shared_resource_list = []
         self.shared_resource_coords = []
         self.env = env
+        self.tab = []
+    def as_tab(self):
+        return np.array(self.tab)
     def __len__(self):
         return len(self.memory_program["core0"])
     def store(self,sample:dict[list]):
         keys_ = list(sample['mutual'].keys())[:-3]# 3 --> no L2_cache_miss_detailled, probably takes to much memory
+        key_set = ['shared_resource_events']
         self.memory_program["core0"].append(sample["program"]["core0"])
         self.memory_program["core1"].append(sample["program"]["core1"])
+        observation_vec = []
         for key1 in self.memory_perf.keys():
             for key2 in sample[key1].keys():
-                if key2 in self.memory_perf[key1] and key2 in keys_:
+                if key2 not in key_set:
+                    observation_vec.append(np.array(sample[key1][key2]).reshape((-1)))
+                if key2 in self.memory_perf[key1] and key2 not in key_set:
                     self.memory_perf[key1][key2].append(sample[key1][key2])
-                elif key2 in keys_:
+                elif key2 not in key_set:
                     self.memory_perf[key1][key2] = [sample[key1][key2]]
-                elif key2 in ['shared_resource_events']:
+                elif key2 in key_set:
                     if key2 in self.memory_perf[key1] and sample[key1][key2]!=[]:
                         self.memory_perf[key1][key2][self.j] = sample[key1][key2]
                     elif sample[key1][key2]!=[] :
@@ -36,6 +43,7 @@ class History:
                                 self.shared_resource_list.append(shared_ressource2vec(event,self.env))
                                 self.shared_resource_coords.append({'program':self.j,'cycle':event['cycle']})
         self.j+=1
+        self.tab.append(np.concatenate(observation_vec))
 
     def present_content(self):
         output  = {key:np.array(self.memory_perf[key]) for key in self.memory_perf.keys()}
@@ -69,22 +77,27 @@ class History:
         """Takes the ``N_init`` first steps from the ``sample`` dictionnary to initialize the expl    oration. 
         Then the iterator i is set to N_init directly
         """
-        print("sampl", sample.keys())
-        for key in sample["memory_perf"].keys():
-            self.memory_perf[key]= list(sample["memory_perf"][key][:N_init])
-        self.memory_program["core0"] = sample["memory_program"]["core0"][:N_init]
-        self.memory_program["core1"] = sample["memory_program"]["core1"][:N_init]
+        self.j = N_init
+        self.memory_perf = sample["memory_perf"]
+        self.memory_program["core0"] = sample["memory_program"]["core0"]
+        self.memory_program["core1"] = sample["memory_program"]["core1"]
     
     def as_array(self):
         keys = list(self.memory_perf['mutual'].keys())[:-1]
         len_ = self.j
         if len_>0:
-            tab = [np.array(self.memory_perf[core][key]).reshape(len_,-1) for key in keys for core in ['core0','core1','mutual'] if key in self.memory_perf[core] ]
-            tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core0']['miss_ratios_detailled']).reshape(len_,-1)))
-            tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core1']['miss_ratios_detailled']).reshape(len_,-1)))
+            tab = [np.array(self.memory_perf[core][key]).reshape(len_,-1) for key in keys for core in ['core0','core1','mutual'] if key in self.memory_perf[core]]
+            #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core0']['miss_ratios_detailled']).reshape(len_,-1)))
+            #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core1']['miss_ratios_detailled']).reshape(len_,-1)))
             return np.concatenate(tab,axis=1)
         else:
             return np.array([])
+    def as_array2(self):
+        len_ = self.j
+        tab = self.tab.copy()
+        #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core0']['miss_ratios_detailled']).reshape(len_,-1)))
+        #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core1']['miss_ratios_detailled']).reshape(len_,-1)))
+        return np.concatenate(tab,axis=1)
 
 
 def shared_ressource2vec(in_,E):

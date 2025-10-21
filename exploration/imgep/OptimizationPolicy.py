@@ -71,7 +71,7 @@ class OptimizationPolicykNN(Features):
     def select_closest_codes(self,H:History,signature: np.ndarray,module:int)->dict:
         assert len(H.memory_program)>0, "history empty"
         output = {"program": {"core0":[],"core1":[]},}
-        if module==H.as_array().shape[-1]:
+        if module==H.as_tab().shape[-1]:
             features = np.array(H.shared_resource_list).T # to get size (dim,N), with N individual, vectors 
             idx = self.feature2closest_code(features,signature)
             idx = [(H.shared_resource_coords[id_]['program'],H.shared_resource_coords[id_]['cycle']) for id_ in idx]
@@ -79,7 +79,7 @@ class OptimizationPolicykNN(Features):
                 output["program"]["core0"].append(subsequence(cycle,H.memory_program["core0"][id_]))
                 output["program"]["core1"].append(subsequence(cycle,H.memory_program["core1"][id_]))
         else:
-            features = H.as_array()[:,module]
+            features = H.as_tab()[:,module]
             idx = self.feature2closest_code(features,signature)
             for id_ in idx:
                 output["program"]["core0"].append(H.memory_program["core0"][id_])

@@ -53,7 +53,7 @@ class IMGEP:
         """
         if self.start==0:
             self.random_explor()
-        self.modules = range(self.H.as_array().shape[1]+1)#average data + shared events
+        self.modules = range(self.H.as_tab().shape[1]+1)#average data + shared events
         for i in range(self.N_init,self.N):
             if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
