@@ -34,7 +34,7 @@ if __name__=="__main__":
             print('k',k)
             print('segment mixing method', segment_method)
             E =Env(300,num_addr=100)
-            H = History(env=E)
+            H = History(env=E,capacity=N)
             Pi = OP(num_mutations = num_mutations,k=k,
                     segment_method=segment_method,
                     min_address_core0=min_address_core0,

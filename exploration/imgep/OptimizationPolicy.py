@@ -56,10 +56,15 @@ class OptimizationPolicykNN(Features):
         return {'core0':[mix0],'core1':[mix1]}
     def loss(self,goal:np.ndarray, elements:np.ndarray):
         if type(goal)!=float:
-            a = goal.reshape(-1,1) 
+            a = goal.reshape(1,-1) 
+#            print('a', a.shape)
+#            print('elements', elements.shape)
         else:
-            a = np.array([goal]).reshape(-1,1)#size (dim,N), N=1 individual
-        out = np.sum((a -elements)**2,axis=0)
+            a = np.array([goal]).reshape(1,-1)#size (dim,N), N=1 individual
+            elements = elements.reshape(-1,1)
+        out = np.sum((a -elements)**2,axis=1)
+#        if type(goal)!=float:
+#            print('out', out.shape)
         return out
     def feature2closest_code(self,features,signature:np.ndarray)->np.ndarray:
         if type(signature)==np.ndarray:
@@ -67,12 +72,13 @@ class OptimizationPolicykNN(Features):
                 raise TypeError(f"goal of shape {signature.shape} has be a float. Features of shape {features.shape}")
         d = self.loss(signature,features)
         idx = np.argsort(d)[:self.k]
+        #print('idx',idx)
         return idx
     def select_closest_codes(self,H:History,signature: np.ndarray,module:int)->dict:
         assert len(H.memory_program)>0, "history empty"
         output = {"program": {"core0":[],"core1":[]},}
         if module==H.as_tab().shape[-1]:
-            features = np.array(H.shared_resource_list).T # to get size (dim,N), with N individual, vectors 
+            features = np.array(H.shared_resource_list) # to get size (dim,N), with N individual, vectors 
             idx = self.feature2closest_code(features,signature)
             idx = [(H.shared_resource_coords[id_]['program'],H.shared_resource_coords[id_]['cycle']) for id_ in idx]
             for id_,cycle in idx:

@@ -3,35 +3,69 @@ import pickle
 import os.path
 import copy
 class History:
-    def __init__(self,env=None):
+    def __init__(self,env=None,capacity=1000):
         self.memory_program = {"core0":[],"core1":[]}
         self.memory_perf = {'mutual':{},
                             'core0':{},
                             'core1':{}}
-        self.memory_tab = []
         self.j = 0
+        self.capacity = capacity
         self.shared_resource_list = []
         self.shared_resource_coords = []
         self.env = env
         self.tab = []
+        self.hist_vec = []
+        self.diversity_vec = []
+        self.reward_vec = [0]
+        self.alp_vec = [0]
+        self.window_size = 200
+        self.window = {'id':[],'alp':[]}
     def as_tab(self):
         return np.array(self.tab)
     def __len__(self):
         return len(self.memory_program["core0"])
-    def store(self,sample:dict[list]):
-        keys_ = list(sample['mutual'].keys())[:-3]# 3 --> no L2_cache_miss_detailled, probably takes to much memory
+    def store(self,sample:dict):
         key_set = ['shared_resource_events']
         self.memory_program["core0"].append(sample["program"]["core0"])
         self.memory_program["core1"].append(sample["program"]["core1"])
         observation_vec = []
+        diversity = 0
+        step = 5
+        k =0
         for key1 in self.memory_perf.keys():
             for key2 in sample[key1].keys():
                 if key2 not in key_set:
-                    observation_vec.append(np.array(sample[key1][key2]).reshape((-1)))
+                    value = np.array(sample[key1][key2]).reshape((-1))
+                    observation_vec.append(value)
+                    if self.j==0:
+                        if key2 in ['time_core0', 'time_core1']:
+                            hist = np.zeros((value.shape[0],300//step+1))
+                            hist[range(value.shape[0]),int(value//step)]=1
+                        else:
+                            hist = np.zeros((value.shape[0],21))
+                            hist[range(value.shape[0]),value.astype('int64')*100//step]=1
+                        self.hist_vec.append(hist)
+                    else:
+                        if key2 in ['time_core0', 'time_core1']:
+                            self.hist_vec[k][range(value.shape[0]),int(value//step)]+=1
+                        else:
+                            value = 100*value//step
+                            self.hist_vec[k][range(value.shape[0]),value.astype('int64')]+=1
+                    diversity+=np.sum(self.hist_vec[k]>0)
+                    k+=1
                 if key2 in self.memory_perf[key1] and key2 not in key_set:
-                    self.memory_perf[key1][key2].append(sample[key1][key2])
+                    self.memory_perf[key1][key2][self.j] = sample[key1][key2]
                 elif key2 not in key_set:
-                    self.memory_perf[key1][key2] = [sample[key1][key2]]
+                    try:
+                        shape = sample[key1][key2].shape
+                    except:
+                        shape =None
+                    if shape:
+                        self.memory_perf[key1][key2] = np.zeros((self.capacity+1,)+sample[key1][key2].shape)
+                    else:
+                        self.memory_perf[key1][key2] = np.zeros((self.capacity+1))
+                    self.memory_perf[key1][key2][0] = sample[key1][key2]
+                # shared resource events
                 elif key2 in key_set:
                     if key2 in self.memory_perf[key1] and sample[key1][key2]!=[]:
                         self.memory_perf[key1][key2][self.j] = sample[key1][key2]
@@ -40,21 +74,44 @@ class History:
                     if sample[key1][key2]!=[]:
                         for event in sample[key1][key2]:
                             if event['type']=='DDR_MEMORY_CONTENTION':
-                                self.shared_resource_list.append(shared_ressource2vec(event,self.env))
+                                self.shared_resource_list.append(shared_resource2vec(event,self.env))
                                 self.shared_resource_coords.append({'program':self.j,'cycle':event['cycle']})
-        self.j+=1
-        self.tab.append(np.concatenate(observation_vec))
+#        if self.j ==0:
+#            o = np.concatenate(observation_vec)
+#            print('len', len(o))
+#            print(o.shape)
+#            self.tab = np.zeros((self.capacity,len(o)))
+#            self.tab[0] = o
+#        else:
+#            self.tab[self.j] = np.concatenate(observation_vec)
+        observation_vec = np.concatenate(observation_vec)
+        self.tab.append(observation_vec)
+#        print(self.as_tab().shape)
+        if self.j>0:
+            self.reward_vec.append(int(diversity - self.diversity_vec[-1]))
+        self.diversity_vec.append(int(diversity))
+        #calcul observation plus proche
+        if self.j>0:
+            loss = np.sum((self.as_tab()[:-1]-observation_vec.reshape(1,-1))**2,axis=1)
+            alp_value = np.abs(self.reward_vec[loss.argmin()]- self.reward_vec[-1])
+            self.alp_vec.append(alp_value)
+            self.window['alp'].append(self.alp_vec)
+            self.window['id'].append(self.j)
+            del self.window['alp'][:-self.window_size]
+            del self.window['id'][:-self.window_size]
 
-    def present_content(self):
-        output  = {key:np.array(self.memory_perf[key]) for key in self.memory_perf.keys()}
-        return output
+
+        self.j+=1
     def content(self):
         """
         returns dictionary of content
         """
         keys = ['time_core0', 'time_core1', 'miss_ratios_detailled', 'miss_ratios_global', 'L1_miss_ratio_core0', 'L1_miss_ratio_core1', 'L2_miss_ratio']
         return {"memory_perf":{key:{k:np.array(self.memory_perf[key][k]) for k in self.memory_perf[key] if k in keys} for key in self.memory_perf.keys()},
-                "memory_program":{"core0":self.memory_program["core0"],"core1":self.memory_program["core1"]}}
+                "memory_program":{"core0":self.memory_program["core0"],"core1":self.memory_program["core1"]},
+                "reward":self.reward_vec,
+                "diversity_vec":self.diversity_vec,
+                "alp_vec":self.alp_vec}
     def save_pickle(self, name:str=None):
         k = 0
         while os.path.isfile(f"{name}_{k}.pkl"):
@@ -62,17 +119,6 @@ class History:
         output = self.content()
         with open(f"{name}_{k}.pkl", "wb") as f:
             pickle.dump(output, f)
-    def __getitem__(self,val):
-        """
-        returns slice of memory_perf and memory_program in this order
-        """
-        memory_program = {"core0":[],"core1":[]}
-        memory_perf = {}
-        for k in self.memory_perf.keys():
-            memory_perf[k] = self.memory_perf[k][val]
-        for k in self.memory_program.keys():
-            memory_program[k] = self.memory_program[k][val]
-        return memory_perf,memory_program
     def take(self,sample:dict,N_init:int):
         """Takes the ``N_init`` first steps from the ``sample`` dictionnary to initialize the expl    oration. 
         Then the iterator i is set to N_init directly
@@ -81,26 +127,10 @@ class History:
         self.memory_perf = sample["memory_perf"]
         self.memory_program["core0"] = sample["memory_program"]["core0"]
         self.memory_program["core1"] = sample["memory_program"]["core1"]
-    
-    def as_array(self):
-        keys = list(self.memory_perf['mutual'].keys())[:-1]
-        len_ = self.j
-        if len_>0:
-            tab = [np.array(self.memory_perf[core][key]).reshape(len_,-1) for key in keys for core in ['core0','core1','mutual'] if key in self.memory_perf[core]]
-            #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core0']['miss_ratios_detailled']).reshape(len_,-1)))
-            #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core1']['miss_ratios_detailled']).reshape(len_,-1)))
-            return np.concatenate(tab,axis=1)
-        else:
-            return np.array([])
-    def as_array2(self):
-        len_ = self.j
-        tab = self.tab.copy()
-        #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core0']['miss_ratios_detailled']).reshape(len_,-1)))
-        #tab.append(np.abs(np.array(self.memory_perf['mutual']['miss_ratios_detailled']).reshape(len_,-1) - np.array(self.memory_perf['core1']['miss_ratios_detailled']).reshape(len_,-1)))
-        return np.concatenate(tab,axis=1)
+        self.tab = np.concatenate([np.array(sample['memory_perf'][key1][key2]).reshape((N_init,-1)) for key1 in sample['memory_perf'] for key2 in sample['memory_perf'][key1] if key2!='shared_resource_events'],axis=1)    
 
 
-def shared_ressource2vec(in_,E):
+def shared_resource2vec(in_,E):
     count_banks = np.histogram(in_['details']['banks'],bins = range(E.num_banks+1))[0]/len(in_['details']['banks'])
     count_rows = np.histogram(in_['details']['rows'],bins = range(E.num_rows+1))[0]/len(in_['details']['banks'])
     ratios_core = np.array([sum(np.array(in_['initiators'])==1)/len(in_['initiators'])])

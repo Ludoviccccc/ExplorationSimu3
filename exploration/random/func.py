@@ -7,6 +7,8 @@ from exploration.env.func import Env
 from exploration.history import History
 from codegeneration import generate_instruction_sequence
 import random
+import time
+
 
 class RANDOM:
     def __init__(self,N:int,E:Env,H:History,
@@ -31,6 +33,7 @@ class RANDOM:
         self.min_address_core1 = min_address_core1
         self.max_address_core1 = max_address_core1
     def __call__(self):
+        start_time = time.time()
         for i in range(self.N):
             if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
@@ -39,3 +42,4 @@ class RANDOM:
             parameter = {'core0':code0,
                         'core1':code1}
             self.H.store({"program":parameter}|self.env(parameter))
+        print(time.time() - start_time)

@@ -9,6 +9,7 @@ import random
 
 from codegeneration import generate_instruction_sequence
 from exploration.random.func import RANDOM
+import time
 class IMGEP:
     """
     N: int. The experimental budget
@@ -49,6 +50,7 @@ class IMGEP:
         self.H.memory_program["core0"] = sample["memory_program"]["core0"]
         self.H.memory_program["core1"] = sample["memory_program"]["core1"]
     def __call__(self):
+        start_time = time.time()
         """Performs the exploration.
         """
         if self.start==0:
@@ -63,3 +65,4 @@ class IMGEP:
             parameter = self.Pi(goal,self.H, module)
             observation = self.env(parameter)
             self.H.store({"program":parameter}|observation)
+        print(time.time() - start_time)
