@@ -30,6 +30,7 @@ class History:
         self.memory_program["core1"].append(sample["program"]["core1"])
         observation_vec = []
         diversity = 0
+        observation_diversity_vec = []
         step = 5
         k =0
         for key1 in self.memory_perf.keys():
@@ -52,6 +53,7 @@ class History:
                             value = 100*value//step
                             self.hist_vec[k][range(value.shape[0]),value.astype('int64')]+=1
                     diversity+=np.sum(self.hist_vec[k]>0)
+                    #observation_diversity_vec.append(np.sum(self.hist_vec[k]>0))
                     k+=1
                 if key2 in self.memory_perf[key1] and key2 not in key_set:
                     self.memory_perf[key1][key2][self.j] = sample[key1][key2]
