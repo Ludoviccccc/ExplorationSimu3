@@ -15,7 +15,7 @@ class History:
         self.env = env
         self.tab = []
         self.hist_vec = []
-        self.diversity_vec = []
+        self.diversity_vec = 0
         self.reward_vec = [0]
         self.alp_vec = [0]
         self.window_size = 200
@@ -53,7 +53,7 @@ class History:
                             value = 100*value//step
                             self.hist_vec[k][range(value.shape[0]),value.astype('int64')]+=1
                     diversity+=np.sum(self.hist_vec[k]>0)
-                    #observation_diversity_vec.append(np.sum(self.hist_vec[k]>0))
+                    observation_diversity_vec.append(np.sum(self.hist_vec[k]>0,axis=1))
                     k+=1
                 if key2 in self.memory_perf[key1] and key2 not in key_set:
                     self.memory_perf[key1][key2][self.j] = sample[key1][key2]
@@ -78,32 +78,29 @@ class History:
                             if event['type']=='DDR_MEMORY_CONTENTION':
                                 self.shared_resource_list.append(shared_resource2vec(event,self.env))
                                 self.shared_resource_coords.append({'program':self.j,'cycle':event['cycle']})
-#        if self.j ==0:
-#            o = np.concatenate(observation_vec)
-#            print('len', len(o))
-#            print(o.shape)
-#            self.tab = np.zeros((self.capacity,len(o)))
-#            self.tab[0] = o
-#        else:
-#            self.tab[self.j] = np.concatenate(observation_vec)
+        #array that counts diversity for every axis
+        current_diversity_array = np.concatenate(observation_diversity_vec)
+        #synthetizes an array with all observations, usefull for exploration.
         observation_vec = np.concatenate(observation_vec)
+        if self.j==0:
+            self.reward_vec = np.zeros((self.capacity+1,len(observation_vec)))
+            self.alp_vec = np.zeros((self.capacity+1,len(observation_vec)))
+        #print('shape reward vec', self.reward_vec.shape)
+        if self.j>0:
+            current_reward = current_diversity_array - self.diversity_vec
+        #closest previously sampled observation
+        if self.j>0:
+            loss = np.abs(self.as_tab()-observation_vec.reshape(1,-1))
+            argmin = loss.argmin(axis=0) #(Nb of Features,)
+            alp_values = np.abs(self.reward_vec[argmin,range(len(argmin))] - current_reward)
+            self.alp_vec[self.j] = alp_values
+            self.reward_vec[self.j] = current_reward
+        self.diversity_vec = current_diversity_array
         self.tab.append(observation_vec)
-#        print(self.as_tab().shape)
-        if self.j>0:
-            self.reward_vec.append(int(diversity - self.diversity_vec[-1]))
-        self.diversity_vec.append(int(diversity))
-        #calcul observation plus proche
-        if self.j>0:
-            loss = np.sum((self.as_tab()[:-1]-observation_vec.reshape(1,-1))**2,axis=1)
-            alp_value = np.abs(self.reward_vec[loss.argmin()]- self.reward_vec[-1])
-            self.alp_vec.append(alp_value)
-            self.window['alp'].append(self.alp_vec)
-            self.window['id'].append(self.j)
-            del self.window['alp'][:-self.window_size]
-            del self.window['id'][:-self.window_size]
 
 
         self.j+=1
+
     def content(self):
         """
         returns dictionary of content
