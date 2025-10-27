@@ -7,7 +7,7 @@ from exploration.imgep.mutation import mutate_instruction_sequence, mutate_paire
 from exploration.history import History
 from exploration.imgep.features import Features
 from exploration.imgep.mix import mix_sequences
-from exploration.imgep.mixxx import random_mix_sequences
+from exploration.imgep.mixxx import random_mix_sequences,segment_mix_sequences
 
 def subsequence(cycle,parameter:dict):
     '''
@@ -40,8 +40,8 @@ class OptimizationPolicykNN(Features):
         self.num_bank = num_bank #this attribute is used by Features
         self.num_addr = num_addr
 
-    def __call__(self,goal:np.ndarray,H:History, module:int)->dict:
-        closest_codes = self.select_closest_codes(H,goal, module) #most promising sample from the history
+    def __call__(self,goal:np.ndarray,H:History,cond:np.ndarray=None)->dict:
+        closest_codes = self.select_closest_codes(H,goal,cond) #most promising sample from the history
         output = {'core0':closest_codes['program']['core0'],
                 'core1':closest_codes['program']['core1']}
         if self.k>1:
@@ -49,46 +49,33 @@ class OptimizationPolicykNN(Features):
         output = self.light_code_mutation(output)
         return output
     def mix(self,programs:list[dict]):
-        if self.segment_method:
+        if not self.segment_method:
             mix0, mix1 = mix_sequences(programs["core0"],max_cycle=self.max_cycle), mix_sequences(programs["core1"],max_cycle=self.max_cycle)
         else:
-            mix0, mix1 = random_mix_sequences(programs["core0"],max_cycle=self.max_cycle), mix_sequences(programs["core1"],max_cycle=self.max_cycle)
+            mix0, mix1 = segment_mix_sequences(programs["core0"],max_cycle=self.max_cycle), segment_mix_sequences(programs["core1"],max_cycle=self.max_cycle)
         return {'core0':[mix0],'core1':[mix1]}
     def loss(self,goal:np.ndarray, elements:np.ndarray):
         a = np.array([goal]).reshape(1,-1)#size (dim,N), N=1 individual
-        elements = elements.reshape(-1,1)
-        out = np.sum((a -elements)**2,axis=1)
-#        if type(goal)!=float:
-#            print('out', out.shape)
+        max_ = elements.max(axis=0)
+        w = 1.0/((max_>1.0)*max_+ (max_<=1.0)*1.0)
+        w = w.reshape((1,-1))
+        out = np.sum(w*(a -elements)**2,axis=1)
         return out
     def feature2closest_code(self,features,signature:np.ndarray)->np.ndarray:
-        if type(signature)==np.ndarray:
-            if features.ndim==1 and (signature.shape[0]>1 or signature.ndim>1):
-                raise TypeError(f"goal of shape {signature.shape} has be a float. Features of shape {features.shape}")
         d = self.loss(signature,features)
         idx = np.argsort(d)[:self.k]
         return idx
-    def select_closest_codes(self,H:History,signature: np.ndarray,module:int)->dict:
+    def select_closest_codes(self,H:History,signature: np.ndarray,cond:np.ndarray=None)->dict:
         assert len(H.memory_program)>0, "history empty"
         output = {"program": {"core0":[],"core1":[]},}
-        if module==H.as_tab().shape[-1]:
-            features = np.array(H.shared_resource_list) # to get size (dim,N), with N individual, vectors 
-            idx = self.feature2closest_code(features,signature)
-            idx = [(H.shared_resource_coords[id_]['program'],H.shared_resource_coords[id_]['cycle']) for id_ in idx]
-            for id_,cycle in idx:
-                output["program"]["core0"].append(subsequence(cycle,H.memory_program["core0"][id_]))
-                output["program"]["core1"].append(subsequence(cycle,H.memory_program["core1"][id_]))
-        else:
-            features = H.as_tab()[:,module]
-            idx = self.feature2closest_code(features,signature)
-            if module==0:
-                print('signature',signature)
-                print('features',features)
-                print('idx',idx)
-                print('value encounterd', features[idx[0]])
-            for id_ in idx:
-                output["program"]["core0"].append(H.memory_program["core0"][id_])
-                output["program"]["core1"].append(H.memory_program["core1"][id_])
+        features = H.as_tab()
+        max_ = features.max(axis=0)
+        if type(cond)!=None:
+            features = features[:,cond].reshape((features.shape[0],-1))
+        idx = self.feature2closest_code(features,signature)
+        for id_ in idx:
+            output["program"]["core0"].append(H.memory_program["core0"][id_])
+            output["program"]["core1"].append(H.memory_program["core1"][id_])
         return output
     def light_code_mutation(self,programs:dict[list[dict]]):
         mutated0 = mutate_instruction_sequence(programs['core0'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core0,max_address=self.max_address_core0)

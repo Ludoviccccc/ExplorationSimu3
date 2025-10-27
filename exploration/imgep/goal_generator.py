@@ -14,9 +14,11 @@ class GoalGenerator:
             max_ = np.array(H.shared_resource_list).max(axis=0)
         else:
             stat = Tab[:,module]
-            min_ = stat.min(axis=-1)
-            max_ = stat.max(axis=-1)
-        if np.max(max_)>1.0:
+            #min_ = stat.min(axis=-1)
+            #max_ = stat.max(axis=-1)
+            min_ = stat.min(axis=0)
+            max_ = stat.max(axis=0)
+        if max_>1.0:
             out = np.random.uniform((1-np.sign(min_)*0.6)*min_,2.0*max_)
         else:
             out = np.random.uniform(min_,max_)

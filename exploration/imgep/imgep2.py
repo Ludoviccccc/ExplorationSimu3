@@ -3,8 +3,8 @@ sys.path.append("../")
 sys.path.append("../../")
 from exploration.env.func import Env
 from exploration.history import History
-from  exploration.imgep.OptimizationPolicy import OptimizationPolicykNN
-from exploration.imgep.goal_generator import GoalGenerator
+from  exploration.imgep.OptimizationPolicy2 import OptimizationPolicykNN
+from exploration.imgep.goal_generator2 import GoalGenerator
 import random
 
 from codegeneration import generate_instruction_sequence
@@ -39,7 +39,6 @@ class IMGEP:
         self.N_init = N_init
         self.Pi = Pi
         self.periode = periode
-        self.modules = None
         self.start = 0
         self.random_explor = RANDOM(self.N_init,self.env,self.H,min_address_core0,max_address_core0,min_address_core1,max_address_core1)
     def take(self,sample:dict,start:int): 
@@ -56,17 +55,13 @@ class IMGEP:
         """
         if self.start==0:
             self.random_explor()
-        self.modules = range(self.H.as_tab().shape[1]+1)#average data + shared events
         for i in range(self.N_init,self.N):
             if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
             if (i-self.N_init)%self.periode==0 and i>=self.N_init:
-                if i==self.N_init:
-                    module = random.choice(self.modules)
-                else:
-                    module = np.random.choice(self.H.as_tab().shape[1],1,p = self.H.prob())[0]
-                goal = self.G(self.H, module = module)
-            parameter = self.Pi(goal,self.H, module)
+                m = random.choice([0,1,2])
+                goal,cond = self.G(self.H,m)
+            parameter = self.Pi(goal,self.H,cond)
             observation = self.env(parameter)
-            self.H.store({"program":parameter}|observation,module=module)
+            self.H.store({"program":parameter}|observation)
         print(time.time() - start_time)

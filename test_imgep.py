@@ -49,4 +49,6 @@ if __name__=="__main__":
                           max_address_core1=max_address_core1)
             imgep()
             s = 1 if segment_method else 0
-            H.save_pickle(f'data_explor/imgep_run_{k}_{N}_s_{s}')
+            H.save_pickle(f'data_explor3/imgep_run_{k}_{N}_s_{s}')
+    print(np.sum(H.prob()))
+    print(H.prob())

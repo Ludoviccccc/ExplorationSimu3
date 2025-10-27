@@ -41,7 +41,7 @@ def hist_diversity(content_random, content_imgep = None, name = None, title = No
     plt.grid()
     if title:
         plt.title(title)
-    plt.savefig('images/diversity_bar_core0')
+    plt.savefig(name+'_core0')
     plt.show()
 
     plt.figure(figsize=(18,5), layout='constrained') 
@@ -53,7 +53,7 @@ def hist_diversity(content_random, content_imgep = None, name = None, title = No
     plt.grid()
     if title:
         plt.title(title)
-    plt.savefig('images/diversity_bar_core1')
+    plt.savefig(name+'_core1')
     plt.show()
 def plot_ddr_miss_ratio_diversity(content_random:dict, content_imgep:dict = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
     fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28,80), layout='constrained')
@@ -225,13 +225,15 @@ def comparaison_ratios_iterations(contents:list[tuple], name = None,k = None,num
 
 def diversity_time_iteration(content_random,content_imgep,title=None, folder="images"):
     count_bins = lambda content: np.arange(0,max(np.max(content['mutual']['time_core0']),np.max(content['mutual']['time_core1'])),5)
-    ll = len(content_random['core0']['miss_ratios_detailled'])
-    bins = count_bins(content_random)
+    ll = len(content_random['mutual']['time_core0'])
+    bins = count_bins(content_imgep)
     plt.figure()
     diversity_time_random = [diversity([content_random['mutual']['time_core0'][:k],content_random['mutual']['time_core1'][:k]], [bins, bins]) for k in range(0,ll,100)]
     plt.plot(range(0,ll,100),diversity_time_random, label='random')
+
     diversity_time_imgep = [diversity([content_imgep['mutual']["time_core0"][:k],content_imgep['mutual']["time_core1"][:k]],[bins, bins]) for k in range(0,ll,100)]
-    plt.plot(range(0,ll,100),diversity_time_imgep, label=f"imgep k = 1")
+
+    plt.plot(range(0,ll,100),diversity_time_imgep, label=f"imgep")
     plt.xlabel("iteration")
     plt.ylabel("diversity")
     if title:

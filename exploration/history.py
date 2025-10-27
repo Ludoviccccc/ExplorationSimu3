@@ -17,19 +17,15 @@ class History:
         self.hist_vec = []
         self.diversity_vec = 0
         self.reward_vec = [0]
-        self.alp_vec = [0]
-        self.window_size = 200
-        self.window = {'id':[],'alp':[]}
     def as_tab(self):
         return np.array(self.tab)
     def __len__(self):
         return len(self.memory_program["core0"])
-    def store(self,sample:dict):
+    def store(self,sample:dict,module:int=None):
         key_set = ['shared_resource_events']
         self.memory_program["core0"].append(sample["program"]["core0"])
         self.memory_program["core1"].append(sample["program"]["core1"])
         observation_vec = []
-        diversity = 0
         observation_diversity_vec = []
         step = 5
         k =0
@@ -48,11 +44,10 @@ class History:
                         self.hist_vec.append(hist)
                     else:
                         if key2 in ['time_core0', 'time_core1']:
-                            self.hist_vec[k][range(value.shape[0]),int(value//step)]+=1
+                            self.hist_vec[k][range(value.shape[0]),min(300//step,int(value[0]//step))]+=1
                         else:
                             value = 100*value//step
                             self.hist_vec[k][range(value.shape[0]),value.astype('int64')]+=1
-                    diversity+=np.sum(self.hist_vec[k]>0)
                     observation_diversity_vec.append(np.sum(self.hist_vec[k]>0,axis=1))
                     k+=1
                 if key2 in self.memory_perf[key1] and key2 not in key_set:
@@ -83,24 +78,29 @@ class History:
         #synthetizes an array with all observations, usefull for exploration.
         observation_vec = np.concatenate(observation_vec)
         if self.j==0:
-            self.reward_vec = np.zeros((self.capacity+1,len(observation_vec)))
-            self.alp_vec = np.zeros((self.capacity+1,len(observation_vec)))
-        #print('shape reward vec', self.reward_vec.shape)
+            self.reward_vec = np.zeros(self.capacity+1)
+            self.score = np.zeros(len(observation_vec))
+            current_reward = 0
         if self.j>0:
-            current_reward = current_diversity_array - self.diversity_vec
-        #closest previously sampled observation
-        if self.j>0:
-            loss = np.abs(self.as_tab()-observation_vec.reshape(1,-1))
-            argmin = loss.argmin(axis=0) #(Nb of Features,)
-            alp_values = np.abs(self.reward_vec[argmin,range(len(argmin))] - current_reward)
-            self.alp_vec[self.j] = alp_values
-            self.reward_vec[self.j] = current_reward
+            current_reward = np.sum(current_diversity_array - self.diversity_vec)
+            if module!=None:
+                if module < len(observation_vec):
+                    self.score[module]+=current_reward
+        self.reward_vec[self.j] = current_reward
         self.diversity_vec = current_diversity_array
+
+
         self.tab.append(observation_vec)
-
-
         self.j+=1
-
+    def prob(self):
+        epsilon = 0.5
+        c = self.score
+        unif = np.ones(len(c))/len(c)
+        if np.sum(self.score)!=0:
+            c /=np.sum(self.score)
+            return c*(1-epsilon)+epsilon*unif
+        else:
+            return unif
     def content(self):
         """
         returns dictionary of content
@@ -110,7 +110,7 @@ class History:
                 "memory_program":{"core0":self.memory_program["core0"],"core1":self.memory_program["core1"]},
                 "reward":self.reward_vec,
                 "diversity_vec":self.diversity_vec,
-                "alp_vec":self.alp_vec}
+                }
     def save_pickle(self, name:str=None):
         k = 0
         while os.path.isfile(f"{name}_{k}.pkl"):
