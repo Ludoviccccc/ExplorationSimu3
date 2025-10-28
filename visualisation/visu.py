@@ -211,15 +211,26 @@ def comparaison_ratios_iterations(contents:list[tuple], name = None,k = None,num
             for label, content in contents:
                 ll = len(content['core0']['miss_ratios_detailled'])
                 diversity_ratio_core0 = [diversity([content['core0']['miss_ratios_detailled'][:k,row,j],  content['mutual']['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
-                diversity_ratio_core1 = [diversity([content['core1']['miss_ratios_detailled'][:k,row,j],  content['mutual']['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
-                axs[j+row*num_banks].plot(range(0,ll+1,100),diversity_ratio_core0, label=label+'_core0')
-                axs[j+row*num_banks].plot(range(0,ll+1,100),diversity_ratio_core1, label=label+'_core1')
+                axs[j+row*num_banks].plot(range(0,ll+1,100),diversity_ratio_core0, label=label)
                 axs[j+row*num_banks].set_xlabel('iteration',fontsize=18)
                 axs[j+row*num_banks].set_ylabel('diversity',fontsize=18)
                 axs[j+row*num_banks].legend()
                 axs[j+row*num_banks].set_title(f'Mutual Vs Isolation bank {j},row {row}', fontsize=20)
     if name:
-        plt.savefig(name)
+        plt.savefig(name+'_core0')
+    plt.close()
+
+    for j in range(num_banks):
+        for row in range(num_rows):
+            for label, content in contents:
+                diversity_ratio_core1 = [diversity([content['core1']['miss_ratios_detailled'][:k,row,j],  content['mutual']['miss_ratios_detailled'][:k,row,j]], [bins, bins]) for k in range(0,ll+1,100)]
+                axs[j+row*num_banks].plot(range(0,ll+1,100),diversity_ratio_core1, label=label)
+                axs[j+row*num_banks].set_xlabel('iteration',fontsize=18)
+                axs[j+row*num_banks].set_ylabel('diversity',fontsize=18)
+                axs[j+row*num_banks].legend()
+                axs[j+row*num_banks].set_title(f'Mutual Vs Isolation bank {j},row {row}', fontsize=20)
+    if name:
+        plt.savefig(name+'_core1')
     plt.close()
 
 
@@ -236,6 +247,27 @@ def diversity_time_iteration(content_random,content_imgep,title=None, folder="im
     plt.plot(range(0,ll,100),diversity_time_imgep, label=f"imgep")
     plt.xlabel("iteration")
     plt.ylabel("diversity")
+    if title:
+        plt.title(title)
+    else:
+        plt.title("time")
+    plt.legend()
+    if title:
+        plt.savefig(f"{folder}/{title}")
+    plt.close()
+def diversity_time_iteration2(list_,title=None, folder="images"):
+    count_bins = lambda content: np.arange(0,max(np.max(content['mutual']['time_core0']),np.max(content['mutual']['time_core1'])),5)
+
+    plt.figure()
+    for arg in list_:
+        content,label = arg[0],arg[1]
+        print('label',label)
+        ll = len(content['mutual']['time_core0'])
+        bins = count_bins(content)
+        diversity_values = [diversity([content['mutual']['time_core0'][:k],content['mutual']['time_core1'][:k]], [bins, bins]) for k in range(0,ll,100)]
+        plt.plot(range(0,ll,100),diversity_values, label=label)
+        plt.xlabel("iteration")
+        plt.ylabel("diversity")
     if title:
         plt.title(title)
     else:
