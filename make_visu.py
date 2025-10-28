@@ -30,7 +30,7 @@ if __name__=='__main__':
     folder = 'exclusive_axis_exploration' 
     name = f'{folder}/rand_run_{N}'
     content_rand = load(name)
-    images = 'images3'
+    images = 'images_excl'
 
     for k in [1,2,3]:
         for s in [0,1]:  
