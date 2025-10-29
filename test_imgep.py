@@ -15,6 +15,7 @@ import os
 from exploration.imgep.OptimizationPolicy import OptimizationPolicykNN as OP
 from exploration.imgep.goal_generator import GoalGenerator as G
 from exploration.imgep.imgep import IMGEP
+from exploration.random.func import RANDOM
 
 
 
@@ -29,11 +30,18 @@ if __name__=="__main__":
     min_address_core1 = 49
     max_address_core0 = 50
     max_address_core1 = 100
-    for segment_method in [True]:
+
+    E =Env(400,num_addr=100)
+    H_rand = History(env=E,capacity=N)
+    random = RANDOM(N,E,H_rand,min_address_core0,max_address_core0,min_address_core1,max_address_core1)
+    #random()
+    folder = 'exclusive_axis_exploration'
+    #H_rand.save_pickle(f'{folder}/rand_run_{N}')
+    for segment_method in [False]:
         for k in k_values:
             print('k',k)
             print('segment mixing method', segment_method)
-            E =Env(300,num_addr=100)
+            E =Env(400,num_addr=100)
             H = History(env=E,capacity=N)
             Pi = OP(num_mutations = num_mutations,k=k,
                     segment_method=segment_method,
@@ -49,6 +57,4 @@ if __name__=="__main__":
                           max_address_core1=max_address_core1)
             imgep()
             s = 1 if segment_method else 0
-            H.save_pickle(f'data_explor3/imgep_run_{k}_{N}_s_{s}')
-    print(np.sum(H.prob()))
-    print(H.prob())
+            H.save_pickle(f'{folder}/imgep_run_{k}_{N}_s_{s}')
