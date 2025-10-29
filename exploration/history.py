@@ -58,9 +58,9 @@ class History:
                     except:
                         shape =None
                     if shape:
-                        self.memory_perf[key1][key2] = np.zeros((self.capacity+1,)+sample[key1][key2].shape)
+                        self.memory_perf[key1][key2] = np.zeros((self.capacity,)+sample[key1][key2].shape)
                     else:
-                        self.memory_perf[key1][key2] = np.zeros((self.capacity+1))
+                        self.memory_perf[key1][key2] = np.zeros((self.capacity))
                     self.memory_perf[key1][key2][0] = sample[key1][key2]
                 # shared resource events
                 elif key2 in key_set:
