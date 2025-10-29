@@ -170,8 +170,27 @@ apply alp
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
 
-* I will compare k-NN goal strategy achievement IMGEP with:
-* a random exploration : the warm up for imgep is done by selecting the $Ninit$ first iterations.
+* I will compare k-NN goal strategy achievement IMGEP with a random exploration
+* Parameter study with : k, number of segment for mixing operator/mixing method, exclusive exploration along axis vs non-exclusive exploration along axis
+* Add diversity value: some of all squared distances
+* Analysis of acceleration phenomenon
+* Visualisation of cache miss, ddr miss, and execution time + other space.
+* Analyse the impact of exploring interference event observables.
+
+
+
+Observation : imgep exhibe des couples de programmes dont les temps d’exécution sont bien plus importants qu’en random
+pb : quels mécanismes causent les temps élevés :
+
+
+H0 : imgep découvre des paires de programmes dont les adresses utilisées font overlapping + random découvre que très rarement de cas d’overlapping 
+
+méthode 0 : pour tester: proposer méthode pour mesurer le overlap entre deux programmes, qui prend en compte que on connaît le mapping.
+Prédiction : la mesure sera corrélée au temps d’exécution
+on peut pas trouver en random + intéressant à trouver sur la source matérielle + est-ce qu’on voudrait éviter d’exploiter ce phénomène
+
+ 
+Méthode 1 : méthode qui permet de 
 
 ![Alt text](illustrations/diversity_bar_core0.png)
 ![Alt text](illustrations/diversity_bar_core1.png)
