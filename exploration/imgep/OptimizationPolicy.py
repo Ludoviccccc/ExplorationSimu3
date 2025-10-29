@@ -59,7 +59,6 @@ class OptimizationPolicykNN(Features):
         elements = elements.reshape(-1,1)
         out = np.sum((a -elements)**2,axis=1)
 #        if type(goal)!=float:
-#            print('out', out.shape)
         return out
     def feature2closest_code(self,features,signature:np.ndarray)->np.ndarray:
         if type(signature)==np.ndarray:
@@ -81,11 +80,6 @@ class OptimizationPolicykNN(Features):
         else:
             features = H.as_tab()[:,module]
             idx = self.feature2closest_code(features,signature)
-            if module==0:
-                print('signature',signature)
-                print('features',features)
-                print('idx',idx)
-                print('value encounterd', features[idx[0]])
             for id_ in idx:
                 output["program"]["core0"].append(H.memory_program["core0"][id_])
                 output["program"]["core1"].append(H.memory_program["core1"][id_])
