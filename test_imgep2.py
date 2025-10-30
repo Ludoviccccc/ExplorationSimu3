@@ -12,10 +12,9 @@ from visualisation.visu import plot_ddr_miss_ratio_diversity, plot_time_diversit
 import os
 
 
-from exploration.imgep.OptimizationPolicy import OptimizationPolicykNN as OP
-from exploration.imgep.goal_generator import GoalGenerator as G
-from exploration.imgep.imgep import IMGEP
-from exploration.random.func import RANDOM
+from exploration.imgep.OptimizationPolicy2 import OptimizationPolicykNN as OP
+from exploration.imgep.goal_generator2 import GoalGenerator as G
+from exploration.imgep.imgep2 import IMGEP
 
 
 
@@ -23,20 +22,14 @@ if __name__=="__main__":
 
     N = 10000
     N_init = 1000
-    k_values = [2]
+    k_values = [1,2,3]
     num_mutations = 1
     periode = 1
     min_address_core0 = 0
     min_address_core1 = 49
     max_address_core0 = 50
     max_address_core1 = 100
-
-    E =Env(400,num_addr=100)
-    H_rand = History(env=E,capacity=N)
-    folder = 'exclusive_axis_exploration'
-    random = RANDOM(N,E,H_rand,min_address_core0,max_address_core0,min_address_core1,max_address_core1)
-    #random()
-    #H_rand.save_pickle(f'{folder}/rand_run_{N}')
+    folder = 'non_exclusive_axis_exploration'
     for segment_method in [True]:
         for k in k_values:
             print('k',k)

@@ -59,7 +59,7 @@ class IMGEP:
             if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
             if (i-self.N_init)%self.periode==0 and i>=self.N_init:
-                m = random.choice([0,1,2])
+                m = random.choice([0,1,2,3])
                 goal,cond = self.G(self.H,m)
             parameter = self.Pi(goal,self.H,cond)
             observation = self.env(parameter)

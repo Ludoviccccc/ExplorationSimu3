@@ -110,6 +110,7 @@ class History:
                 "memory_program":{"core0":self.memory_program["core0"],"core1":self.memory_program["core1"]},
                 "reward":self.reward_vec,
                 "diversity_vec":self.diversity_vec,
+                "tabular_view":self.as_tab()
                 }
     def save_pickle(self, name:str=None):
         k = 0

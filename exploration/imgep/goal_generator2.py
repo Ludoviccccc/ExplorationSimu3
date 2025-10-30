@@ -6,9 +6,10 @@ from exploration.history import History
 class GoalGenerator:
     def __init__(self,
                  ):
-        pass
+        self.nb_elem = 5
     def __call__(self,H:History,m:int)->np.ndarray:
         Tab = H.as_tab()
+        dim = Tab.shape[1]
         min_ = Tab.min(axis=0)
         max_ = Tab.max(axis=0)
         cond = None
@@ -20,8 +21,13 @@ class GoalGenerator:
                 min_2 = min_[cond]
                 max_2 = max_[cond]
                 out = np.random.uniform(min_2,2*max_2)
-            else:
+            elif m==2:
                 cond = np.where(max_<=1.0)[0]
+                min_2 = min_[cond]
+                max_2 = max_[cond]
+                out = np.random.uniform(min_2,max_2)
+            elif m==3:
+                cond = np.array(random.sample(range(dim),self.nb_elem))
                 min_2 = min_[cond]
                 max_2 = max_[cond]
                 out = np.random.uniform(min_2,max_2)
