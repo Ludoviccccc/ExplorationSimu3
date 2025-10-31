@@ -1,7 +1,7 @@
 import random 
 import copy
 
-def mutate_instruction_sequence(instructions, num_mutations=1, max_cycle=60, min_address = 0,max_address=19):
+def mutate_instruction_sequence(instructions, num_mutations=1, max_cycle=60, min_address = 0,max_address=19,num_instructions=None):
     """
     Mutate an instruction sequence by adding, deleting, or modifying instructions.
     
@@ -61,8 +61,9 @@ def mutate_instruction_sequence(instructions, num_mutations=1, max_cycle=60, min
                 new_type = 'write' if old_type == 'read' else 'read'
                 new_address = random.randint(min_address, max_address)
                 mutated[cycle_to_modify] = (new_type, new_address)
-    
+    if num_instructions:
+        mutated = {key:mutated[key] for j,key in enumerate(mutated) if j<num_instructions}
     return mutated
 
-def mutate_paire_instructions(programs0,programs1,num_mutations, max_cycle=60, max_address=19):
-    return mutate_instruction_sequence(programs0,num_mutations,max_cycle = max_cycle,max_address=max_address),mutate_instruction_sequence(programs1,num_mutations,max_cycle = max_cycle,max_address=max_address)
+def mutate_paire_instructions(programs0,programs1,num_mutations, max_cycle=60, max_address=19,num_instructions=None):
+    return mutate_instruction_sequence(programs0,num_mutations,max_cycle = max_cycle,max_address=max_address,num_instructions=num_instructions),mutate_instruction_sequence(programs1,num_mutations,max_cycle = max_cycle,max_address=max_address,num_instructions=num_instructions)

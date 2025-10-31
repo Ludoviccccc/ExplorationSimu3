@@ -35,8 +35,9 @@ if __name__=="__main__":
     H_rand = History(env=E,capacity=N)
     folder = 'exclusive_axis_exploration'
     random = RANDOM(N,E,H_rand,min_address_core0,max_address_core0,min_address_core1,max_address_core1)
-    #random()
-    #H_rand.save_pickle(f'{folder}/rand_run_{N}')
+    random()
+    H_rand.save_pickle(f'{folder}/rand_run_{N}')
+    #exit()
     for segment_method in [True]:
         for k in k_values:
             print('k',k)

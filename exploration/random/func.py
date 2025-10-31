@@ -11,11 +11,15 @@ import time
 
 
 class RANDOM:
-    def __init__(self,N:int,E:Env,H:History,
+    def __init__(self,
+                    N:int,
+                    E:Env,
+                    H:History,
                     min_address_core0 = 0 ,
                     max_address_core0 = 10,
                     min_address_core1 = 11,
-                    max_address_core1 = 21
+                    max_address_core1 = 21,
+                    num_instructions = None,
 
             ):
         """
@@ -32,13 +36,14 @@ class RANDOM:
         self.max_address_core0 = max_address_core0
         self.min_address_core1 = min_address_core1
         self.max_address_core1 = max_address_core1
+        self.num_instructions = num_instructions
     def __call__(self):
         start_time = time.time()
         for i in range(self.N):
             if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
-            code0 = generate_instruction_sequence(None,max_cycle = self.max_cycle,min_address=self.min_address_core0,max_address = self.max_address_core0)
-            code1 = generate_instruction_sequence(None,max_cycle = self.max_cycle,min_address=self.min_address_core1,max_address = self.max_address_core1)
+            code0 = generate_instruction_sequence(self.num_instructions,max_cycle = self.max_cycle,min_address=self.min_address_core0,max_address = self.max_address_core0)
+            code1 = generate_instruction_sequence(self.num_instructions,max_cycle = self.max_cycle,min_address=self.min_address_core1,max_address = self.max_address_core1)
             parameter = {'core0':code0,
                         'core1':code1}
             self.H.store({"program":parameter}|self.env(parameter))

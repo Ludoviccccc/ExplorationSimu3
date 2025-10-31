@@ -17,6 +17,7 @@ class History:
         self.hist_vec = []
         self.diversity_vec = 0
         self.reward_vec = [0]
+        self.interleaving = np.zeros((self.capacity,4))
     def as_tab(self):
         return np.array(self.tab)
     def __len__(self):
@@ -73,6 +74,7 @@ class History:
                             if event['type']=='DDR_MEMORY_CONTENTION':
                                 self.shared_resource_list.append(shared_resource2vec(event,self.env))
                                 self.shared_resource_coords.append({'program':self.j,'cycle':event['cycle']})
+                                self.interleaving[self.j] +=shared_resource2vec(event,self.env)[1:5]
         #array that counts diversity for every axis
         current_diversity_array = np.concatenate(observation_diversity_vec)
         #synthetizes an array with all observations, usefull for exploration.
@@ -110,7 +112,8 @@ class History:
                 "memory_program":{"core0":self.memory_program["core0"],"core1":self.memory_program["core1"]},
                 "reward":self.reward_vec,
                 "diversity_vec":self.diversity_vec,
-                "tabular_view":self.as_tab()
+                "tabular_view":self.as_tab(),
+                "interleaving":self.interleaving,
                 }
     def save_pickle(self, name:str=None):
         k = 0
@@ -131,8 +134,8 @@ class History:
 
 
 def shared_resource2vec(in_,E):
-    count_banks = np.histogram(in_['details']['banks'],bins = range(E.num_banks+1))[0]/len(in_['details']['banks'])
-    count_rows = np.histogram(in_['details']['rows'],bins = range(E.num_rows+1))[0]/len(in_['details']['banks'])
+    count_banks = np.histogram(in_['details']['banks'],bins = range(E.num_banks+1))[0]#/len(in_['details']['banks'])
+    count_rows = np.histogram(in_['details']['rows'],bins = range(E.num_rows+1))[0]#/len(in_['details']['banks'])
     ratios_core = np.array([sum(np.array(in_['initiators'])==1)/len(in_['initiators'])])
     conflicts = np.array([1*in_['details']['bank_conflicts'],1*in_['details']['row_conflicts']])
     out = np.concatenate((ratios_core,count_banks,count_rows,conflicts),axis=0)

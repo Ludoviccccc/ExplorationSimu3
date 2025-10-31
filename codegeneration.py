@@ -15,8 +15,7 @@ def generate_instruction_sequence(num_instructions=None, max_cycle=60, min_addre
     """
     if num_instructions is None:
         num_instructions = random.randint(1, 20)  # Random number of instructions
-    
-    # Ensure we don't generate more instructions than available cycles
+        # Ensure we don't generate more instructions than available cycles
     num_instructions = min(num_instructions, max_cycle + 1)
     
     instructions = {}

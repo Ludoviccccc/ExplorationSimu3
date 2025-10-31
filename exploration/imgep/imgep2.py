@@ -31,6 +31,7 @@ class IMGEP:
                 max_address_core0=10,
                 min_address_core1=11,
                 max_address_core1=21,
+                num_instructions = None,
                 ):
         self.N = N
         self.env = E
@@ -40,7 +41,8 @@ class IMGEP:
         self.Pi = Pi
         self.periode = periode
         self.start = 0
-        self.random_explor = RANDOM(self.N_init,self.env,self.H,min_address_core0,max_address_core0,min_address_core1,max_address_core1)
+        self.num_instructions = num_instructions
+        self.random_explor = RANDOM(self.N_init,self.env,self.H,min_address_core0,max_address_core0,min_address_core1,max_address_core1,self.num_instructions)
     def take(self,sample:dict,start:int): 
         """Takes the ``start`` first steps from the ``sample`` dictionnary to initialize the exploration. 
         Then the iterator i is set to ``start`` directly

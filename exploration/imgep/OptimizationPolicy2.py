@@ -27,6 +27,7 @@ class OptimizationPolicykNN(Features):
                 min_address_core1 = 11,
                 max_address_core1 = 21,
                 segment_method=True,
+                num_instructions=None,
                 ):
         super().__init__()
         self.segment_method = segment_method
@@ -39,6 +40,7 @@ class OptimizationPolicykNN(Features):
         self.max_cycle = max_cycle
         self.num_bank = num_bank #this attribute is used by Features
         self.num_addr = num_addr
+        self.num_instructions = num_instructions
 
     def __call__(self,goal:np.ndarray,H:History,cond:np.ndarray=None)->dict:
         closest_codes = self.select_closest_codes(H,goal,cond) #most promising sample from the history
@@ -58,6 +60,7 @@ class OptimizationPolicykNN(Features):
         a = np.array([goal]).reshape(1,-1)#size (dim,N), N=1 individual
         max_ = elements.max(axis=0)
         w = 1.0/((max_>1.0)*max_+ (max_<=1.0)*1.0)
+        w = w/np.sum(w)
         w = w.reshape((1,-1))
         out = np.sum(w*(a -elements)**2,axis=1)
         return out
@@ -78,6 +81,6 @@ class OptimizationPolicykNN(Features):
             output["program"]["core1"].append(H.memory_program["core1"][id_])
         return output
     def light_code_mutation(self,programs:dict[list[dict]]):
-        mutated0 = mutate_instruction_sequence(programs['core0'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core0,max_address=self.max_address_core0)
-        mutated1 = mutate_instruction_sequence(programs['core1'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core1,max_address=self.max_address_core1)
+        mutated0 = mutate_instruction_sequence(programs['core0'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core0,max_address=self.max_address_core0,num_instructions=self.num_instructions)
+        mutated1 = mutate_instruction_sequence(programs['core1'][0],num_mutations=self.num_mutations,max_cycle=self.max_cycle,min_address=self.min_address_core1,max_address=self.max_address_core1,num_instructions=self.num_instructions)
         return {'core0':mutated0,'core1':mutated1}

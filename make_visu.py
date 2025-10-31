@@ -32,24 +32,22 @@ if __name__=='__main__':
     content_rand = load(name)
     images = 'images_non_excl'
 
-    for k in [1,2,3]:
-        for s in [1]:  
-            name = f'{folder}/imgep_run_{k}_{N}_s_{s}'
-            content_imgep = load(name)
-            #plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_s_{s}_plotly', show=False)
+    #for k in []:
+    #    for s in [1]:  
+    #        name = f'{folder}/imgep_run_{k}_{N}_s_{s}'
+    #        content_imgep = load(name)
+    #        #plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_s_{s}_plotly', show=False)
 
     diversity_time_iteration2([(content_rand['memory_perf'],'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}')['memory_perf'],f'imgep k = {k},segment = {s}') for k in [1,2,3] for s in [1]], title=f'iteration_time_',folder=images)
     arg_list = [('random',content_rand['memory_perf'])]+[(f'imgep k = {k},segment = {s}',load(f'{folder}/imgep_run_{k}_{N}_s_{s}')['memory_perf']) for k in [1,2,3] for s in [1]]
 
     comparaison_ratios_iterations(arg_list,name=f'{images}/comparaison_iteration_ddr_miss_ratio',num_rows=7)
     
-    for k in [1,2,3]:
+    for k in [1,3]:
         for s in [1]:  
             name = f'{folder}/imgep_run_{k}_{N}_s_{s}'
             content_imgep = load(name)
             plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'{images}/miss_ratios_k_{k}_s_{s}', show=False,num_row=7)
             plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'{images}/miss_ratios_k_{k}_s_{s}', show=False,num_row=7)
             hist_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], name=f'{images}/time_k_{k}_s_{s}',num_row=7,title=f'diveristy ddr miss ratio for imgep k={k}. mutual vs isolation')
-            #comparaison_ratios_iterations([('random',content_rand['memory_perf']),('imgep',content_imgep['memory_perf'])],name=f'{images}/comparaison_iteration_ddr_miss_ratio_{k}_{s}',num_rows=7)
-            #diversity_time_iteration(content_rand['memory_perf'],content_imgep['memory_perf'],title=f'iteration_time_{k}_{s}')
             plot_time_diversity(content_rand['memory_perf'],content_imgep['memory_perf'], f'{images}/time_k_{k}_s_{s}', show=False)

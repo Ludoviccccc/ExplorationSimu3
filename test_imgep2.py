@@ -8,7 +8,6 @@ from simulator.sim3 import print_contention_analysis
 import pandas as pd
 from exploration.history import History
 
-from visualisation.visu import plot_ddr_miss_ratio_diversity, plot_time_diversity
 import os
 
 
@@ -29,7 +28,14 @@ if __name__=="__main__":
     min_address_core1 = 49
     max_address_core0 = 50
     max_address_core1 = 100
-    folder = 'non_exclusive_axis_exploration'
+    num_instructions = 10
+    folder = 'non_exclusive_axis_exploration2'
+    E =Env(400,num_addr=100)
+    H_rand = History(env=E,capacity=N)
+    random = RANDOM(N,E,H_rand,min_address_core0,max_address_core0,min_address_core1,max_address_core1,num_instructions)
+    random()
+    H_rand.save_pickle(f'{folder}/rand_run_{N}')
+    exit()
     for segment_method in [True]:
         for k in k_values:
             print('k',k)
@@ -41,13 +47,15 @@ if __name__=="__main__":
                     min_address_core0=min_address_core0,
                     max_address_core0=max_address_core0,
                     min_address_core1=min_address_core1,
-                    max_address_core1=max_address_core0)
+                    max_address_core1=max_address_core0,
+                    num_instructions=num_instructions)
             goal_generator = G()
             imgep = IMGEP(N,N_init,E,H,goal_generator,Pi, periode = periode,
                           min_address_core0=min_address_core0,
                           max_address_core0=max_address_core0,
                           min_address_core1=min_address_core1,
-                          max_address_core1=max_address_core1)
+                          max_address_core1=max_address_core1,
+                          num_instructions=num_instructions)
             imgep()
             s = 1 if segment_method else 0
             H.save_pickle(f'{folder}/imgep_run_{k}_{N}_s_{s}')
