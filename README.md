@@ -129,7 +129,7 @@ First I choose to consider events that inform of competition between the two cor
   'count_rows': array([0.667, 0.333]),#distribution among the rows
   'conflicts_bank_row': array([1, 1])})
 ```
-* We can either choose L2 norm to conceive distance between these vectors or use some kind of conbination, e.g use KL divergence to model distances between the distributions, and use L2/L1 norm for the rest.
+* We can either choose L2 norm to conceive distance between vectors or use some kind of conbination, e.g use KL divergence to model distances between the distributions, and use L2/L1 norm for the rest.
 * We note the characterization set of events as $\mathcal{E}=\subset\mathbb{R}^{1+\mbox{nb banks}+\mbox{nb rows} +2 }$.
 We'll also work with events such as :
 ```
@@ -153,15 +153,16 @@ For more effiency we also axplore a such larger space:
 We explore $\mathcal{G} = \mathcal{T}\cup\mathcal{E}$
 ## Goal generation
 For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
+* We show that targeting multidimensional goals help to increase the diversity along on the bordure, as opposed with an exclusive exploration along the axis.
 * Periodically set the sampling boundaries based on the history $\mathcal{H}$, allowing to sample new goals *e.g*:
 	* $\mbox{min}_{\mathcal{T}} g:= (\mbox{min } g_1,\cdots,\mbox{min } g_6)$
  	* $\mbox{max}_{\mathcal{T}} g:= (\mbox{max } g_1,\cdots,\mbox{max } g_6)$
  * Periodically sample goal uniformly in a slightly larger set, using two factors *e.g* $f_1 = 0.8,f_2 = 1.2$, $g\sim\mathcal{U}([f_1\mbox{min } g_1,f_2\mbox{max } g_2])\otimes\cdots\otimes\mathcal{U}([f_1\mbox{min } g_6,f_2\mbox{max }g_6])$
- * During exploratino we find out setting bounds for the time values allows more diversity: to be detailled.
+ * During exploration we also find out that setting bounds for the time values allows more diversity, as it helps to not enlarge the data cloud in a specific direction.
 See [goal_generation.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/goal_generator.py)
 
 ## Mixing sequence operator
-In order to conserve interference patterns, we use a mixing sequence operator that randomly selects segments of the disctinct programs to produce another one. See [mixxx.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/mixxx.py)
+In order to conserve interference patterns, we use a mixing sequence operator that randomly selects segments of the disctinct programs to produce another one. This idea comes from the fact that interference comes from specific successions of instructions tath we can call segments. If we mix randomly two applications regardless of their order, we can expect to break the interference pattern and then to not get closer from our target. See [mixxx.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/mixxx.py)
 
 ## Mutation Operator
 With a given number of actions as argument. The program either `add`,`delete` or `modify` an instruction. The modification can either be changing the `type`,`address` or both. See [mutation.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/mutation.py)
@@ -172,10 +173,12 @@ With a given number of actions as argument. The program either `add`,`delete` or
 * We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum value along the axis. At the end of the process with normalize the vectors so it adds up to one.
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
+* We compare k-NN goal strategy achievement IMGEP with a random exploration. Results [pictures ] show that using k-NN allows a more efficient exploration along the bordure of the domain $mathcal{O}$. Meanwhile the resulting diversity of the total space is not significantly larger.
 
-* I will compare k-NN goal strategy achievement IMGEP with a random exploration
-* Parameter study with : k, number of segment for mixing operator/mixing method, exclusive exploration along axis vs non-exclusive exploration along axis
+* In order to target the right combination of parameter we perform a grid search on a product space of values of k and number of segments to split the programs. Parameters leading to the highest diversty will be selectionned.
+* Parametric study with : k, number of segment for mixing operator/mixing method, exclusive exploration along axis vs non-exclusive exploration along axis
 * Add diversity value: some of all squared distances
+# Interpretation, diagnostics: 
 * Analysis of acceleration phenomenon
 * Visualisation of cache miss, ddr miss, and execution time + other space.
 * Analyse the impact of exploring interference event observables.
