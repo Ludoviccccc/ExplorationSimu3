@@ -69,6 +69,7 @@ row 1 	-0.0 	-0.0 	-0.0 	-0.0
 We use a set of 101 adresses from 0 to 100. Because it is interesting to see what interference patterns occur when running programs that don't depend on each others we divide in two parts this set for core 0 and 1.
 * Core 1: addresses from 0 to 49
 * Core 2: addresses from 50 to 100
+* 
 Sequences will look like this:
 ```python
 {4: ('write', 3),
@@ -76,14 +77,6 @@ Sequences will look like this:
  8: ('write', 15),
  9: ('read', 7),
  16: ('write', 0),
- 18: ('read', 11),
- 19: ('read', 17),
- 34: ('write', 10),
- 38: ('read', 6),
- 39: ('write', 1),
- 43: ('write', 17),
- 45: ('read', 10),
- 46: ('read', 10),
  48: ('read', 17),
  51: ('read', 2),
  56: ('write', 2),
