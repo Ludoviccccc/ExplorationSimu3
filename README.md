@@ -69,7 +69,8 @@ row 1 	-0.0 	-0.0 	-0.0 	-0.0
 We use a set of 101 adresses from 0 to 100. Because it is interesting to see what interference patterns occur when running programs that don't depend on each others we divide in two parts this set for core 0 and 1.
 * Core 1: addresses from 0 to 49
 * Core 2: addresses from 50 to 100
-* 
+  
+For both core, the length of the applications will be from 1 to 10, and the 
 Sequences will look like this:
 ```python
 {4: ('write', 3),
@@ -129,7 +130,7 @@ First I choose to consider events that inform of competition between the two cor
   'conflicts_bank_row': array([1, 1])})
 ```
 * We can either choose L2 norm to conceive distance between these vectors or use some kind of conbination, e.g use KL divergence to model distances between the distributions, and use L2/L1 norm for the rest.
-We note the characterization set of events as $\mathcal{E}=\subset\mathbb{R}^{9}$.
+* We note the characterization set of events as $\mathcal{E}=\subset\mathbb{R}^{1+\mbox{nb banks}+\mbox{nb rows} +2 }$.
 We'll also work with events such as :
 ```
 {type: hit/miss 
@@ -146,16 +147,17 @@ Let:
 * $\mathcal{M} = (ratio[0,⋅],ratio[⋅,1],ratio[0,1])$
 * {L2 cache miss ratio}
   
-We explore the product space: $\mathcal{O} = \mathcal{T}\times\mathcal{M}\times\{\mbox{L2 cache miss ratio}\}\subset\mathbb{R}^{1+\mbox{nb rows}\times\mbox{nb banks}\times 3+4}$
+We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\{\mbox{L2 cache miss ratio}\}\subset\mathbb{R}^{1+\mbox{nb rows}\times\mbox{nb banks}\times 3+4}$
 ### Second Case
 For more effiency we also axplore a such larger space:
-We explore $\mathcal{T}\cup\mathcal{E}$
+We explore $\mathcal{G} = \mathcal{T}\cup\mathcal{E}$
 ## Goal generation
 For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
 * Periodically set the sampling boundaries based on the history $\mathcal{H}$, allowing to sample new goals *e.g*:
 	* $\mbox{min}_{\mathcal{T}} g:= (\mbox{min } g_1,\cdots,\mbox{min } g_6)$
  	* $\mbox{max}_{\mathcal{T}} g:= (\mbox{max } g_1,\cdots,\mbox{max } g_6)$
  * Periodically sample goal uniformly in a slightly larger set, using two factors *e.g* $f_1 = 0.8,f_2 = 1.2$, $g\sim\mathcal{U}([f_1\mbox{min } g_1,f_2\mbox{max } g_2])\otimes\cdots\otimes\mathcal{U}([f_1\mbox{min } g_6,f_2\mbox{max }g_6])$
+ * During exploratino we find out setting bounds for the time values allows more diversity: to be detailled.
 See [goal_generation.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/goal_generator.py)
 
 ## Mixing sequence operator
@@ -166,10 +168,8 @@ With a given number of actions as argument. The program either `add`,`delete` or
 ## Goal achievement strategy policy $\Pi$
 
 ![Alt text](illustrations/achievement_strategy.png)
-The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
-## Use of learning progress to target goals effiently
-apply alp
-* citer papier
+* The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
+* We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum valued along the axis. At the end of the process with normalize the vectors so it adds up to one.
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
 
