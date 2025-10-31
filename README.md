@@ -169,7 +169,7 @@ With a given number of actions as argument. The program either `add`,`delete` or
 
 ![Alt text](illustrations/achievement_strategy.png)
 * The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
-* We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum valued along the axis. At the end of the process with normalize the vectors so it adds up to one.
+* We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum value along the axis. At the end of the process with normalize the vectors so it adds up to one.
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
 
