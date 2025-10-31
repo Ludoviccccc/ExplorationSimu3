@@ -87,7 +87,7 @@ Sequences will look like this:
 
 We want to observe relevant data that provides material for analysis of sources of interference.
 
-We make the hypothesis that the simulator is a white box. The following will be accessible:
+The simulator is a white box. The following is accessible:
 * The exact queue contents of the ddr is avaible for every cycle
 * Acces to *miss* and *hit* information for every cycle.
 * Statuses of every cache line
@@ -141,6 +141,7 @@ previous location:row and bank
 previous command type}
 ```
 ## Goal Space
+We will work on three different cases for the space $\mathcal{G}$ that we will explore, according to the hypothesis we will make on our knowledge. Our objective is to collect data points to form a cloud that spreads as much as possible in $\mathcal{G}$.
 ### First Case 
 Let:
 * $\mathcal{T} = (t_{0,⋅}​(c_0​),t_{⋅,1}​(c_1​),t{0_,1}​(c_0​),t_{0,1}​(c_1​))$
@@ -151,6 +152,8 @@ We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\
 ### Second Case
 For more effiency we also axplore a such larger space:
 We explore $\mathcal{G} = \mathcal{T}\cup\mathcal{E}$
+### Third Case
+Limited knowledge, no location details.
 ## Goal generation
 For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
 * We show that targeting multidimensional goals help to increase the diversity along on the bordure, as opposed with an exclusive exploration along the axis.
@@ -173,6 +176,7 @@ With a given number of actions as argument. The program either `add`,`delete` or
 * We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum value along the axis. At the end of the process with normalize the vectors so it adds up to one.
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
+* To assess the results, we design a diversity measure $\mathcal{D}$ on the entire space $\mathcal{O}\subset\mathbb{R}^{D}$ , and other measures $\mathcal{D}_{j}$ to evaluate the diversity along specific axis $j$. We choose $\mathcal{D}$ to be the cumulated squared distance between all the wise points. Measures $\mathcal{D}_j$ will be the sum of all non -empty bins in a defined histogram $H_j$.
 * We compare k-NN goal strategy achievement IMGEP with a random exploration. Results [pictures ] show that using k-NN allows a more efficient exploration along the bordure of the domain $mathcal{O}$. Meanwhile the resulting diversity of the total space is not significantly larger.
 
 * In order to target the right combination of parameter we perform a grid search on a product space of values of k and number of segments to split the programs. Parameters leading to the highest diversty will be selectionned.
