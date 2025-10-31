@@ -129,16 +129,7 @@ First I choose to consider events that inform of competition between the two cor
   'conflicts_bank_row': array([1, 1])})
 ```
 * We can either choose L2 norm to conceive distance between these vectors or use some kind of conbination, e.g use KL divergence to model distances between the distributions, and use L2/L1 norm for the rest.
-## Goal Space
-### First Case 
-Let:
-* $\mathcal{T} = (t_{0,⋅}​(c_0​),t_{⋅,1}​(c_1​),t{0_,1}​(c_0​),t_{0,1}​(c_1​))$
-* $\mathcal{M} = (ratio[0,⋅],ratio[⋅,1],ratio[0,1])$
-* {L2 cache miss ratio}
-  
-We explore the product space: $\mathcal{O} = \mathcal{T}\times\mathcal{M}\times{\mbox{L2 cache miss ratio}}$
-
-
+We note the characterization set of events as $\mathcal{E}=\subset\mathbb{R}^{9}$.
 We'll also work with events such as :
 ```
 {type: hit/miss 
@@ -148,8 +139,19 @@ current command type
 previous location:row and bank 
 previous command type}
 ```
+## Goal Space
+### First Case 
+Let:
+* $\mathcal{T} = (t_{0,⋅}​(c_0​),t_{⋅,1}​(c_1​),t{0_,1}​(c_0​),t_{0,1}​(c_1​))$
+* $\mathcal{M} = (ratio[0,⋅],ratio[⋅,1],ratio[0,1])$
+* {L2 cache miss ratio}
+  
+We explore the product space: $\mathcal{O} = \mathcal{T}\times\mathcal{M}\times\{\mbox{L2 cache miss ratio}\}\subset\mathbb{R}^{1+\mbox{nb rows}\times\mbox{nb banks}\times 3+4}$
+### Second Case
+For more effiency we also axplore a such larger space:
+We explore $\mathcal{T}\cup\mathcal{E}$
 ## Goal generation
-For any event we will track we synthetize a vector. Thus, we generate vectors and not events as goals
+For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
 * Periodically set the sampling boundaries based on the history $\mathcal{H}$, allowing to sample new goals *e.g*:
 	* $\mbox{min}_{\mathcal{T}} g:= (\mbox{min } g_1,\cdots,\mbox{min } g_6)$
  	* $\mbox{max}_{\mathcal{T}} g:= (\mbox{max } g_1,\cdots,\mbox{max } g_6)$
