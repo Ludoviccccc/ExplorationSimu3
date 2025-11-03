@@ -98,10 +98,10 @@ For the material device at least the following information is avaible :
 |----|--------------------------|----------|---------------------------------|
 |    | Processor cycles         | General  | Nb of executed cycles           |
 |    | Instruction completed    | General  | Nb of completed instructions    |
-|    | decode stalled           | General  |                                 |
-|    | L1/L2 cache misses       | L1/L2    | Nb of cache miss L1             |
-|    | L1/L2 cache store misses | L1/L2    |                                 |
-|    | L1 cache load misses     | L1/L2    | Nb of cache miss L1 for loads   |
+|    | decode stalled           | General  | Nb of cycles in a waiting status|
+|    | L1/L2 cache misses       | L1/L2    | Nb of cache misses L1           |
+|    | L1/L2 cache store misses | L1/L2    | Nb of cache misses L1           |
+|    | L1 cache load misses     | L1/L2    | Nb of cache misses L1 for loads |
 |    | L1 demand access         | L1/L2    | Nb of requests for L1           |
 |    | L1 store allocates       | L1/L2    | Nb of line allocations in L1/L2 |
 
