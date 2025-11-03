@@ -70,7 +70,7 @@ We use a set of 101 adresses from 0 to 100. Because it is interesting to see wha
 * Core 1: addresses from 0 to 49
 * Core 2: addresses from 50 to 100
   
-For both core, the length of the applications will be from 1 to 10, and the 
+In order to make trackable analysis, we choose the length of the applications to be from 1 to 10, and the 
 Sequences will look like this:
 ```python
 {4: ('write', 3),
@@ -87,25 +87,53 @@ Sequences will look like this:
 
 We want to observe relevant data that provides material for analysis of sources of interference.
 
-The simulator is a white box. The following is accessible:
-* The exact queue contents of the ddr is avaible for every cycle
-* Acces to *miss* and *hit* information for every cycle.
-* Statuses of every cache line
-* Statuses of every row and bank 
-## What to discover
-For the material device at least the following information is avaible :
+
+For the material device at least the following information is avaible and thus also for the simulator:
 | id | Performance counter      | Category | Description                     |
 |----|--------------------------|----------|---------------------------------|
 |    | Processor cycles         | General  | Nb of executed cycles           |
 |    | Instruction completed    | General  | Nb of completed instructions    |
 |    | decode stalled           | General  | Nb of cycles in a waiting status|
-|    | L1/L2 cache misses       | L1/L2    | Nb of cache misses L1           |
-|    | L1/L2 cache store misses | L1/L2    | Nb of cache misses L1           |
-|    | L1 cache load misses     | L1/L2    | Nb of cache misses L1 for loads |
-|    | L1 demand access         | L1/L2    | Nb of requests for L1           |
+|    | L1/L2 cache misses       | L1/L2    | Nb of cache misses L1/L2           |
+|    | L1/L2 cache store misses | L1/L2    | Nb of cache misses L1/L2 for stores|
+|    | L1 cache load misses     | L1/L2    | Nb of cache misses L1/L2 for loads |
+|    | L1 demand access         | L1/L2    | Nb of requests for L1/L2           |
 |    | L1 store allocates       | L1/L2    | Nb of line allocations in L1/L2 |
 
-First I choose to consider events that inform of competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
+
+For our simulator, at least the following is also avaiable :
+| id | Performance counter      | Category | Description                     |
+|----|--------------------------|----------|---------------------------------|
+|    | DDR   cache misses       | DDR      | Nb of cache misses DDR          |
+|    | DDR   cache store misses | DDR      | Nb of cache misses DDR for stores|
+|    | DDR   cache load misses  | DDR      | Nb of cache misses DDR for loads|
+|    | DDR   demand access      | DDR      | Nb of requests for DDR          |
+|    | DDR   store allocates    | DDR      | Nb of line allocations in DDR   |
+
+Since the simulator is a white box, one can also have acces to:
+* The exact queue contents of the ddr is avaible for every cycle
+* Statuses of every cache line
+* Statuses of every row and bank 
+## Goal Space
+We will work on three different cases for the space $\mathcal{G}$ that we will explore, according to the hypothesis we will make on our knowledge. Our objective is to collect data points to form a cloud that spreads as much as possible in $\mathcal{G}$.
+### First Case
+* In order to spot the occurence of interference, one can spot the changes of some well chosen data for execution in isolation vs non-isolation. Thus we will target the following values when applications are executed on isolation on cores 0 and 1 and in mutually i.e on both cores simultaneously.
+
+| id | Category | Description                     |
+|----|----------|---------------------------------|
+|    | General  | Nb of executed cycles           |
+|    | DDR      | miss ratios for DDR for every (bank,line)|
+|    | L2       | miss ratios for cache L2|
+|    | L2       | Nb of cache misses L2         |
+
+Let:
+* $\mathcal{T} = (t_{0,⋅}​(c_0​),t_{⋅,1}​(c_1​),t{0_,1}​(c_0​),t_{0,1}​(c_1​)) \subset \mathbb{R}^{4}$
+* $\mathcal{D} = \{ratio[0,⋅],ratio[⋅,1],ratio[0,1],\forall \mbox{row},\mbox{banks}\}\subset\mathbb{R}^{\mbox{nb rows}\times\mbox{nb banks}\times 3}$
+* $\mathcal{L} = $ {L2 cache miss ratio}$\cup${Nb of cache misses L2}$\mathbb{R}^{2\times 3}$
+
+We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\{\mathcal{L}\}\subset\mathbb{R}^{4+\mbox{nb rows}\times\mbox{nb banks}\times 3+2}$
+### Second Case
+* One can consider adding events that inform of competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
 ```python
 {'cycle': 7,
    'type': 'DDR_MEMORY_CONTENTION',
@@ -152,20 +180,6 @@ current command type
 previous location:row and bank 
 previous command type}
 ```
-## Goal Space
-We will work on three different cases for the space $\mathcal{G}$ that we will explore, according to the hypothesis we will make on our knowledge. Our objective is to collect data points to form a cloud that spreads as much as possible in $\mathcal{G}$.
-### First Case 
-Let:
-* $\mathcal{T} = (t_{0,⋅}​(c_0​),t_{⋅,1}​(c_1​),t{0_,1}​(c_0​),t_{0,1}​(c_1​))$
-* $\mathcal{M} = (ratio[0,⋅],ratio[⋅,1],ratio[0,1])$
-* {L2 cache miss ratio}
-  
-We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\{\mbox{L2 cache miss ratio}\}\subset\mathbb{R}^{1+\mbox{nb rows}\times\mbox{nb banks}\times 3+4}$
-### Second Case
-For more effiency we also axplore a such larger space:
-We explore $\mathcal{G} = \mathcal{T}\cup\mathcal{E}$
-### Third Case
-Limited knowledge, no location details.
 ## Goal generation
 For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
 * We show that targeting multidimensional goals help to increase the diversity along on the bordure, as opposed with an exclusive exploration along the axis.
