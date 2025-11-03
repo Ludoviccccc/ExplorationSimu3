@@ -93,6 +93,18 @@ The simulator is a white box. The following is accessible:
 * Statuses of every cache line
 * Statuses of every row and bank 
 ## What to discover
+For the material device at least the following information is avaible :
+| id | Performance counter      | Category | Description                     |
+|----|--------------------------|----------|---------------------------------|
+|    | Processor cycles         | General  | Nb of executed cycles           |
+|    | Instruction completed    | General  | Nb of completed instructions    |
+|    | decode stalled           | General  |                                 |
+|    | L1/L2 cache misses       | L1/L2    | Nb of cache miss L1             |
+|    | L1/L2 cache store misses | L1/L2    |                                 |
+|    | L1 cache load misses     | L1/L2    | Nb of cache miss L1 for loads   |
+|    | L1 demand access         | L1/L2    | Nb of requests for L1           |
+|    | L1 store allocates       | L1/L2    | Nb of line allocations in L1/L2 |
+
 First I choose to consider events that inform of competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
 ```python
 {'cycle': 7,
