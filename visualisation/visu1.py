@@ -31,7 +31,7 @@ def polytope_to_cloud(tab):
     print(time.time()-start)
     return sum_
 
-def histogram_diversity_for_comparaison(args:list[np.ndarray],name=None):
+def histogram_diversity_for_comparaison(args:list[np.ndarray],name=None,title=None):
     labels = []
     contents = []
     diversities = []
@@ -45,6 +45,8 @@ def histogram_diversity_for_comparaison(args:list[np.ndarray],name=None):
         plt.bar([label],[diversity_])
         diversities.append(diversity_)
         contents.append(content)
+    if title:
+        plt.title(title)
     if name:
         plt.savefig(name)
     plt.show()

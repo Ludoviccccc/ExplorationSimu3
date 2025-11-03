@@ -31,17 +31,18 @@ if __name__=='__main__':
     folder = 'non_exclusive_axis_exploration2' 
     name = f'{folder}/rand_run_{N}'
     content_rand = load(name)
-    images = 'images_excl'
+    images = 'images_non_excl'
+    excl = 'exclusive exploration'
 
     for k in [2]:
         for s in [1]:  
             name = f'{folder}/imgep_run_{k}_{N}_s_{s}'
             content_imgep = load(name)
-            plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_s_{s}_plotly', show=False)
+            #plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_s_{s}_plotly', show=False)
 
     #diversity_time_iteration2([(content_rand['memory_perf'],'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}')['memory_perf'],f'imgep k = {k},segment = {s}') for k in [1,2,3] for s in [1]], title=f'iteration_time_',folder=images)
     #arg_list = [('random',content_rand['memory_perf'])]+[(f'imgep k = {k},segment = {s}',load(f'{folder}/imgep_run_{k}_{N}_s_{s}')['memory_perf']) for k in [1,2,3] for s in [1]]
 
     #comparaison_ratios_iterations(arg_list,name=f'{images}/comparaison_iteration_ddr_miss_ratio',num_rows=7)
-    #histogram_diversity_for_comparaison([(content_rand,'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}'),f'imgep k = {k},segment = {s}') for k in [1,2,3] for s in [1]],f'{images}/comparaison_models')
-    #comparaison([(content_rand,'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}'),f'imgep k = {k},segment = {s}') for k in [1,2,3] for s in [1]])
+    histogram_diversity_for_comparaison([(content_rand,'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}'),f'imgep k = {k},segment = {s}') for k in [1,2,3] for s in [1]],f'{images}/comparaison_models',title=f'diversity {excl}')
+    #comparaison([(content_rand,'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}'),f'imgep k = {k},segment = {s}') for k in [1,2,3] for s in [1]],f'{images}/all_space_diversity_comparaison')
