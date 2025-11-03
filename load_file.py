@@ -29,7 +29,7 @@ def load(name):
 
 if __name__=='__main__':
 
-    N = 10000
-    folder = 'non_exclusive_axis_exploration2' 
+    N = 3000
+    folder = 'non_exclusive_axis_exploration3' 
     name = f'{folder}/rand_run_{N}'
     content_rand = load(name)

@@ -1,19 +1,18 @@
 import numpy as np
 import sys
 sys.path.append('../../')
-from exploration.imgep.ball_areas import BallCloud1D
-#from 
+from exploration.history2 import History
 
 
 class ALP_module:
     '''
     use areas to calculate reward
     '''
-    def __init__(self):
-        pass
-    def reward(self,goal,result):
+    def __init__(self,H:History,
+                      window_size = 100):
+        self.History = History
+        self.window_size = window_size
+    def fit(self):
         '''
-        This methods calculates the scalar reward obtained after obtaining vector `result' when targeting vector 'goal'
+        fits best gmm models on moving window
         '''
-        output = (goal-result)**2
-        return output
