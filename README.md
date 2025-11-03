@@ -129,7 +129,7 @@ We will work on three different cases for the space $\mathcal{G}$ that we will e
 Let:
 * $\mathcal{T} = (t_{0,⋅}​(c_0​),t_{⋅,1}​(c_1​),t{0_,1}​(c_0​),t_{0,1}​(c_1​)) \subset \mathbb{R}^{4}$
 * $\mathcal{D} = \{ratio[0,⋅],ratio[⋅,1],ratio[0,1],\forall \mbox{row},\mbox{banks}\}\subset\mathbb{R}^{\mbox{nb rows}\times\mbox{nb banks}\times 3}$
-* $\mathcal{L} = \mbox{L2 cache miss ratio}\cup \mbox{Nb of cache misses L2}\mathbb{R}^{2\times 3}$
+* $\mathcal{L} = \{\mbox{L2 cache miss ratio}\}\cup \{\mbox{Nb of cache misses L2}\}\subset\mathbb{R}^{2\times 3}$
 
 We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\{\mathcal{L}\}\subset\mathbb{R}^{4+\mbox{nb rows}\times\mbox{nb banks}\times 3+2}$
 ### Second Case
