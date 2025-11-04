@@ -22,6 +22,21 @@ An interference is a phenomenon such that, for identical initial conditions, the
 running in isolation (S1 , _) on a platform differs from the execution time of S1 running with an application S2 on
 the platform. (S1 , S2 ).
 ## Automated Discovery process
+An exploration consists of several steps: 1) choosing the experimental parameters, 2) launching an experiment in the
+system with the input parameters, 3) measuring the outcomes into numerical vectors describing some of the observed
+properties, and 4) collecting the results in a database.
+
+The Intrinsically Motivated Goal Exploration Process algorithm architecture is a diversity-driven strategy that aims to
+maximally cover an observation space or a behaviour space by selecting parameters leading to the highest diversity in
+that space. From the IMGEP architecture perspective, an element of a behaviour space is seen as a goal to reach. The
+algorithm architecture 1 relies on the definition of exploration 2.1. The autotelic agent firstly samples the goals to solve
+and then uses a strategy to solve them. Two internal models are used for these respective aspects, a goal generator G
+and a goal strategy achievement model $\Pi$. During the exploration, the agent fills a database $\mathcal{H}$ used to update its internal models, and thus the data acquired is reused to extract potential solutions to solve other goals.
+
+IMGEP addresses solutions to explore, with a limited budget, complex systems suffering from butterfly effects, attrac-
+tor effects, or stochasticity.
+
+**Justify choice of population based imgep**
 # Simulator description
 In order to provide a proof of concept for applying automated discovery framework on the problem of interference identification, one choose to explore a simplified simulated model of mutli-core architectures.
 
@@ -270,7 +285,7 @@ With a given number of actions as argument. The program either `add`,`delete` or
 * We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum value along the axis. At the end of the process with normalize the vectors so it adds up to one.
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
-* To assess the results, we design a diversity measure $\mathcal{D}$ on the entire space $\mathcal{O}\subset\mathbb{R}^{D}$ , and other measures $\mathcal{D}_{j}$ to evaluate the diversity along specific axis $j$. We choose $\mathcal{D}$ to be the cumulated squared distance between all the wise points. Measures $\mathcal{D}_j$ will be the sum of all non -empty bins in a defined histogram $H_j$.
+* To assess the diversity of the resulting dataset, we design a diversity measure $\mathcal{D}$ on the entire space $\mathcal{O}\subset\mathbb{R}^{D}$ , and other measures $\mathcal{D}_{j}$ to evaluate the diversity along specific axis $j$. We choose $\mathcal{D}$ to be the cumulated squared distance between all the wise points. Measures $\mathcal{D}_j$ will be the sum of all non -empty bins in a defined histogram $H_j$.
 * We compare k-NN goal strategy achievement IMGEP with a random exploration. Results [pictures ] show that using k-NN allows a more efficient exploration along the bordure of the domain $mathcal{O}$. Meanwhile the resulting diversity of the total space is not significantly larger.
 
 * In order to target the right combination of parameter we perform a grid search on a product space of values of k and number of segments to split the programs. Parameters leading to the highest diversty will be selectionned.
