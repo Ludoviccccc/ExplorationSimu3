@@ -1,6 +1,33 @@
+# Presentation
+The shift from single-core to multi-core architectures is essential in safety-critical embedded systems in multiple domains such as aerospace and automotive, driven by both the need to enhance processor performance for increasingly demanding applications and adaptation to recent technology. However, this transition introduces new complexities, particularly hardware contention issues known as inter-core interferences.
+
+The objective of this project is to apply automated exploration algorithms to the novel use case  of identification of inter-core interference sources in multi-core architectures. Indeed, undesirable phenomena such as temporal interference can occur due to concurrent access to shared resources (e.g. memory buses, caches etc …). Due to the hardware complexities, the conditions under which interference occurs, as well as their effects, can vary greatly and often seem random, making them very difficult to model and to predict. In other words, such architectures are complex systems. Thus we believe that our automated discovery algorithms can be very useful to characterize their behavior.
+
+The purpose of the study is to developp a framework to automatically identify sources of interference on multi-core platforms:
+
+* Identify all micro architectural mechanisms that can lead to the occurrence of an interference.
+* Identify the conditions under which the corresponding interferences occur.
+
+In order to provide a proof of concept for applying automated discovery framework on the problem of interference identification, one choose to explore a simplified simulated model of mutli-core architectures.
+
+This will require finding sequences of code that generate a maximal diversity of interference mechanisms. The
+following curiosity-driven exploration method will be applied to identify hardware interference patterns. It relies
+on the construction of an autonomous AI agent that can learn to represent, generate, select, and solve its own
+problems to efficiently explore the vast outcome space of artificial or natural complex systems. These methods
+aim to address the knowledge gap between our ability to manipulate low-level inputs of complex systems and our
+ability to discover controllable properties. Moreover, these methods help deal with a limited experimental budget
+
+## What is an interference ?
+An interference is a phenomenon such that, for identical initial conditions, the execution time of an application S1
+running in isolation (S1 , _) on a platform differs from the execution time of S1 running with an application S2 on
+the platform. (S1 , S2 ).
+## Automated Discovery process
 # Simulator description
 In order to provide a proof of concept for applying automated discovery framework on the problem of interference identification, one choose to explore a simplified simulated model of mutli-core architectures.
+
 ![Alt text](illustrations/simulator_new.png)
+
+We work with a minimal 
 A full description of the simulator can be found in [Simu3](https://github.com/Ludoviccccc/Simu3)
 ## DDR model
 The memory consists of several banks, each of which has a row buffer (a form of cache). Each bank is managed by a timed state machine which includes the one described in [1] (see figure above)
@@ -32,9 +59,19 @@ This model is obviously very simplified compared to the actual operation of a ph
 
 ## Cache model
 
+Each cache level within the simulator is configurable with parameters such as total size, cache line size and associativity. 
+One choose the behavior type to be 'write_back', that is to say, writing in lower-level memory occurs when the cache line is evicted. During the write operation, the line is simply marked "dirty" and when the line is evicted, it is written into the lower-level memory.It is also possible to implement a "write-through" behavior in which writing into the lower-level memory takes place immediately.
+The management of the eviction of cache lines is carried out by a PLRU (PLRU class) whose role is to determine the line to be replaced based on the current state of the cache. Ideally, one would like to implement a behavior of the LRU (Least Recently Used) type, which would consist in eliminating the line used less recently in order to make the most of the locality principle. However, this strategy is expensive to implement and we often prefer to use a simpler mechanism called Pseudo-LRU which relies on a binary tree.
+This algorithm includes:
+  * a function allowing to maintain the data structure (binary tree) which will allow to choose the next row to be evicted according to memory accesses ("update_on-access")
+  * a function allowing to choose the next cache line to remove ("get_victim") from the information contained in the binary tree.
+  * The last level cache (L2 in current code) is shared by both memory hierarchies, core 0 and core 1.
+
+Note taht there is no cache coherency management mechanism.
+
 # Some tests for the behavior of the simulator
 
-* this following notebook gathers tests [test_simulator.ipynb](test_simulator.ipynb)
+* this following notebook gathers some tests [test_simulator.ipynb](test_simulator.ipynb)
 * 1 core, 2 read cycles,same index, same tag, same bank, different rows, no dependency
 * 1st RD => cache miss => DDR reads transaction 
 * 2nd RD => cache miss => DDR reads transaction 
@@ -97,7 +134,7 @@ row 1 	-0.0 	-0.0 	-0.0 	-0.0
 ```
 # Apply Intrinsically motivated Goal exploration process
 ## Parameter space
-We use a set of 101 adresses from 0 to 100. Because it is interesting to see what interference patterns occur when running programs that don't depend on each others we divide in two parts this set for core 0 and 1.
+Because we find it revelant to study interference patterns occuring with independant programs, we divide in two parts the set of 101 adresses from 0 to 100 for core 0 and 1. 
 * Core 1: addresses from 0 to 49
 * Core 2: addresses from 50 to 100
   
