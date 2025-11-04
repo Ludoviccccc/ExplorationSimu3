@@ -200,7 +200,7 @@ Since the simulator is a white box, one can also have acces to:
 * Statuses of every row and bank 
 ## Goal Space
 We will work on three different cases for the space $\mathcal{G}$ that we will explore, according to the hypothesis we will make on our knowledge. Our objective is to collect data points to form a cloud that spreads as much as possible in $\mathcal{G}$.
-### First Case
+
 * In order to spot the occurence of interference, one can spot the changes of some well chosen data for execution in isolation vs non-isolation. Thus we will target the following values when applications are executed on isolation on cores 0 and 1 and in mutually i.e on both cores simultaneously.
 
 | id | Category | Description                     |
@@ -216,54 +216,7 @@ Let:
 * $\mathcal{L} = \{\mbox{L2 cache miss ratio}\}\cup \{\mbox{Nb of cache misses L2}\}\subset\mathbb{R}^{2\times 3}$
 
 We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\{\mathcal{L}\}\subset\mathbb{R}^{4+\mbox{nb rows}\times\mbox{nb banks}\times 3+2}$
-### Second Case
-* One can consider adding events that inform of competition between the two cores in the ddr. In the sens that two instructions from the distincts cores are waiting for scheduling stage in the main memory.
-```python
-{'cycle': 7,
-   'type': 'DDR_MEMORY_CONTENTION',
-   'resource': 'DDR_MEMORY',
-   'initiators': [0, 1],
-   'details': {'banks': [3, 3],
-    'rows': [0, 1],
-    'operations': ['read', 'read'],
-    'statuses': ['ROW MISS', 'waiting'],
-    'bank_conflicts': True,
-    'row_conflicts': True}}
 
-{'cycle': 35,
-   'type': 'DDR_MEMORY_CONTENTION',
-   'resource': 'DDR_MEMORY',
-   'initiators': [1, 0, 1],
-   'details': {'banks': [0, 2, 0],
-    'rows': [1, 0, 0],
-    'operations': ['read', 'read', 'read'],
-    'statuses': ['ROW HIT', 'waiting', 'waiting'],
-    'bank_conflicts': True,
-    'row_conflicts': True}}
-```
-* Altough we might lose information we'll associate well defined vectors to these event, in order to work with metric spaces. This will allow to measure proximity between such events:
-```python
- {'ratio_cores': array([0.5]),
-  'count_banks': array([0., 0., 0., 1.]),#distribution among the banks
-  'count_rows': array([0.5, 0.5]),#distribution among the rows
-  'conflicts_bank_row': array([1, 1])})
-
- {'ratio_cores': array([0.667]),
-  'count_banks': array([0.667, 0., 0.333, 0.]),#distribution among the banks
-  'count_rows': array([0.667, 0.333]),#distribution among the rows
-  'conflicts_bank_row': array([1, 1])})
-```
-* We can either choose L2 norm to conceive distance between vectors or use some kind of conbination, e.g use KL divergence to model distances between the distributions, and use L2/L1 norm for the rest.
-* We note the characterization set of events as $\mathcal{E}=\subset\mathbb{R}^{1+\mbox{nb banks}+\mbox{nb rows} +2 }$.
-We'll also work with events such as :
-```
-{type: hit/miss 
-delay: delay,
-current location:row and bank 
-current command type
-previous location:row and bank 
-previous command type}
-```
 ## Goal generation
 For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
 * We show that targeting multidimensional goals help to increase the diversity along on the bordure, as opposed with an exclusive exploration along the axis.
@@ -284,6 +237,14 @@ With a given number of actions as argument. The program either `add`,`delete` or
 ![Alt text](illustrations/achievement_strategy.png)
 * The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
 * We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum value along the axis. At the end of the process with normalize the vectors so it adds up to one.
+# Two different strategies for the respective goal sets
+## Second strategy
+* We gather iteratively all the results in a matrix $A\in\mathbb{R}^{N,F}$. $F \approx 160, N $ is the growing number of individuals.
+ The observable set can be partition as follow : $\mathcal{O} = \mathcal{T}\cup\mathcal{R}, \mathcal{T}\cap\mathcal{R}=\emptyset$. $ \mathcal{T}$ are time features and $\mathcal{R}$ are miss ratios informations. $\mathcal{T}$ and $\mathcal{R}$ are not exclusive set, in the sense that we can observe pairs of values $(t,m)\in\mathcal{T}\times\mathcal{R}$.
+
+* We choose 'large' vectors up to size $v\in\mathbb{R}^{F}$. Whenever we choose to sample a goal as a vector of size $v\in\mathbb{R}^{F}$, that is one third of the time, we then normalize features with their maximum magnitude. For instance if j is the executing time on the core 0, then I will replace $g_{i,j}$ with  $g_{j}/max(\{A_{i,j}, \forall 1\leq i \leq N\})$.
+
+* One third of the time, we also sample goals $g$ such that $\forall i: g_i\in\mathcal{T} $, and one other third such that $\forall i: g_i\in\mathcal{R} $.
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
 * To assess the diversity of the resulting dataset, we design a diversity measure $\mathcal{D}$ on the entire space $\mathcal{O}\subset\mathbb{R}^{D}$ , and other measures $\mathcal{D}_{j}$ to evaluate the diversity along specific axis $j$. We choose $\mathcal{D}$ to be the cumulated squared distance between all the wise points. Measures $\mathcal{D}_j$ will be the sum of all non -empty bins in a defined histogram $H_j$.
@@ -292,6 +253,7 @@ Run of 10000 iterations, 1000 for initialization.
 * In order to target the right combination of parameter we perform a grid search on a product space of values of k and number of segments to split the programs. Parameters leading to the highest diversty will be selectionned.
 * Parametric study with : k, number of segment for mixing operator/mixing method, exclusive exploration along axis vs non-exclusive exploration along axis
 * Add diversity value: some of all squared distances
+
 # Interpretation, diagnostics: 
 * Analysis of acceleration phenomenon
 * Visualisation of cache miss, ddr miss, and execution time + other space.
