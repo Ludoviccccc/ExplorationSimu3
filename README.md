@@ -217,6 +217,10 @@ Let:
 
 We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\{\mathcal{L}\}\subset\mathbb{R}^{4+\mbox{nb rows}\times\mbox{nb banks}\times 3+2}$
 
+* We gather iteratively all the results in a matrix $A\in\mathbb{R}^{N,F}$. $F \approx 160, N $ is the growing number of individuals.
+ The observable set can be partition as follow : $\mathcal{O} = \mathcal{T}\cup\mathcal{R}, \mathcal{T}\cap\mathcal{R}=\emptyset.  \mathcal{T}$ are time features and $\mathcal{R}$ are miss ratios informations. $\mathcal{T}$ and $\mathcal{R}$ are not exclusive set, in the sense that we can observe pairs of values $(t,m)\in\mathcal{T}\times\mathcal{R}$.
+
+
 ## Goal generation
 For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
 * We show that targeting multidimensional goals help to increase the diversity along on the bordure, as opposed with an exclusive exploration along the axis.
@@ -227,21 +231,18 @@ For any event we track, we synthetize a vector. Thus, we generate vectors and no
  * During exploration we also find out that setting bounds for the time values allows more diversity, as it helps to not enlarge the data cloud in a specific direction.
 See [goal_generation.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/goal_generator.py)
 
+* We choose 'large' vectors up to size $v\in\mathbb{R}^{F}$. Whenever we choose to sample a goal as a vector of size $v\in\mathbb{R}^{F}$, that is one third of the time, we then normalize features with their maximum magnitude. For instance if j is the executing time on the core 0, then I will replace $g_{i,j}$ with  $g_{j}/max(\{A_{i,j}, \forall 1\leq i \leq N\})$.
+
 ## Mixing sequence operator
 In order to conserve interference patterns, we use a mixing sequence operator that randomly selects segments of the disctinct programs to produce another one. This idea comes from the fact that interference comes from specific successions of instructions tath we can call segments. If we mix randomly two applications regardless of their order, we can expect to break the interference pattern and then to not get closer from our target. See [mixxx.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/mixxx.py)
 
 ## Mutation Operator
 With a given number of actions as argument. The program either `add`,`delete` or `modify` an instruction. The modification can either be changing the `type`,`address` or both. See [mutation.py](https://github.com/Ludoviccccc/ExplorationSimu3/blob/master/exploration/imgep/mutation.py)
 ## Goal achievement strategy policy $\Pi$
-
 ![Alt text](illustrations/achievement_strategy.png)
 * The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
 * We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum value along the axis. At the end of the process with normalize the vectors so it adds up to one.
 ## Strategy
-* We gather iteratively all the results in a matrix $A\in\mathbb{R}^{N,F}$. $F \approx 160, N $ is the growing number of individuals.
- The observable set can be partition as follow : $\mathcal{O} = \mathcal{T}\cup\mathcal{R}, \mathcal{T}\cap\mathcal{R}=\emptyset.  \mathcal{T}$ are time features and $\mathcal{R}$ are miss ratios informations. $\mathcal{T}$ and $\mathcal{R}$ are not exclusive set, in the sense that we can observe pairs of values $(t,m)\in\mathcal{T}\times\mathcal{R}$.
-
-* We choose 'large' vectors up to size $v\in\mathbb{R}^{F}$. Whenever we choose to sample a goal as a vector of size $v\in\mathbb{R}^{F}$, that is one third of the time, we then normalize features with their maximum magnitude. For instance if j is the executing time on the core 0, then I will replace $g_{i,j}$ with  $g_{j}/max(\{A_{i,j}, \forall 1\leq i \leq N\})$.
 
 * One third of the time, we also sample goals $g$ such that $\forall i: g_i\in\mathcal{T} $, and one other third such that $\forall i: g_i\in\mathcal{R} $.
 # Temporary exploration results
