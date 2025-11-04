@@ -237,10 +237,9 @@ With a given number of actions as argument. The program either `add`,`delete` or
 ![Alt text](illustrations/achievement_strategy.png)
 * The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
 * We synthetize a weighted to distance to avoid exploring specific regions of the total space. We start by synthetizing a weight vector with coordinates coresponding to ratios are equalled to one. Other weights for other axis will be set to the maximum value along the axis. At the end of the process with normalize the vectors so it adds up to one.
-# Two different strategies for the respective goal sets
-## Second strategy
+## Strategy
 * We gather iteratively all the results in a matrix $A\in\mathbb{R}^{N,F}$. $F \approx 160, N $ is the growing number of individuals.
- The observable set can be partition as follow : $\mathcal{O} = \mathcal{T}\cup\mathcal{R}, \mathcal{T}\cap\mathcal{R}=\emptyset$. $ \mathcal{T}$ are time features and $\mathcal{R}$ are miss ratios informations. $\mathcal{T}$ and $\mathcal{R}$ are not exclusive set, in the sense that we can observe pairs of values $(t,m)\in\mathcal{T}\times\mathcal{R}$.
+ The observable set can be partition as follow : $\mathcal{O} = \mathcal{T}\cup\mathcal{R}, \mathcal{T}\cap\mathcal{R}=\emptyset.  \mathcal{T}$ are time features and $\mathcal{R}$ are miss ratios informations. $\mathcal{T}$ and $\mathcal{R}$ are not exclusive set, in the sense that we can observe pairs of values $(t,m)\in\mathcal{T}\times\mathcal{R}$.
 
 * We choose 'large' vectors up to size $v\in\mathbb{R}^{F}$. Whenever we choose to sample a goal as a vector of size $v\in\mathbb{R}^{F}$, that is one third of the time, we then normalize features with their maximum magnitude. For instance if j is the executing time on the core 0, then I will replace $g_{i,j}$ with  $g_{j}/max(\{A_{i,j}, \forall 1\leq i \leq N\})$.
 
