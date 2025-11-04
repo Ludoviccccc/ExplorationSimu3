@@ -1,6 +1,37 @@
 # Simulator description
-A description of the simulator can be found in [Simu3](https://github.com/Ludoviccccc/Simu3)
+In order to provide a proof of concept for applying automated discovery framework on the problem of interference identification, one choose to explore a simplified simulated model of mutli-core architectures.
 ![Alt text](illustrations/simulator_new.png)
+A full description of the simulator can be found in [Simu3](https://github.com/Ludoviccccc/Simu3)
+## DDR model
+The memory consists of several banks, each of which has a row buffer (a form of cache). Each bank is managed by a timed state machine which includes the one described in [1] (see figure above)
+The state of the banks of the DDR determines the completion dates of operations. The requests are issued by the DDR controller
+## DDR Controller model
+
+The DDR model and that of the memory controller are coupled.
+At each cycle,the controller determines which requests are completed i.e. the current date is greater than the scheduled completion date. In this case, and for a request of type 'read', the controller informs core that the access is completed. This signal is used by the core to unlock the execution of a new instruction. No signal is provided in the case of a write request.
+
+The controller processes requests located in its input queue. For each request, it determines if it can be processed by the DDR according to its state (managed by the state machine of the DDR) ensuring the constraints of minimum delays (cf [1]). Then it determines the "best" request to process based on a ranking established to prioritize requests resulting in a "row hit", write requests over read requests and the arrival order (FIFO). Finally, it transmits the "best" request to the DDR. The DDR Controller model takes up the "main lines" of the general mechanisms described in [1].
+
+## Core model
+The simulation of cores handles exclusively memory accesses instructions.  In other words, the instruction set is reduced to read and write (load and store) operations in memory since, ultimately, only memory accesses are simulated.
+
+For each core, a simple loop models the "fetch and execute" cycle.
+
+At each iteration of the loop (thus, each CPU cycle), the core can
+
+    wait for the end of a read operation
+    execute a "read" (load);
+    execute a "write" (store).
+    execute an instruction that does not perform memory accesses, which, in the case of the simulator, amounts to doing nothing.
+
+
+This model is obviously very simplified compared to the actual operation of a physical target device.
+
+
+  Waiting for the completion of a read memory access to continue the code execution does not correspond to reality because the processor has various mechanisms precisely allowing to hide these latencies. This wait is only necessary to preserve the true enter access dependencies (e.g., a @a LD sequence, WR @a must be preserved at run time to maintain program semantics).
+
+## Cache model
+
 # Some tests for the behavior of the simulator
 
 * this following notebook gathers tests [test_simulator.ipynb](test_simulator.ipynb)
