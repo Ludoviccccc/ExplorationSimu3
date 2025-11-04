@@ -148,6 +148,7 @@ row 0 	0.5 	-0.0 	-0.0 	-0.0
 row 1 	-0.0 	-0.0 	-0.0 	-0.0
 ```
 # Apply Intrinsically motivated Goal exploration process
+![Alt text](illustrations/imgep_scheme.png)
 ## Parameter space
 Because we find it revelant to study interference patterns occuring with independant programs, we divide in two parts the set of 101 adresses from 0 to 100 for core 0 and 1. 
 * Core 1: addresses from 0 to 49
