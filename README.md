@@ -40,7 +40,7 @@ tor effects, or stochasticity.
 # Simulator description
 In order to provide a proof of concept for applying automated discovery framework on the problem of interference identification, one choose to explore a simplified simulated model of mutli-core architectures.
 
-![Alt text](illustrations/simulator_new.png)
+![Alt text|306x345](illustrations/simulator_new.png)
 
 We work with a minimal 
 A full description of the simulator can be found in [Simu3](https://github.com/Ludoviccccc/Simu3)
