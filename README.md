@@ -225,6 +225,8 @@ We explore the product space: $\mathcal{G} = \mathcal{T}\times\mathcal{M}\times\
 For any event we track, we synthetize a vector. Thus, we generate vectors and not events as goals
 * We show that targeting multidimensional goals help to increase the diversity along on the bordure, as opposed with an exclusive exploration along the axis.
 * We choose 'large' vectors up to size $v\in\mathbb{R}^{F}$. Whenever we choose to sample a goal as a vector of size $v\in\mathbb{R}^{F}$, that is one third of the time,
+
+* One third of the time, we also sample goals $g$ such that $\forall i: g_i\in\mathcal{T} $, and one other third such that $\forall i: g_i\in\mathcal{R} $.
 * Periodically set the sampling boundaries based on the history $\mathcal{H}$, allowing to sample new goals *e.g*:
 	* $\mbox{min}_{\mathcal{T}} g:= (\mbox{min } g_1,\cdots,\mbox{min } g_6)$
  	* $\mbox{max}_{\mathcal{T}} g:= (\mbox{max } g_1,\cdots,\mbox{max } g_6)$
@@ -242,13 +244,10 @@ With a given number of actions as argument. The program either `add`,`delete` or
 ![Alt text](illustrations/achievement_strategy.png)
 * The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
 * We synthetize a weighted distance to avoid exploring specific regions of the total space. The weights will be periodically updated according to the feature magnitudes :
-$||z|| = \sum_{j}{\frac{{z_{j}}^{2}}{{\mbox{max}}_{j}(A_{i,j})}}$
-$||z|| = \sum_{j}{\frac{{z_{j}}^{2}}{{\mbox{max}}(\{A_{i,j},\forall i\})}}$
+${||z||}^{2} = \sum_{j}{\frac{{z_{j}}^{2}}{{\mbox{max}}(\{A_{i,j},\forall i\})}}$
 
 *  we then normalize features with their maximum magnitude. For instance if j is the executing time on the core 0, then I will replace $g_{i,j}$ with  $g_{j}/max(\{A_{i,j}, \forall 1\leq i \leq N\})$.
-## Strategy
 
-* One third of the time, we also sample goals $g$ such that $\forall i: g_i\in\mathcal{T} $, and one other third such that $\forall i: g_i\in\mathcal{R} $.
 # Temporary exploration results
 Run of 10000 iterations, 1000 for initialization.
 * To assess the diversity of the resulting dataset, we design a diversity measure $\mathcal{D}$ on the entire space $\mathcal{O}\subset\mathbb{R}^{D}$ , and other measures $\mathcal{D}_{j}$ to evaluate the diversity along specific axis $j$. We choose $\mathcal{D}$ to be the cumulated squared distance between all the wise points. Measures $\mathcal{D}_j$ will be the sum of all non -empty bins in a defined histogram $H_j$.
