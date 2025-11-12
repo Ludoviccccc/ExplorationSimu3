@@ -50,6 +50,7 @@ class IMGEP:
         self.H.memory_perf = sample["memory_perf"]
         self.H.memory_program["core0"] = sample["memory_program"]["core0"]
         self.H.memory_program["core1"] = sample["memory_program"]["core1"]
+        self.H.tab = list(sample['tabular_view'][:start])
     def __call__(self):
         start_time = time.time()
         """Performs the exploration.

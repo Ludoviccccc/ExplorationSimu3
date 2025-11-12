@@ -48,9 +48,12 @@ class IMGEP:
         Then the iterator i is set to ``start`` directly
         """
         self.start = start
-        self.H.memory_perf = sample["memory_perf"]
-        self.H.memory_program["core0"] = sample["memory_program"]["core0"]
-        self.H.memory_program["core1"] = sample["memory_program"]["core1"]
+        for key1 in self.H.memory_perf.keys():
+            for key2 in self.H.memory_perf[key1].keys():
+                self.H.memory_perf = sample["memory_perf"][key1][key2][:start]
+        self.H.memory_program["core0"] = sample["memory_program"]["core0"][:start]
+        self.H.memory_program["core1"] = sample["memory_program"]["core1"][:start]
+        self.H.tab = list(sample['tabular_view'][:start])
     def __call__(self):
         start_time = time.time()
         """Performs the exploration.

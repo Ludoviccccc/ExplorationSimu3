@@ -1,26 +1,27 @@
 from simulator.sim3 import *
-import pickle
 from exploration.env.func import Experiment, Env
 from exploration.random.func import RANDOM
-import numpy as np
-from codegeneration import generate_instruction_sequence
-from simulator.sim3 import print_contention_analysis
-import pandas as pd
-from exploration.history import History
+from exploration.history2 import History
+from exploration.imgep.OptimizationPolicy3 import OptimizationPolicykNN as OP
+from exploration.imgep.goal_generator3 import GoalGenerator as G
+from exploration.imgep.imgep3 import IMGEP
 
+import pickle
 import os
-
-
-from exploration.imgep.OptimizationPolicy2 import OptimizationPolicykNN as OP
-from exploration.imgep.goal_generator2 import GoalGenerator as G
-from exploration.imgep.imgep2 import IMGEP
-
+def load(name):
+    k = 1
+    while os.path.isfile(f"{name}_{k}.pkl"):
+        k+=1
+    k-=1
+    with open(f'{name}_{k}.pkl','rb') as f:
+        contentbis = pickle.load(f)
+    return contentbis
 
 
 if __name__=="__main__":
 
     N = 10000
-    N_init = 1000
+    N_init = 3000
     k_values = [1,2,3]
     num_mutations = 1
     periode = 1
@@ -29,14 +30,15 @@ if __name__=="__main__":
     max_address_core0 = 50
     max_address_core1 = 100
     num_instructions = 10
-    folder = 'non_exclusive_axis_exploration2'
+    folder = 'non_exclusive_axis_exploration'
     E =Env(400,num_addr=100)
-    H_rand = History(env=E,capacity=N)
-    random = RANDOM(N,E,H_rand,min_address_core0,max_address_core0,min_address_core1,max_address_core1,num_instructions)
-    random()
-    H_rand.save_pickle(f'{folder}/rand_run_{N}')
-    exit()
-    for segment_method in [True]:
+    #H_rand = History(env=E,capacity=N)
+    #random = RANDOM(N,E,H_rand,min_address_core0,max_address_core0,min_address_core1,max_address_core1,num_instructions)
+    #random()
+    #H_rand.save_pickle(f'{folder}/rand_run_{N}')
+    name = f'{folder}/rand_run_{N}'
+    content_rand = load(name)
+    for segment_method in [False]:
         for k in k_values:
             print('k',k)
             print('segment mixing method', segment_method)
@@ -56,6 +58,7 @@ if __name__=="__main__":
                           min_address_core1=min_address_core1,
                           max_address_core1=max_address_core1,
                           num_instructions=num_instructions)
+            imgep.take(content_rand,N_init)
             imgep()
             s = 1 if segment_method else 0
             H.save_pickle(f'{folder}/imgep_run_{k}_{N}_s_{s}')

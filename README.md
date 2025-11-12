@@ -244,7 +244,7 @@ With a given number of actions as argument. The program either `add`,`delete` or
 ![Alt text](illustrations/achievement_strategy.png)
 * The method [OptimizatoinPolicy.py](https://github.com/Ludoviccccc/ExplorationSimu3/exploration/imgep/OptimizationPolicy.py) generates a pair of instruction sequences by selecting the closest observations stored in the database $\mathcal{H}$, mixing them and lightly mutate the resulting pair.
 * We synthetize a weighted distance to avoid exploring specific regions of the total space. The weights will be periodically updated according to the feature magnitudes :
-${||z||}^{2} = \sum_{j}{\frac{{z_{j}}^{2}}{{\mbox{max}}(\\{A_{i,j},\forall i})}}$
+${||z||}^{2} = \sum_{j}{\frac{{z_{j}}^{2}}{{\mbox{max}}(A_{i,j},\forall i})}$
 
 *  we then normalize features with their maximum magnitude. For instance if j is the executing time on the core 0, then I will replace $g_{i,j}$ with  $g_{j}/max(\{A_{i,j}, \forall 1\leq i \leq N\})$.
 

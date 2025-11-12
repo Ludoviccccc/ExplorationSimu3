@@ -1,60 +1,97 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.express as px
 def diversity(data:[np.ndarray,np.ndarray],bins:[np.ndarray, np.ndarray]):
     H,_,_ = np.histogram2d(data[0],data[1],bins)
     divers = np.sum(H>0)
     return divers
-def hist_diversity(content_random, content_imgep = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,):
+def hist_diversity_misses(content_random, contents:list, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,labels=[f'k={j}' for j in range(1,4)]):
     A_core0_rand = []
     B_core0_rand = []
-    A_core0_imgep = []
-    B_core0_imgep = []
     A_core1_rand = []
     B_core1_rand = []
-    A_core1_imgep = []
-    B_core1_imgep = []
+    A_core0_imgep = [[] for j in range(len(contents))]
+    A_core1_imgep = [[] for j in range(len(contents))]
     bins = np.arange(-1.0,1.0,0.05)
     for j in range(num_bank):
         for row in range(num_row):
             diversity_ratio_random0 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
-            diversity_ratio_imgep0 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
             A_core0_rand.append(diversity_ratio_random0)
-            A_core0_imgep.append(diversity_ratio_imgep0)
             B_core0_rand.append(f'b{j},r{row}')
-            B_core0_imgep.append(f'b{j},r{row}')
 
             diversity_ratio_random1 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
-            diversity_ratio_imgep1 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
             A_core1_rand.append(diversity_ratio_random1)
-            A_core1_imgep.append(diversity_ratio_imgep1)
             B_core1_rand.append(f'b{j},r{row}')
-            B_core1_imgep.append(f'b{j},r{row}')
+            for j_c,content_imgep in enumerate(contents):
+                diversity_ratio_imgep0 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+                A_core0_imgep[j_c].append(diversity_ratio_imgep0)
 
-    plt.figure(figsize=(18,5), layout='constrained') 
-    plt.bar(B_core0_imgep,A_core0_imgep,label='imgep')
-    plt.bar(B_core0_rand,A_core0_rand,alpha=.5, label='random')
-    plt.legend()
-    plt.xlabel(f'core 0, bank b, row r')
-    plt.ylabel(f'diversity')
-    #plt.title('diversity isolation vs mutual, core 0')
-    plt.grid()
-    if title:
-        plt.title(title)
-    plt.savefig(name+'_core0')
-    plt.show()
-
-    plt.figure(figsize=(18,5), layout='constrained') 
-    plt.bar(B_core1_imgep,A_core1_imgep,label='imgep')
-    plt.bar(B_core1_rand,A_core1_rand,alpha=.5, label='random')
-    plt.legend()
-    plt.xlabel(f'core 1, bank b, row r')
-    plt.ylabel(f'diversity')
-    plt.grid()
-    if title:
-        plt.title(title)
-    plt.savefig(name+'_core1')
-    plt.show()
+                diversity_ratio_imgep1 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+                A_core1_imgep[j_c].append(diversity_ratio_imgep1)
+    fig = make_subplots(
+    rows=1, cols=2,
+    subplot_titles=('Core 0', 'Core 1'),
+    horizontal_spacing=0.1
+    )
+    
+    # Core 0 data
+    for j in range(len(contents)):
+        fig.add_trace(go.Bar(
+            x=B_core0_rand,
+            y=A_core0_imgep[j],
+            name=labels[j],
+            marker_color=px.colors.qualitative.Plotly[j],
+            #showlegend=(j==0)  # Only show legend for first trace to avoid duplicates
+        ), row=1, col=1)
+    
+    fig.add_trace(go.Bar(
+        x=B_core0_rand,
+        y=A_core0_rand,
+        name='random',
+        marker_color='lightgray',
+        showlegend=True
+    ), row=1, col=1)
+    
+    # Core 1 data
+    for j in range(len(contents)):
+        fig.add_trace(go.Bar(
+            x=B_core1_rand,
+            y=A_core1_imgep[j],
+            name=labels[j],
+            marker_color=px.colors.qualitative.Plotly[j],
+            showlegend=False  # Don't show duplicate legends
+        ), row=1, col=2)
+    
+    fig.add_trace(go.Bar(
+        x=B_core1_rand,
+        y=A_core1_rand,
+        name='random',
+        marker_color='lightgray',
+        showlegend=False
+    ), row=1, col=2)
+    
+    fig.update_layout(
+        title_text=title if title else 'Diversity Comparison',
+        width=1200,
+        height=500,
+        showlegend=True,
+        template='plotly_white',
+        bargap=0.1
+    )
+    
+    fig.update_xaxes(title_text='core 0, bank b, row r', row=1, col=1)
+    fig.update_xaxes(title_text='core 1, bank b, row r', row=1, col=2)
+    fig.update_yaxes(title_text='diversity', row=1, col=1)
+    fig.update_yaxes(title_text='diversity', row=1, col=2)
+    
+    fig.show()
+    
+    # Save the combined figure
+    fig.write_image(name+'_both_cores.png')
 def plot_ddr_miss_ratio_diversity(content_random:dict, content_imgep:dict = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
     fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28,80), layout='constrained')
     fontsize = 22
@@ -244,35 +281,36 @@ def diversity_time_iteration(content_random,content_imgep,title=None, folder="im
 
     diversity_time_imgep = [diversity([content_imgep['mutual']["time_core0"][:k],content_imgep['mutual']["time_core1"][:k]],[bins, bins]) for k in range(0,ll,100)]
 
-    plt.plot(range(0,ll,100),diversity_time_imgep, label=f"imgep")
+    plt.plot(range(0,ll,100),diversity_time_imgep)
     plt.xlabel("iteration")
     plt.ylabel("diversity")
     if title:
         plt.title(title)
     else:
         plt.title("time")
-    plt.legend()
+    plt.legend(prop={'size': 19})
     if title:
         plt.savefig(f"{folder}/{title}")
     plt.close()
 def diversity_time_iteration2(list_,title=None, folder="images"):
     count_bins = lambda content: np.arange(0,max(np.max(content['mutual']['time_core0']),np.max(content['mutual']['time_core1'])),5)
 
-    plt.figure()
+    plt.figure(figsize=(15,10))
     for arg in list_:
         content,label = arg[0],arg[1]
         print('label',label)
         ll = len(content['mutual']['time_core0'])
         bins = count_bins(content)
         diversity_values = [diversity([content['mutual']['time_core0'][:k],content['mutual']['time_core1'][:k]], [bins, bins]) for k in range(0,ll,100)]
-        plt.plot(range(0,ll,100),diversity_values, label=label)
-        plt.xlabel("iteration")
-        plt.ylabel("diversity")
+        plt.plot(range(0,ll,100),diversity_values, '-o',label=label)
+        plt.xlabel("iteration",fontsize=19)
+        plt.ylabel("diversity",fontsize=19)
     if title:
-        plt.title(title)
+        plt.title(title,fontsize=19)
     else:
-        plt.title("time")
-    plt.legend()
+        plt.title("time",fontsize=19)
+    plt.legend(prop={'size': 19})
     if title:
         plt.savefig(f"{folder}/{title}")
+    plt.show()
     plt.close()

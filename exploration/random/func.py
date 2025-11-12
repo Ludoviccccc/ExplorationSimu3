@@ -1,11 +1,12 @@
 import sys
 import random
 sys.path.append("../../")
+sys.path.append("../")
 sys.path.append("../../simulator")
 sys.path.append("../../exploration/")
 from exploration.env.func import Env
 from exploration.history import History
-from codegeneration import generate_instruction_sequence
+from exploration.codegeneration import generate_instruction_sequence
 import random
 import time
 

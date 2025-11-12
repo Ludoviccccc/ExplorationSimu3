@@ -384,7 +384,7 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
         while os.path.isfile(f'{name}_{k}.png'):
             k += 1
         fig.write_image(f'{name}_{k}.png')
-    
+        fig.write_html(f'{name}_{k}.html')    
     return fig
 
 # Alternative: Create an HTML file with custom CSS for even better tooltip control

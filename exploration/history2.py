@@ -14,8 +14,7 @@ class History:
         self.shared_resource_coords = []
         self.env = env
         self.tab = []
-        self.reward_vec = [0]
-        self.interleaving = np.zeros((self.capacity,4))
+        self.names = []
     def as_tab(self):
         return np.array(self.tab)
     def __len__(self):
@@ -29,9 +28,13 @@ class History:
         k =0
         for key1 in self.memory_perf.keys():
             for key2 in sample[key1].keys():
+                if self.j==0:
+                    self.names.append(key1+'_'+key2)
                 if key2 not in key_set:
                     value = np.array(sample[key1][key2]).reshape((-1))
                     observation_vec.append(value)
+                    if self.j==0:
+                        self.names +=[key1+'_'+key2]*len(value)
                     k+=1
                 if key2 in self.memory_perf[key1] and key2 not in key_set:
                     self.memory_perf[key1][key2][self.j] = sample[key1][key2]
@@ -56,32 +59,10 @@ class History:
                             if event['type']=='DDR_MEMORY_CONTENTION':
                                 self.shared_resource_list.append(shared_resource2vec(event,self.env))
                                 self.shared_resource_coords.append({'program':self.j,'cycle':event['cycle']})
-                                self.interleaving[self.j] +=shared_resource2vec(event,self.env)[1:5]
         #synthetizes an array with all observations, usefull for exploration.
         observation_vec = np.concatenate(observation_vec)
-        if self.j==0:
-            self.reward_vec = np.zeros((self.capacity,len(observation_vec)))
-            self.novelty_vec = np.zeros((self.capacity))
-        if self.j>0:
-            if self.j==1 or self.j%200==0:
-                self.weight = np.max(self.as_tab(),axis=0)
-                self.weight /=np.sum(self.weight)
-            diff = self.as_tab() - observation_vec
-            new_novelty = np.mean(np.sum(self.weight*(diff)**2,axis=1))
-            closest_points = np.abs(diff).argmin(axis=0)
-            self.reward_vec[self.j] = np.abs(new_novelty - self.novelty_vec[closest_points])
-            self.novelty_vec[self.j] = new_novelty
         self.tab.append(observation_vec)
         self.j+=1
-    def prob(self):
-        epsilon = 0.5
-        c = self.score
-        unif = np.ones(len(c))/len(c)
-        if np.sum(self.score)!=0:
-            c /=np.sum(self.score)
-            return c*(1-epsilon)+epsilon*unif
-        else:
-            return unif
     def content(self):
         """
         returns dictionary of content
@@ -89,9 +70,8 @@ class History:
         keys = ['time_core0', 'time_core1', 'miss_ratios_detailled', 'miss_ratios_global', 'L1_miss_ratio_core0', 'L1_miss_ratio_core1', 'L2_miss_ratio']
         return {"memory_perf":{key:{k:np.array(self.memory_perf[key][k]) for k in self.memory_perf[key] if k in keys} for key in self.memory_perf.keys()},
                 "memory_program":{"core0":self.memory_program["core0"],"core1":self.memory_program["core1"]},
-                "reward":self.reward_vec,
                 "tabular_view":self.as_tab(),
-                "interleaving":self.interleaving,
+                "names":self.names
                 }
     def save_pickle(self, name:str=None):
         k = 0
