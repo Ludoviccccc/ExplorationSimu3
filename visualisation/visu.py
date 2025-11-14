@@ -76,7 +76,7 @@ def hist_diversity_misses(content_random, contents:list, name = None, title = No
     
     fig.update_layout(
         title_text=title if title else 'Diversity Comparison',
-        width=1200,
+        width=2000,
         height=500,
         showlegend=True,
         template='plotly_white',

@@ -9,9 +9,9 @@ from exploration.history import History
 from exploration.codegeneration import generate_instruction_sequence
 import random
 import time
+from exploration.test_addr import test_programs
 
-
-class RANDOM:
+class RANDOM(test_programs):
     def __init__(self,
                     N:int,
                     E:Env,
@@ -29,6 +29,7 @@ class RANDOM:
         max_l: int. Max length for of the instruction sequences
         E: Env. The environnement.
         """
+        super().__init__()
         self.env = E
         self.H = H
         self.N = N
@@ -43,8 +44,17 @@ class RANDOM:
         for i in range(self.N):
             if i%1000==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
-            code0 = generate_instruction_sequence(self.num_instructions,max_cycle = self.max_cycle,min_address=self.min_address_core0,max_address = self.max_address_core0)
-            code1 = generate_instruction_sequence(self.num_instructions,max_cycle = self.max_cycle,min_address=self.min_address_core1,max_address = self.max_address_core1)
+            code0 = generate_instruction_sequence(random.randint(1,
+                                                self.num_instructions),
+                                                max_cycle = self.max_cycle,
+                                                min_address=self.min_address_core0,
+                                                max_address = self.max_address_core0)
+            code1 = generate_instruction_sequence(random.randint(1,
+                                                    self.num_instructions)
+                                                    ,max_cycle = self.max_cycle,
+                                                    min_address=self.min_address_core1,
+                                                    max_address = self.max_address_core1)
+            self._test_program_addr(code0,code1)
             parameter = {'core0':code0,
                         'core1':code1}
             self.H.store({"program":parameter}|self.env(parameter))

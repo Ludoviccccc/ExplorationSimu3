@@ -279,6 +279,8 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
         f"Core1 Together: {content_imgep['memory_perf']['mutual']['time_core1'][i]:.2f}<br>"
         f"Core0 Alone: {content_imgep['memory_perf']['core0']['time_core0'][i]:.2f}<br>"
         f"Core1 Alone: {content_imgep['memory_perf']['core1']['time_core1'][i]:.2f}<br>"
+        f"code 0: {content_imgep['memory_program']['core0'][i]}<br>"
+        f"code 1: {content_imgep['memory_program']['core1'][i]}<br>"
         f"<extra>IMGEP Together Data</extra>"
         for i in range(len(content_imgep['memory_perf']['mutual']['time_core0']))
     ]
@@ -289,6 +291,8 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
         f"Core1 Together: {content_random['memory_perf']['mutual']['time_core1'][i]:.2f}<br>"
         f"Core0 Alone: {content_random['memory_perf']['core0']['time_core0'][i]:.2f}<br>"
         f"Core1 Alone: {content_random['memory_perf']['core1']['time_core1'][i]:.2f}<br>"
+        f"code 0: {content_random['memory_program']['core0'][i]}<br>"
+        f"code 1: {content_random['memory_program']['core1'][i]}<br>"
         f"<extra>Random Together Data</extra>"
         for i in range(len(content_random['memory_perf']['mutual']['time_core0']))
     ]

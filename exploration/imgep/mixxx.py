@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 def random_mix_sequences(sequences, seed=None, max_gap=5,max_cycle=60):
     """
@@ -59,7 +60,7 @@ def random_mix_sequences(sequences, seed=None, max_gap=5,max_cycle=60):
 
 import random
 
-def segment_mix_sequences(sequences, num_parts=3, seed=None, max_cycle=60):
+def segment_mix_sequences(sequences, num_parts=2, seed=None, max_cycle=60):
     """
     Mix contiguous parts from multiple instruction sequences, preserving timing,
     and ensuring the resulting sequence fits within a maximum cycle range.
@@ -133,3 +134,12 @@ def segment_mix_sequences(sequences, num_parts=3, seed=None, max_cycle=60):
 
     return dict(sorted(mixed.items()))
 
+def mixFor2(sequences, max_cycle=60):
+    mixed = {}
+    current_time = 0
+    id_ = random.choice([0,1])
+    in0_ = {k:sequences[id_][k] for j,k in enumerate(sequences[id_]) if j<=4 if k<=max_cycle}
+    in1_ = {k:sequences[abs(id_-1)][k] for j,k in enumerate(sequences[abs(id_-1)]) if j<=4 if k<=max_cycle}
+    in_ = in0_|in1_
+    in_ = {k:in_[k] for k in np.unique(list(in_.keys()))}
+    return in_
