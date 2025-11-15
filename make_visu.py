@@ -28,17 +28,13 @@ if __name__=='__main__':
     folder = 'non_exclusive_axis_exploration' 
     images = 'images_non_excl'
     method = 'imgep raw matrix'
-
-#    folder = 'imgep_pca_results' 
-#    images = 'images_pca'
-#    method = 'imgep pca'
-
     s_list = [0]
+    k_list = [1,2,5,10,20]
 
     name = f'{folder}/rand_run_{N}'
     content_rand = load(name)
 
-    #diversity_time_iteration2([(content_rand['memory_perf'],'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}')['memory_perf'],f'imgep k = {k},segment = {s}') for k in [1,2,3] for s in [1]], title=f'iteration_time_',folder=images)
+    diversity_time_iteration2([(content_rand['memory_perf'],'random')]+[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}')['memory_perf'],f'imgep k = {k},segment = {s}') for k in k_list for s in s_list], title=f'iteration_time_',folder=images)
     #arg_list = [('random',content_rand['memory_perf'])]+[(f'imgep k = {k},segment = {s}',load(f'{folder}/imgep_run_{k}_{N}_s_{s}')['memory_perf']) for k in [1,2,3] for s in [1]]
 
     #comparaison_ratios_iterations(arg_list,name=f'{images}/comparaison_iteration_ddr_miss_ratio',num_rows=7)

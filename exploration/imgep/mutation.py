@@ -24,7 +24,7 @@ def mutate_instruction_sequence(instructions, num_mutations=1, max_cycle=60, min
     available_cycles = list(all_cycles - used_cycles)
     
     for _ in range(num_mutations):
-        if len(mutated)>2:
+        if len(mutated)>1:
             mutation_type = random.choice(['add', 'delete', 'modify'])
         else:
             mutation_type = random.choice(['add', 'modify'])

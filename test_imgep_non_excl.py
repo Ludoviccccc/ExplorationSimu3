@@ -1,29 +1,19 @@
-from simulator.sim3 import *
-from exploration.env.func import Experiment, Env
+from exploration.env.func import Env
 from exploration.random.func import RANDOM
-from exploration.history2 import History
-from exploration.imgep.OptimizationPolicy3 import OptimizationPolicykNN as OP
-from exploration.imgep.goal_generator3 import GoalGenerator as G
-from exploration.imgep.imgep3 import IMGEP
-
+from exploration.history import History
+from exploration.imgep.OptimizationPolicy import OptimizationPolicykNN as OP
+from exploration.imgep.goal_generator import GoalGenerator as G
+from exploration.imgep.imgep import IMGEP
+from exploration.load_file import load
 import pickle
 import os
-def load(name):
-    k = 1
-    while os.path.isfile(f"{name}_{k}.pkl"):
-        k+=1
-    k-=1
-    with open(f'{name}_{k}.pkl','rb') as f:
-        contentbis = pickle.load(f)
-    return contentbis
-
 
 if __name__=="__main__":
 
-    N = 100000
-    N_init = 3000
-    k_values = [1]
-    num_mutations = 1
+    N = 10000
+    N_init = 1000
+    k_values = [1,2,5,10,20,30,40]
+    num_mutations = 5
     periode = 1
     min_address_core0 = 0
     max_address_core0 = 20
@@ -33,12 +23,19 @@ if __name__=="__main__":
     folder = 'non_exclusive_axis_exploration'
     E =Env(400,num_addr=100)
     H_rand = History(env=E,capacity=N)
-    random = RANDOM(N,E,H_rand,min_address_core0,max_address_core0,min_address_core1,max_address_core1,num_instructions)
-    random()
-    H_rand.save_pickle(f'{folder}/rand_run_{N}')
+    #random = RANDOM(N,
+    #                E,
+    #                H_rand,
+    #                min_address_core0,
+    #                max_address_core0,
+    #                min_address_core1,
+    #                max_address_core1,
+    #                num_instructions)
+    #random()
+    #H_rand.save_pickle(f'{folder}/rand_run_{N}')
     name = f'{folder}/rand_run_{N}'
     content_rand = load(name)
-    for segment_method in [False,True]:
+    for segment_method in [True]:
         for k in k_values:
             print('k',k)
             print('segment mixing method', segment_method)

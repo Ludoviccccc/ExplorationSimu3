@@ -134,6 +134,7 @@ class Experiment:
         self.ratios_tab = self.miss_tab/(denominator_tab)
         self.ratios_tab[self.ratios_tab<0] = -1
 
+
         #details for shared cache miss ratio
         #self.cache_miss_ratio_tab = sel
     def output_data(self):
@@ -141,6 +142,8 @@ class Experiment:
                 'time_core1':max(self.time_values['core1']),
                 'miss_ratios_detailled':self.ratios_tab,
                 'miss_ratios_global': self.ratios,
+                'miss':self.miss_tab,
+                'hits':self.hits_tab,
                 }
 class Env:
     def __init__(self,cycles,
@@ -168,8 +171,7 @@ class Env:
         GlobalVar.clear_history()
         del out['core0']['time_core1']
         del out['core1']['time_core0']
-        out['mutual']['diff_time_core0'] = out['mutual']['time_core0'] - out['core0']['time_core0']
-        out['mutual']['diff_time_core1'] = out['mutual']['time_core1'] - out['core1']['time_core1']
-        out['mutual']['diff_ratio_detailled'] = out['mutual']['miss_ratios_detailled'] - out['core0']['miss_ratios_detailled']
-        out['mutual']['diff_ratio_detailled'] = out['mutual']['miss_ratios_detailled'] - out['core1']['miss_ratios_detailled']
+        out['diff_time_core0'] = np.abs(out['mutual']['time_core0'] - out['core0']['time_core0'])
+        out['diff_time_core1'] = np.abs(out['mutual']['time_core1'] - out['core1']['time_core1'])
+        out['diff_time'] = np.abs(out['mutual']['time_core1'] - out['mutual']['time_core0'])
         return out

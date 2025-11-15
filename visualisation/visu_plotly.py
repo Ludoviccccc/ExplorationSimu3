@@ -29,8 +29,8 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
     )
     
     # Calculate bins and diversity for core0
-    bins_core0 = np.arange(0, max(np.max(content_imgep['memory_perf']['core0']['time_core0']), 
-                                  np.max(content_imgep['memory_perf']['mutual']['time_core0'])), 5)
+    #bins_core0 = np.arange(0, max(np.max(content_imgep['memory_perf']['core0']['time_core0']), 
+    bins_core0 = np.arange(0, 400, 5)
     diversity_time_rand_core0 = diversity([content_random['memory_perf']['core0']['time_core0'], content_random['memory_perf']['mutual']['time_core0']], [bins_core0, bins_core0])
     diversity_time_imgep_core0 = diversity([content_imgep['memory_perf']['core0']['time_core0'], content_imgep['memory_perf']['mutual']['time_core0']], [bins_core0, bins_core0])
     
@@ -113,8 +113,8 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
     fig.update_yaxes(title_text='time_core0_together', row=1, col=1, gridcolor='lightgray', gridwidth=1)
     
     # Calculate bins and diversity for core1
-    bins_core1 = np.arange(0, max(np.max(content_imgep['memory_perf']['core1']['time_core1']), 
-                                  np.max(content_imgep['memory_perf']['mutual']['time_core1'])), 5)
+    #bins_core1 = np.arange(0, max(np.max(content_imgep['memory_perf']['core1']['time_core1']), 
+    bins_core1 = np.arange(0,400, 5)
     diversity_time_rand_core1 = diversity([content_random['memory_perf']['core1']['time_core1'], content_random['memory_perf']['mutual']['time_core1']], [bins_core1, bins_core1])
     diversity_time_imgep_core1 = diversity([content_imgep['memory_perf']['core1']['time_core1'], content_imgep['memory_perf']['mutual']['time_core1']], [bins_core1, bins_core1])
     
@@ -267,8 +267,7 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
     fig.update_xaxes(title_text='time[together] - time[alone]', row=2, col=2)
     
     # Plot 5: Core0 vs Core1 together
-    bins_together = np.arange(0, max(np.max(content_imgep['memory_perf']['mutual']['time_core0']), 
-                                     np.max(content_imgep['memory_perf']['mutual']['time_core1'])), 5)
+    bins_together = np.arange(0,400,5)
     diversity_time_rand_together = diversity([content_random['memory_perf']['mutual']['time_core0'], content_random['memory_perf']['mutual']['time_core1']], [bins_together, bins_together])
     diversity_time_imgep_together = diversity([content_imgep['memory_perf']['mutual']['time_core0'], content_imgep['memory_perf']['mutual']['time_core1']], [bins_together, bins_together])
     
