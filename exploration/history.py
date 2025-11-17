@@ -29,7 +29,8 @@ class History:
                     self.names.append(key1+'_'+key2)
                 value = np.array(sample[key1][key2]).reshape((-1))
                 #if not (key2 in ['time_core0','time_core1']):
-                if not (key2 in ['miss_ratios_detailled','miss_ratios_global']):
+                #if not (key2 in ['miss_ratios_detailled','miss_ratios_global']):
+                if (key2 in ['miss_core0','miss_core1','diff_time_core0','diff_time_core1','diff_time','L2_hit_core0','L2_hit_core1','L2_miss_core0','L2_miss_core1']):
                     observation_vec.append(value)
                 if self.j==0:
                     self.names +=[key1+'_'+key2]*len(value)

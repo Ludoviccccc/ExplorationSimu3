@@ -85,5 +85,5 @@ class OptimizationPolicykNN(test_programs):
                         min_address=self.min_address_core1,
                         max_address=self.max_address_core1,
                         num_instructions=self.num_instructions)
-        self._test_program_addr(mutated0,mutated1) 
+        #self._test_program_addr(mutated0,mutated1) 
         return {'core0':mutated0,'core1':mutated1}

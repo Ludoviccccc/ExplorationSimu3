@@ -1,3 +1,5 @@
+# 
+
 # Presentation
 The shift from single-core to multi-core architectures is essential in safety-critical embedded systems in multiple domains such as aerospace and automotive, driven by both the need to enhance processor performance for increasingly demanding applications and adaptation to recent technology. However, this transition introduces new complexities, particularly hardware contention issues known as inter-core interferences.
 

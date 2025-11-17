@@ -144,6 +144,8 @@ class Experiment:
                 'miss_ratios_global': self.ratios,
                 'miss':self.miss_tab,
                 'hits':self.hits_tab,
+                'L2_miss':self.cache_stats_core_0['L2']['misses'],
+                'L2_hit':self.cache_stats_core_0['L2']['hits'],
                 }
 class Env:
     def __init__(self,cycles,
@@ -171,7 +173,13 @@ class Env:
         GlobalVar.clear_history()
         del out['core0']['time_core1']
         del out['core1']['time_core0']
-        out['diff_time_core0'] = np.abs(out['mutual']['time_core0'] - out['core0']['time_core0'])
-        out['diff_time_core1'] = np.abs(out['mutual']['time_core1'] - out['core1']['time_core1'])
-        out['diff_time'] = np.abs(out['mutual']['time_core1'] - out['mutual']['time_core0'])
+        out['mutual']['diff_time_core0'] = out['mutual']['time_core0'] - out['core0']['time_core0']
+        out['mutual']['diff_time_core1'] = out['mutual']['time_core1'] - out['core1']['time_core1']
+        out['mutual']['diff_time'] = out['mutual']['time_core1'] - out['mutual']['time_core0']
+        out['mutual']['miss_core0'] = out['mutual']['miss'] - out['core0']['miss']
+        out['mutual']['miss_core1'] = out['mutual']['miss'] - out['core1']['miss']
+        out['mutual']['L2_miss_core0'] = out['mutual']['L2_miss'] - out['core0']['L2_miss']
+        out['mutual']['L2_hit_core0'] = out['mutual']['L2_miss'] - out['core0']['L2_miss']
+        out['mutual']['L2_miss_core1'] = out['mutual']['L2_miss'] - out['core1']['L2_miss']
+        out['mutual']['L2_hit_core1'] = out['mutual']['L2_miss'] - out['core1']['L2_miss']
         return out
