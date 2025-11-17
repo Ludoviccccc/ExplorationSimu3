@@ -300,10 +300,3 @@ Prédiction : la mesure sera corrélée au temps d’exécution
 on peut pas trouver en random + intéressant à trouver sur la source matérielle + est-ce qu’on voudrait éviter d’exploiter ce phénomène
 
  
-Méthode 1 : méthode qui permet de 
-
-![Alt text](illustrations/diversity_bar_core0.png)
-![Alt text](illustrations/diversity_bar_core1.png)
-![Alt text](illustrations/time_k_2_s_1_11.png)
-![Alt text](illustrations/comparaison_iteration_ddr_miss_ratio.png)
-## Acceleration phenomena
