@@ -1,4 +1,27 @@
-# 
+# Use
+* create a folder i.e `new_folder` inside `trials`.
+* place a configuration file `config.json` as below:
+```
+{"N":10000,
+"N_init":1000,
+"periode":1,
+"k_values":[1,2,3],
+"s_values":[0],
+"num_mutations":5,
+"num_instructions":10,
+"min_address_core0":0,
+"max_address_core0":20,
+"min_address_core1":21,
+"max_address_core1":40,
+"num_addr":41,
+"max_cycle":400
+}
+```
+* place a script file i.e `script.sh` with commands `python3 ../../test.py config.json` and `python3 ../../results_visualisation.py config.json`
+* execute bash file by running `bash script.sh directly inside the new folder `trials/new_folder`
+```
+
+```
 
 # Presentation
 The shift from single-core to multi-core architectures is essential in safety-critical embedded systems in multiple domains such as aerospace and automotive, driven by both the need to enhance processor performance for increasingly demanding applications and adaptation to recent technology. However, this transition introduces new complexities, particularly hardware contention issues known as inter-core interferences.
