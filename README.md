@@ -1,7 +1,7 @@
 # Use
 * create a folder i.e `new_folder` inside `trials`.
 * place a configuration file `config.json` as below:
-```
+```json
 {"N":10000,
 "N_init":1000,
 "periode":1,
