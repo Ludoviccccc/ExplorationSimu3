@@ -387,7 +387,7 @@ class DDRMemoryController:
         best_req.time = self.cycle # Update request time to when it's issued to DDR
         best_req.completion_time = completion_time
         self.ddr.request(best_req) # DDR will now track its internal completion
-        #self.scheduled_ddr_requests.append({'request': best_req, 'bank': bank, 'row': row, 'status': row_status})
+        self.scheduled_ddr_requests.append({'request': best_req, 'bank': bank, 'row': row, 'status': row_status})
 
 
         GlobalVar.log_ddr_access(best_req.core_id, best_req.addr, best_req.req_type,
