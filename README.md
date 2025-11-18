@@ -1,6 +1,6 @@
 # Use
-* create a folder i.e `new_folder` inside `trials`.
-* place a configuration file `config.json` as below:
+* Create a folder e.g `trials/new_folder`.
+* Place inside a configuration file `config.json` as below:
 ```json
 {"N":10000,
 "N_init":1000,
@@ -17,11 +17,12 @@
 "max_cycle":400
 }
 ```
-* place a script file i.e `script.sh` with commands `python3 ../../test.py config.json` and `python3 ../../results_visualisation.py config.json`
-* execute bash file by running `bash script.sh directly inside the new folder `trials/new_folder`
+* Place a script file e.g `script.sh` as below:
+```python
+python3 ../../test.py config.json
+python3 ../../results_visualisation.py config.json
 ```
-
-```
+* execute `bash script.sh directly inside the new folder `trials/new_folder`
 
 # Presentation
 The purpose of the study is to developp a framework to automatically identify sources of interference on multi-core platforms:
