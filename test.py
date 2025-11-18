@@ -23,9 +23,9 @@ if __name__=="__main__":
     periode = config['periode']
     min_address_core0 = config['min_address_core0']
     max_address_core0 = config['max_address_core0']
-    min_address_core1 = config['min_address_core0']
-    max_address_core1 = config['max_address_core0']
-    num_instructions = config['num_instructions']
+    min_address_core1 = config['min_address_core1']
+    max_address_core1 = config['max_address_core1']
+    num_instructions  = config['num_instructions']
     num_addr = config['num_addr']
     num_addr = config['num_addr']
     folder = 'results'
@@ -48,7 +48,7 @@ if __name__=="__main__":
         for k in k_values:
             print('k',k)
             print('segment mixing method', segment_method)
-            E =Env(400,num_addr=num_addr)
+            E =Env(500,num_addr=num_addr)
             H = History(env=E,capacity=N)
             Pi = OP(num_mutations = num_mutations,
                     k=k,

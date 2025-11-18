@@ -29,7 +29,8 @@ if __name__=='__main__':
             name = f'{folder}/imgep_run_{k}_{N}_s_{s}'
             content_imgep = load(name)
             plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_s_{s}_plotly', show=False,title=f'diversity for time {excl} k={k},s={s}')
-
+            #plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'],f'{images}/ddr_miss_ratio_{k}_s_{s}',title='Miss ratio in ddr',num_bank=4,num_row=3)
+    #exit()
 
     plot_total_diversity(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}_s_{s}'),f'imgep k = {k},seg={s}') for k in k_list for s in s_list],name=f'{images}/diversity_comparaison')
 

@@ -24,10 +24,6 @@
 ```
 
 # Presentation
-The shift from single-core to multi-core architectures is essential in safety-critical embedded systems in multiple domains such as aerospace and automotive, driven by both the need to enhance processor performance for increasingly demanding applications and adaptation to recent technology. However, this transition introduces new complexities, particularly hardware contention issues known as inter-core interferences.
-
-The objective of this project is to apply automated exploration algorithms to the novel use case  of identification of inter-core interference sources in multi-core architectures. Indeed, undesirable phenomena such as temporal interference can occur due to concurrent access to shared resources (e.g. memory buses, caches etc …). Due to the hardware complexities, the conditions under which interference occurs, as well as their effects, can vary greatly and often seem random, making them very difficult to model and to predict. In other words, such architectures are complex systems. Thus we believe that our automated discovery algorithms can be very useful to characterize their behavior.
-
 The purpose of the study is to developp a framework to automatically identify sources of interference on multi-core platforms:
 
 * Identify all micro architectural mechanisms that can lead to the occurrence of an interference.
@@ -36,11 +32,7 @@ The purpose of the study is to developp a framework to automatically identify so
 In order to provide a proof of concept for applying automated discovery framework on the problem of interference identification, one choose to explore a simplified simulated model of mutli-core architectures.
 
 This will require finding sequences of code that generate a maximal diversity of interference mechanisms. The
-following curiosity-driven exploration method will be applied to identify hardware interference patterns. It relies
-on the construction of an autonomous AI agent that can learn to represent, generate, select, and solve its own
-problems to efficiently explore the vast outcome space of artificial or natural complex systems. These methods
-aim to address the knowledge gap between our ability to manipulate low-level inputs of complex systems and our
-ability to discover controllable properties. Moreover, these methods help deal with a limited experimental budget
+following curiosity-driven exploration method will be applied to identify hardware interference patterns. It relies on the construction of an autonomous AI agent that can learn to represent, generate, select, and solve its own problems to efficiently explore the vast outcome space of artificial or natural complex systems. These methods aim to address the knowledge gap between our ability to manipulate low-level inputs of complex systems and our on the construction of an autonomous AI agent that can learn to represent, generate, select, and solve its own
 
 ## What is an interference ?
 An interference is a phenomenon such that, for identical initial conditions, the execution time of an application S1

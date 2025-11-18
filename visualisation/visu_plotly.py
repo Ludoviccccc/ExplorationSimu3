@@ -17,7 +17,7 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
             f"Core1: imgep vs random", 
             "Core0 Time Difference",
             "Core1 Time Difference",
-            "Core0 vs Core1 Together"
+            #"Core0 vs Core1 Together"
         ),
         specs=[
             [{"secondary_y": False}, {"secondary_y": False}],
@@ -266,75 +266,75 @@ def plot_time_diversity_plotly(content_random, content_imgep=None, name=None, ti
     
     fig.update_xaxes(title_text='time[together] - time[alone]', row=2, col=2)
     
-    # Plot 5: Core0 vs Core1 together
-    bins_together = np.arange(0,400,5)
-    diversity_time_rand_together = diversity([content_random['memory_perf']['mutual']['time_core0'], content_random['memory_perf']['mutual']['time_core1']], [bins_together, bins_together])
-    diversity_time_imgep_together = diversity([content_imgep['memory_perf']['mutual']['time_core0'], content_imgep['memory_perf']['mutual']['time_core1']], [bins_together, bins_together])
-    
-    # Create hover text for together scatter plot
-    hover_imgep_together = [
-        f"<b>IMGEP - Sample {i}</b><br>"
-        f"Core0 Together: {content_imgep['memory_perf']['mutual']['time_core0'][i]:.2f}<br>"
-        f"Core1 Together: {content_imgep['memory_perf']['mutual']['time_core1'][i]:.2f}<br>"
-        f"Core0 Alone: {content_imgep['memory_perf']['core0']['time_core0'][i]:.2f}<br>"
-        f"Core1 Alone: {content_imgep['memory_perf']['core1']['time_core1'][i]:.2f}<br>"
-        f"code 0: {content_imgep['memory_program']['core0'][i]}<br>"
-        f"code 1: {content_imgep['memory_program']['core1'][i]}<br>"
-        f"<extra>IMGEP Together Data</extra>"
-        for i in range(len(content_imgep['memory_perf']['mutual']['time_core0']))
-    ]
-    
-    hover_random_together = [
-        f"<b>Random - Sample {i}</b><br>"
-        f"Core0 Together: {content_random['memory_perf']['mutual']['time_core0'][i]:.2f}<br>"
-        f"Core1 Together: {content_random['memory_perf']['mutual']['time_core1'][i]:.2f}<br>"
-        f"Core0 Alone: {content_random['memory_perf']['core0']['time_core0'][i]:.2f}<br>"
-        f"Core1 Alone: {content_random['memory_perf']['core1']['time_core1'][i]:.2f}<br>"
-        f"code 0: {content_random['memory_program']['core0'][i]}<br>"
-        f"code 1: {content_random['memory_program']['core1'][i]}<br>"
-        f"<extra>Random Together Data</extra>"
-        for i in range(len(content_random['memory_perf']['mutual']['time_core0']))
-    ]
-    
-    fig.add_trace(
-        go.Scatter(
-            x=content_imgep['memory_perf']['mutual']['time_core0'],
-            y=content_imgep['memory_perf']['mutual']['time_core1'],
-            mode='markers',
-            name='imgep',
-            opacity=0.5,
-            marker=dict(size=8),
-            hovertext=hover_imgep_together,
-            hoverinfo='text',
-            showlegend=False
-        ), row=3, col=1
-    )
-    
-    fig.add_trace(
-        go.Scatter(
-            x=content_random['memory_perf']['mutual']['time_core0'],
-            y=content_random['memory_perf']['mutual']['time_core1'],
-            mode='markers',
-            name='random',
-            opacity=0.5,
-            marker=dict(size=8),
-            hovertext=hover_random_together,
-            hoverinfo='text',
-            showlegend=False
-        ), row=3, col=1
-    )
-    
-    fig.update_xaxes(title_text='time_core0_together', row=3, col=1, gridcolor='lightgray', gridwidth=1)
-    fig.update_yaxes(title_text='time_core1_together', row=3, col=1, gridcolor='lightgray', gridwidth=1)
-    
+#    # Plot 5: Core0 vs Core1 together
+#    bins_together = np.arange(0,400,5)
+#    diversity_time_rand_together = diversity([content_random['memory_perf']['mutual']['time_core0'], content_random['memory_perf']['mutual']['time_core1']], [bins_together, bins_together])
+#    diversity_time_imgep_together = diversity([content_imgep['memory_perf']['mutual']['time_core0'], content_imgep['memory_perf']['mutual']['time_core1']], [bins_together, bins_together])
+#    
+#    # Create hover text for together scatter plot
+#    hover_imgep_together = [
+#        f"<b>IMGEP - Sample {i}</b><br>"
+#        f"Core0 Together: {content_imgep['memory_perf']['mutual']['time_core0'][i]:.2f}<br>"
+#        f"Core1 Together: {content_imgep['memory_perf']['mutual']['time_core1'][i]:.2f}<br>"
+#        f"Core0 Alone: {content_imgep['memory_perf']['core0']['time_core0'][i]:.2f}<br>"
+#        f"Core1 Alone: {content_imgep['memory_perf']['core1']['time_core1'][i]:.2f}<br>"
+#        f"code 0: {content_imgep['memory_program']['core0'][i]}<br>"
+#        f"code 1: {content_imgep['memory_program']['core1'][i]}<br>"
+#        f"<extra>IMGEP Together Data</extra>"
+#        for i in range(len(content_imgep['memory_perf']['mutual']['time_core0']))
+#    ]
+#    
+#    hover_random_together = [
+#        f"<b>Random - Sample {i}</b><br>"
+#        f"Core0 Together: {content_random['memory_perf']['mutual']['time_core0'][i]:.2f}<br>"
+#        f"Core1 Together: {content_random['memory_perf']['mutual']['time_core1'][i]:.2f}<br>"
+#        f"Core0 Alone: {content_random['memory_perf']['core0']['time_core0'][i]:.2f}<br>"
+#        f"Core1 Alone: {content_random['memory_perf']['core1']['time_core1'][i]:.2f}<br>"
+#        f"code 0: {content_random['memory_program']['core0'][i]}<br>"
+#        f"code 1: {content_random['memory_program']['core1'][i]}<br>"
+#        f"<extra>Random Together Data</extra>"
+#        for i in range(len(content_random['memory_perf']['mutual']['time_core0']))
+#    ]
+#    
+#    fig.add_trace(
+#        go.Scatter(
+#            x=content_imgep['memory_perf']['mutual']['time_core0'],
+#            y=content_imgep['memory_perf']['mutual']['time_core1'],
+#            mode='markers',
+#            name='imgep',
+#            opacity=0.5,
+#            marker=dict(size=8),
+#            hovertext=hover_imgep_together,
+#            hoverinfo='text',
+#            showlegend=False
+#        ), row=3, col=1
+#    )
+#    
+#    fig.add_trace(
+#        go.Scatter(
+#            x=content_random['memory_perf']['mutual']['time_core0'],
+#            y=content_random['memory_perf']['mutual']['time_core1'],
+#            mode='markers',
+#            name='random',
+#            opacity=0.5,
+#            marker=dict(size=8),
+#            hovertext=hover_random_together,
+#            hoverinfo='text',
+#            showlegend=False
+#        ), row=3, col=1
+#    )
+#    
+#    fig.update_xaxes(title_text='time_core0_together', row=3, col=1, gridcolor='lightgray', gridwidth=1)
+#    fig.update_yaxes(title_text='time_core1_together', row=3, col=1, gridcolor='lightgray', gridwidth=1)
+#    
     # Update subplot titles with diversity values
     fig.layout.annotations[0].update(text=f'imgep:{diversity_time_imgep_core0:.2f}, rand:{diversity_time_rand_core0:.2f}')
     fig.layout.annotations[1].update(text=f'imgep:{diversity_time_imgep_core1:.2f}, rand:{diversity_time_rand_core1:.2f}')
-    fig.layout.annotations[4].update(text=f'imgep:{diversity_time_imgep_together:.2f}, rand:{diversity_time_rand_together:.2f}')
+#    fig.layout.annotations[4].update(text=f'imgep:{diversity_time_imgep_together:.2f}, rand:{diversity_time_rand_together:.2f}')
     
     # Enhanced hover configuration
     fig.update_layout(
-        height=1200,
+        height=1000,
         width=1200,
         title_text=title if title else None,
         title_x=0.5,

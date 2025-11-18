@@ -145,7 +145,7 @@ class Experiment:
                 'miss':self.miss_tab,
                 'hits':self.hits_tab,
                 'L2_miss':self.cache_stats_core_0['L2']['misses'],
-                'L2_hit':self.cache_stats_core_0['L2']['hits'],
+                'L2_hit': self.cache_stats_core_0['L2']['hits'],
                 }
 class Env:
     def __init__(self,cycles,

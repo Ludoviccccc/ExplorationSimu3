@@ -44,6 +44,7 @@ class OptimizationPolicykNN(test_programs):
         if self.k>1:
             output = self.mix(output)
         output = self.light_code_mutation(output)
+        #self._test_program_addr(mutated0,mutated1) 
         return output
     def mix(self,programs:list[dict]):
         if not self.segment_method:
@@ -57,7 +58,9 @@ class OptimizationPolicykNN(test_programs):
         a = np.array([goal]).reshape(1,-1)#size (dim,N), N=1 individual
         max_ = elements['max']
         min_ = elements['min']
-        out = np.sum(((a - elements['features']))**2,axis=1)
+        denominator = max_ - min_
+        denominator[denominator==0]=1
+        out = np.sum(((a - elements['features'])/denominator)**2,axis=1)
         return out
     def feature2closest_code(self,features:dict,signature:np.ndarray)->np.ndarray:
         d = self.loss(signature,features)
