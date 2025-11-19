@@ -540,7 +540,11 @@ class CacheLevel:
         self.write_back = write_back
         self.write_allocate = write_allocate
         self.hits = 0
+        self.hits_read = 0
+        self.hits_write = 0
         self.misses = 0
+        self.misses_write = 0
+        self.misses_read = 0
         
         self.miss_tab = np.zeros((self.num_sets,assoc))
         self.hit_tab = np.zeros((self.num_sets,assoc))
@@ -582,6 +586,7 @@ class CacheLevel:
                 
                 # Count hits
                 self.hits += 1
+                self.hits_read+= 1
                 self.hit_tab[index,i] += 1
                 
                 # Update the pLRU tree to point away from the MRU
@@ -601,6 +606,7 @@ class CacheLevel:
         
         # Count misses
         self.misses += 1
+        self.misses_read +=1
         self.miss_tab[index,i] += 1
         
         # Choose victim line using PLRU and fetch from lower memory
@@ -659,6 +665,7 @@ class CacheLevel:
 
                 # Count hits
                 self.hits += 1
+                self.hits_write+= 1
 
                 # If the cache is write-back, the data will be written to
                 # memory when evicted, so it is marked "dirty"
@@ -683,6 +690,7 @@ class CacheLevel:
         
         # Count misses
         self.misses += 1
+        self.misses_write +=1
 
         if self.write_allocate:
             # Find the entry to be evicted.
@@ -725,6 +733,10 @@ class CacheLevel:
         return {
             'level': self.level,
             'hits': self.hits,
+            'hits_read': self.hits_read,
+            'hits_write': self.hits_write,
+            'misses_read': self.misses_read,
+            'misses_write': self.misses_write,
             'misses': self.misses,
             'miss_rate': self.misses / total if total else 0,
             'cache_miss_detailled':self.miss_tab,#number of miss at every locaation

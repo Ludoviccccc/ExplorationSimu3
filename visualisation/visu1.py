@@ -18,24 +18,23 @@ def cumulated_squared_distance_to_cloud(tab):
     print(time.time()-start)
     return sum_
 def bin_diversity(content):
-    sup = content.max(axis=0)>1.0
-    inf = content.max(axis=0)<=1.0
-    mul = 3.0*sup+100*inf
     div = 20*np.ones(content.shape[1])
-    coords = (mul*content)//div
+    coords = (content)//div
     c = np.unique(coords,axis=0)
     return c
 def diversity_for_comparaison_bin_method(args:list[np.ndarray],name=None,title=None):
     labels = []
     contents = []
     diversities = []
-    plt.figure(figsize=(20,10))
+    plt.figure()
+    step = 500
     for value in args:
         content = value[0]
         label = value[1]
         labels.append(label)
-        diversity = [0] + [len(bin_diversity(content['tabular_view'][:j])) for j in range(100,len(content['tabular_view']),100)]+ [len(bin_diversity(content['tabular_view']))]
-        plt.plot(range(0,len(content['tabular_view'])+1,100),diversity,'-o',label=label)
+        diversity = [0] + [len(bin_diversity(content['tabular_view'][:j])) for j in range(100,len(content['tabular_view']),step)]+ [len(bin_diversity(content['tabular_view']))]
+        plt.plot(range(0,len(content['tabular_view'])+step+1,step),diversity,'-o',label=label)
+    plt.grid()
     plt.ylabel('diversity:bins filled ',fontsize=19)
     plt.xlabel('iteration',fontsize=19)
     plt.legend( prop={'size': 19})

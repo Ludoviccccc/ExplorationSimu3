@@ -1,19 +1,11 @@
 import random
 import numpy as np
-
 import sys
 sys.path.append("../../")
 from exploration.imgep.mutation import mutate_instruction_sequence
 from exploration.history import History
 from exploration.imgep.mix import mix_sequences
-from exploration.imgep.mixxx import random_mix_sequences,segment_mix_sequences
 from exploration.test_addr import test_programs
-def subsequence(cycle,parameter:dict):
-    '''
-    returns the sequences of instructions up to the given cycle
-    '''
-    return {k:parameter[k] for k in parameter if k<=cycle}
-
 class OptimizationPolicykNN(test_programs):
     def __init__(self,
                 k=1,
@@ -47,12 +39,8 @@ class OptimizationPolicykNN(test_programs):
         #self._test_program_addr(mutated0,mutated1) 
         return output
     def mix(self,programs:list[dict]):
-        if not self.segment_method:
-            mix0 = mix_sequences(programs["core0"],max_cycle=self.max_cycle)
-            mix1 = mix_sequences(programs["core1"],max_cycle=self.max_cycle)
-        else:
-            mix0 = segment_mix_sequences(programs["core0"],max_cycle=self.max_cycle)
-            mix1 = segment_mix_sequences(programs["core1"],max_cycle=self.max_cycle)
+        mix0 = mix_sequences(programs["core0"],max_cycle=self.max_cycle)
+        mix1 = mix_sequences(programs["core1"],max_cycle=self.max_cycle)
         return {'core0':[mix0],'core1':[mix1]}
     def loss(self,goal:np.ndarray, elements:dict):
         a = np.array([goal]).reshape(1,-1)#size (dim,N), N=1 individual
