@@ -15,6 +15,12 @@ class History:
         self.env = env
         self.tab = []
         self.names = []
+        self.selection = ['miss_read_core0','miss_read_core1','hits_read_core0',
+                'hits_read_core1','miss_write_core0','miss_write_core1','hits_write_core0',
+                'hits_write_core1', 'diff_time_core0','diff_time_core1','diff_time']
+        self.selection +=[f'L2_{c}_{type_}_{core}' for c in ['miss','hit'] for type_ in ['write','read'] for core in ['core0','core1']]
+
+
     def as_tab(self):
         return np.array(self.tab)
     def __len__(self):
@@ -23,31 +29,16 @@ class History:
         self.memory_program["core0"].append(sample["program"]["core0"])
         self.memory_program["core1"].append(sample["program"]["core1"])
         observation_vec = []
+        fill_names = len(self.names)==0
         for key1 in self.memory_perf.keys():
             for key2 in sample[key1].keys():
-                if self.j==0:
-                    self.names.append(key1+'_'+key2)
                 value = np.array(sample[key1][key2]).reshape((-1))
-                if (key2 in [
-                            'miss_read_core0',
-                            'miss_read_core1',
-                            'hits_read_core0',
-                            'hits_read_core1',
-                            'miss_write_core0',
-                            'miss_write_core1',
-                            'hits_write_core0',
-                            'hits_write_core1',
-                            'diff_time_core0',
-                            'diff_time_core1',
-                            'diff_time',
-                            #'L2_hit_core0',
-                            #'L2_hit_core1',
-                            #'L2_miss_core0',
-                            #'L2_miss_core1'
-                            ]+[f'L2_{c}_{type_}_{core}' for c in ['miss','hit'] for type_ in ['write','read'] for core in ['core0','core1']]):
+                if key2 in self.selection:
                     observation_vec.append(value)
-                if self.j==0:
-                    self.names +=[key1+'_'+key2]*len(value)
+                if fill_names:
+                    #print('value',len(value))
+                    if key2 in self.selection:
+                        self.names +=[f'{key1}_{key2}'for j in range(len(value))]
                 if self.j==0:
                     try:
                         shape = sample[key1][key2].shape

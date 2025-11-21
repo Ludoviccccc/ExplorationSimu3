@@ -47,28 +47,6 @@ def diversity_for_comparaison_bin_method(args:list[np.ndarray],name=None,title=N
         plt.savefig(f'{name}_{k}.png')
     plt.show()
     return labels,diversities
-def histogram_diversity_for_comparaison_bin_method(args:list[np.ndarray],name=None,title=None):
-    labels = []
-    contents = []
-    diversities = []
-    plt.figure(figsize=(15,10))
-    for value in args:
-        content = value[0]
-        label = value[1]
-        labels.append(label)
-        diversity_ = len(bin_diversity(content)) 
-        plt.bar([label],[diversity_])
-        diversities.append(diversity_)
-        contents.append(content)
-    if title:
-        plt.title(title)
-    plt.show()
-    if name:
-        k = 0
-        while os.path.isfile(f'{name}_{k}.png'):
-            k+=1
-        plt.savefig(f'{name}_{k}.png')
-    return labels,diversities
 def polytope_to_cloud(tab):
     '''
     returns sum of pair wise squared distances

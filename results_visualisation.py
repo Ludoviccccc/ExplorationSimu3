@@ -8,7 +8,7 @@ from exploration.history import History
 from visualisation.visu import plot_ddr_miss_ratio_diversity,hist_diversity_misses
 from visualisation.visu_plotly import plot_time_diversity_plotly
 from exploration.load_file import load
-from visualisation.visu_total_div import plot_total_diversity
+from visualisation.visu_total_div import plot_total_diversity, plot_diversity_hist_and_sum, diversity_for_comparaison_bin_method_time
 from visualisation.visu1 import diversity_for_comparaison_bin_method
 import os
 import json
@@ -30,8 +30,10 @@ if __name__=='__main__':
         plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_plotly', show=False,title=f'diversity for time {excl} k={k}')
         plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'],f'{images}/ddr_miss_ratio_{k}',title='Miss ratio in ddr',num_bank=4,num_row=3)
 
-    plot_total_diversity(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
-    diversity_for_comparaison_bin_method([(content_rand,'random')]+[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison_histogram',title='Entire space Diversity IMGEP vs RANDOM')
+    
+    plot_diversity_hist_and_sum(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
+    #diversity_for_comparaison_bin_method([(content_rand,'random')]+[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison_histogram',title='Entire space Diversity IMGEP vs RANDOM')
+    diversity_for_comparaison_bin_method_time([(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list]+[(content_rand,'random')],name=f'{images}/diversity_comparaison_histogram_seperate')
 
     hist_diversity_misses(content_rand['memory_perf'],
         [load(f'{folder}/imgep_run_{k}_{N}')['memory_perf'] for k in k_list],
@@ -41,3 +43,4 @@ if __name__=='__main__':
         labels=[f'k={k}' for k in k_list]
     )
 
+    #plot_total_diversity(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
