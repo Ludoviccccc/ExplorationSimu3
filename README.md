@@ -1,4 +1,8 @@
 # Use
+* requirements: 
+```
+pip install -r requirements.txt
+```
 * Create a folder e.g `trials/new_folder`.
 * Place inside a configuration file `config.json` as below:
 ```json
