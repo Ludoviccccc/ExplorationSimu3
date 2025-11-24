@@ -68,7 +68,7 @@ def diversity_for_comparaison_bin_method_time(args:list[np.ndarray],name=None):
     ax2.set_xlabel('iteration',fontsize=19)
     ax2.legend( prop={'size': 19})
     ax1.set_title('time space diversity',fontsize=19)
-    ax2.set_title('miss and hit time space diversity',fontsize=19)
+    ax2.set_title('miss and hit space diversity',fontsize=19)
     if name:
         k = 0
         while os.path.isfile(f'{name}_{k}.png'):
