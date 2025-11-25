@@ -32,7 +32,6 @@ if __name__=='__main__':
 
     
     plot_diversity_hist_and_sum(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
-    #diversity_for_comparaison_bin_method([(content_rand,'random')]+[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison_histogram',title='Entire space Diversity IMGEP vs RANDOM')
     diversity_for_comparaison_bin_method_time([(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list]+[(content_rand,'random')],name=f'{images}/diversity_comparaison_histogram_seperate')
 
     hist_diversity_misses(content_rand['memory_perf'],

@@ -15,6 +15,7 @@ import json
 if __name__=="__main__":
     with open(sys.argv[1],"rb") as f:
         config = json.load(f)
+    num_run = config['num_run']
     N = config['N']
     N_init = config['N_init']
     k_values = config['k_values']
@@ -29,38 +30,39 @@ if __name__=="__main__":
     num_addr = config['num_addr']
     folder = 'results'
     os.system(f'mkdir {folder}')
-    E =Env(400,num_addr=num_addr)
-    H_rand = History(env=E,capacity=N)
-    random = RANDOM(N,
-                    E,
-                    H_rand,
-                    min_address_core0,
-                    max_address_core0,
-                    min_address_core1,
-                    max_address_core1,
-                    num_instructions)
-    random()
-    H_rand.save_pickle(f'{folder}/rand_run_{N}')
-    name = f'{folder}/rand_run_{N}'
-    content_rand = load(name)
-    for k in k_values:
-        print('k',k)
+    for _ in range(num_run):
         E =Env(500,num_addr=num_addr)
-        H = History(env=E,capacity=N)
-        Pi = OP(num_mutations = num_mutations,
-                k=k,
-                min_address_core0=min_address_core0,
-                max_address_core0=max_address_core0,
-                min_address_core1=min_address_core1,
-                max_address_core1=max_address_core1,
-                num_instructions=num_instructions)
-        goal_generator = G()
-        imgep = IMGEP(N,N_init,E,H,goal_generator,Pi, periode = periode,
-                      min_address_core0=min_address_core0,
-                      max_address_core0=max_address_core0,
-                      min_address_core1=min_address_core1,
-                      max_address_core1=max_address_core1,
-                      num_instructions=num_instructions)
-        imgep.take(content_rand,N_init)
-        imgep()
-        H.save_pickle(f'{folder}/imgep_run_{k}_{N}')
+        H_rand = History(env=E,capacity=N)
+        random = RANDOM(N,
+                        E,
+                        H_rand,
+                        min_address_core0,
+                        max_address_core0,
+                        min_address_core1,
+                        max_address_core1,
+                        num_instructions)
+        random()
+        H_rand.save_pickle(f'{folder}/rand_run_{N}')
+        name = f'{folder}/rand_run_{N}'
+        content_rand = load(name)
+        for k in k_values:
+            print('k',k)
+            E =Env(500,num_addr=num_addr)
+            H = History(env=E,capacity=N)
+            Pi = OP(num_mutations = num_mutations,
+                    k=k,
+                    min_address_core0=min_address_core0,
+                    max_address_core0=max_address_core0,
+                    min_address_core1=min_address_core1,
+                    max_address_core1=max_address_core1,
+                    num_instructions=num_instructions)
+            goal_generator = G()
+            imgep = IMGEP(N,N_init,E,H,goal_generator,Pi, periode = periode,
+                          min_address_core0=min_address_core0,
+                          max_address_core0=max_address_core0,
+                          min_address_core1=min_address_core1,
+                          max_address_core1=max_address_core1,
+                          num_instructions=num_instructions)
+            imgep.take(content_rand,N_init)
+            imgep()
+            H.save_pickle(f'{folder}/imgep_run_{k}_{N}')
