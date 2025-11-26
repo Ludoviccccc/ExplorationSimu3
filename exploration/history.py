@@ -15,9 +15,9 @@ class History:
         self.env = env
         self.tab = []
         self.names = []
-        self.selection = ['miss_read_core0','miss_read_core1','hits_read_core0',
-                'hits_read_core1','miss_write_core0','miss_write_core1','hits_write_core0',
-                'hits_write_core1', 'diff_time_core0','diff_time_core1','diff_time']
+        self.selection = ['miss_core0','miss_core1','hits_core0',
+                'hits_core1','miss_core0','miss_core1','hits_core0',
+                 'diff_time_core0','diff_time_core1','diff_time']
         self.selection +=[f'L2_{c}_{type_}_{core}' for c in ['miss','hit'] for type_ in ['write','read'] for core in ['core0','core1']]
 
 
