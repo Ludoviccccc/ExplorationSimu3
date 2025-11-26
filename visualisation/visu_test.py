@@ -36,14 +36,14 @@ def compute_total_diversity(content_rand_name,content_name,m=2,name='diversity_c
                 diversities[l,f,j] = np.sum([np.sum(o[:n-i]) for i,o in  enumerate(distances[:n])])
     diversities_imgep_var = np.var(diversities,axis=0)
     diversities_imgep_mean = np.mean(diversities,axis=0)
-    print(diversities_imgep_var)
-    print(diversities_imgep_mean)
+    #print(diversities_imgep_var)
+    #print(diversities_imgep_mean)
     
 
     output = {'imgep':{'mean':diversities_imgep_mean,'var':diversities_imgep_var},
             'random':{'mean':diversities_rand_mean,'var':diversities_rand_var},
             't_crit_interval':t_crit_interval}      
-    with open('stats_plots','wb') as f:
+    with open(os.path.join('results','stats_plots.pkl'),'wb') as f:
         pickle.dump(output,f)
     
 #    for f,vec in enumerate(content_name):
