@@ -314,3 +314,141 @@ def diversity_time_iteration2(list_,title=None, folder="images"):
         plt.savefig(f"{folder}/{title}")
     plt.show()
     plt.close()
+def hist_diversity_misses_seperate(content_random, contents:list, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,labels=[f'k={j}' for j in range(1,4)]):
+    A_core0_rand_write = []
+    B_core0_rand_write = []
+    A_core1_rand_write = []
+    B_core1_rand_write = []
+    A_core0_rand_read = []
+    B_core0_rand_read = []
+    A_core1_rand_read = []
+    B_core1_rand_read = []
+    A_core0_imgep_read = [[] for j in range(len(contents))]
+    A_core1_imgep_read = [[] for j in range(len(contents))]
+    A_core0_imgep_write = [[] for j in range(len(contents))]
+    A_core1_imgep_write = [[] for j in range(len(contents))]
+    bins = np.arange(-1.0,1.0,0.05)
+    for j in range(num_bank):
+        for row in range(num_row):
+            diversity_ratio_random0_read = diversity([content_random['mutual']['miss_ratios_detailled_read'][:,row,j],  content_random['core0']['miss_ratios_detailled_read'][:,row,j]], [bins, bins])
+            diversity_ratio_random0_write = diversity([content_random['mutual']['miss_ratios_detailled_write'][:,row,j],  content_random['core0']['miss_ratios_detailled_write'][:,row,j]], [bins, bins])
+
+            A_core0_rand_write.append(diversity_ratio_random0_write)
+            B_core0_rand_write.append(f'b{j},r{row}')
+            A_core0_rand_read.append(diversity_ratio_random0_read)
+            B_core0_rand_read.append(f'b{j},r{row}')
+
+            diversity_ratio_random1_write = diversity([content_random['mutual']['miss_ratios_detailled_write'][:,row,j],  content_random['core1']['miss_ratios_detailled_write'][:,row,j]], [bins, bins])
+            diversity_ratio_random1_read = diversity([content_random['mutual']['miss_ratios_detailled_read'][:,row,j],  content_random['core1']['miss_ratios_detailled_read'][:,row,j]], [bins, bins])
+            A_core1_rand_write.append(diversity_ratio_random1_write)
+            B_core1_rand_write.append(f'b{j},r{row}')
+            A_core1_rand_read.append(diversity_ratio_random1_read)
+            B_core1_rand_read.append(f'b{j},r{row}')
+            for j_c,content_imgep in enumerate(contents):
+                diversity_ratio_imgep0_write = diversity([content_imgep['mutual']['miss_ratios_detailled_write'][:,row,j],  content_imgep['core0']['miss_ratios_detailled_write'][:,row,j]], [bins, bins])
+                diversity_ratio_imgep0_read = diversity([content_imgep['mutual']['miss_ratios_detailled_read'][:,row,j],  content_imgep['core0']['miss_ratios_detailled_read'][:,row,j]], [bins, bins])
+                A_core0_imgep_write[j_c].append(diversity_ratio_imgep0_write)
+                A_core0_imgep_read[j_c].append(diversity_ratio_imgep0_read)
+
+                diversity_ratio_imgep1_write = diversity([content_imgep['mutual']['miss_ratios_detailled_write'][:,row,j],  content_imgep['core1']['miss_ratios_detailled_write'][:,row,j]], [bins, bins])
+                diversity_ratio_imgep1_read = diversity([content_imgep['mutual']['miss_ratios_detailled_read'][:,row,j],  content_imgep['core1']['miss_ratios_detailled_read'][:,row,j]], [bins, bins])
+                A_core1_imgep_write[j_c].append(diversity_ratio_imgep1_write)
+                A_core1_imgep_read[j_c].append(diversity_ratio_imgep1_read)
+
+    fig = make_subplots(
+    rows=2, cols=2,
+    subplot_titles=('Core 0', 'Core 1'),
+    horizontal_spacing=0.1
+    )
+    
+    # Core 0 data
+    for j in range(len(contents)):
+        fig.add_trace(go.Bar(
+            x=B_core0_rand_write,
+            y=A_core0_imgep_write[j],
+            name=labels[j],
+            marker_color=px.colors.qualitative.Plotly[j],
+            #showlegend=(j==0)  # Only show legend for first trace to avoid duplicates
+        ), row=1, col=1)
+        fig.add_trace(go.Bar(
+            x=B_core0_rand_read,
+            y=A_core0_imgep_read[j],
+            #name=labels[j]+'read',
+            name=None,
+            marker_color=px.colors.qualitative.Plotly[j],
+            #showlegend=(j==0)  # Only show legend for first trace to avoid duplicates
+        ), row=2, col=1)
+    
+    fig.add_trace(go.Bar(
+        x=B_core0_rand_write,
+        y=A_core0_rand_write,
+        name='random',
+        marker_color='lightgray',
+        showlegend=True
+    ), row=1, col=1)
+
+    fig.add_trace(go.Bar(
+        x=B_core0_rand_read,
+        y=A_core0_rand_read,
+        #name='random'+'read',
+        name=None,
+        marker_color='lightgray',
+        showlegend=True
+    ), row=2, col=1)
+    
+    # Core 1 data
+    for j in range(len(contents)):
+        fig.add_trace(go.Bar(
+            x=B_core1_rand_write,
+            y=A_core1_imgep_write[j],
+            name=labels[j],
+            marker_color=px.colors.qualitative.Plotly[j],
+            showlegend=False  # Don't show duplicate legends
+        ), row=1, col=2)
+    
+        fig.add_trace(go.Bar(
+            x=B_core1_rand_read,
+            y=A_core1_imgep_read[j],
+            name=labels[j],
+            marker_color=px.colors.qualitative.Plotly[j],
+            showlegend=False  # Don't show duplicate legends
+        ), row=2, col=2)
+    fig.add_trace(go.Bar(
+        x=B_core1_rand_write,
+        y=A_core1_rand_write,
+        #name='random'+'write',
+        name=None,
+        marker_color='lightgray',
+        showlegend=False
+    ), row=1, col=2)
+    
+    fig.add_trace(go.Bar(
+        x=B_core1_rand_read,
+        y=A_core1_rand_read,
+        name='random',
+        marker_color='lightgray',
+        showlegend=False
+    ), row=2, col=2)
+
+    fig.update_layout(
+        title_text=title if title else 'Diversity Comparison',
+        width=2000,
+        height=500,
+        showlegend=True,
+        template='plotly_white',
+        bargap=0.1
+    )
+    
+    fig.update_xaxes(title_text='core 0, bank b, row r', row=1, col=1)
+    fig.update_xaxes(title_text='core 1, bank b, row r', row=1, col=2)
+    fig.update_xaxes(title_text='core 0, bank b, row r', row=2, col=1)
+    fig.update_xaxes(title_text='core 1, bank b, row r', row=2, col=2)
+    fig.update_yaxes(title_text='diversity read instr.', row=1, col=1)
+    fig.update_yaxes(title_text='diversity read instr.', row=1, col=2)
+    fig.update_yaxes(title_text='diversity write instr.', row=2, col=1)
+    fig.update_yaxes(title_text='diversity write instr.', row=2, col=2)
+    
+    fig.show()
+    
+    # Save the combined figure
+    fig.write_image(name+'_both_cores_type.png')

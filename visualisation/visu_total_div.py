@@ -104,14 +104,14 @@ def plot_diversity_hist_and_sum(content_rand,content_list,name='diversity_compar
         #plot sum diversity for imgep
         ax1.plot(np.arange(0,N+1,1000)[start:],diversities_sum[f][start:],'-o',label=label)#+f'value = {round(diversities_sum[f][-1]/1e11,1)}1e11')
         #hist diversity for imgep
-        diversity = [len(bin_diversity(content_imgep['tabular_view'][:j])) for j in range(100,len(content_imgep['tabular_view']),step)]+ [len(bin_diversity(content_imgep['tabular_view']))]
+        diversity = [0]+ [len(bin_diversity(content_imgep['tabular_view'][:j])) for j in range(0,len(content_imgep['tabular_view']),step) if j!=0]+ [len(bin_diversity(content_imgep['tabular_view']))]
         #plot hist diversity for imgep
-        ax2.plot(range(100,len(content_imgep['tabular_view'])+step+1,step),diversity,'-o',label=label)
+        ax2.plot(range(0,len(content_imgep['tabular_view'])+1,step),diversity,'-o',label=label)
     # plot sum diversity for random
     ax1.plot(np.arange(0,N+1,1000)[start:],diversities_sum_rand[start:],'-o',label=f'random')# value = {round(diversities_sum_rand[-1]/1e11,1)}1e11',alpha=.3)
     diversity = [len(bin_diversity(content_rand['tabular_view'][:j])) for j in range(100,len(content_rand['tabular_view']),step)]+ [len(bin_diversity(content_rand['tabular_view']))]
     # plot hist diversity for random
-    ax2.plot(range(100,len(content_rand['tabular_view'])+step+1,step),diversity,'-o',label=label)
+    ax2.plot(range(0,len(content_rand['tabular_view'])+1,step),diversity,'-o',label=label)
     ax1.grid()
     ax2.grid()
     ax1.set_title('Entire space Diversity', fontsize=19)
@@ -120,7 +120,6 @@ def plot_diversity_hist_and_sum(content_rand,content_list,name='diversity_compar
     ax2.set_ylabel('number of bins filled', fontsize=12)
     ax1.set_xlabel('iterations', fontsize=19)
     ax2.set_xlabel('iterations', fontsize=19)
-    #ax1.set_xticks(range(0,10001,1000)[start:])
     ax1.legend(prop={'size': 19})
     plt.savefig(name)
     plt.show()
