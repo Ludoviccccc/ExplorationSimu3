@@ -42,7 +42,9 @@ def compute_total_diversity(content_rand_name,content_name,m=2,name='diversity_c
 
     output = {'imgep':{'mean':diversities_imgep_mean,'var':diversities_imgep_var},
             'random':{'mean':diversities_rand_mean,'var':diversities_rand_var},
-            't_crit_interval':t_crit_interval}      
+            't_crit_interval':t_crit_interval,
+            'm':m,
+            'N':N}
     with open(os.path.join('results','stats_plots.pkl'),'wb') as f:
         pickle.dump(output,f)
     

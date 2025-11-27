@@ -18,5 +18,4 @@ if __name__=='__main__':
     excl = 'imgep raw data'
 
     name = f'{folder}/rand_run_{N}'
-    content_rand = load(name)
     compute_total_diversity(name,[(f'{folder}/imgep_run_{k}_{N}',f'imgep k = {k}') for k in k_list],m=m,name='diversity_comparaison')
