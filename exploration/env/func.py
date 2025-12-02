@@ -107,16 +107,6 @@ class Experiment:
     def reorder(self):
         hits = np.zeros(self.num_banks)
         miss = np.zeros(self.num_banks)
-        #self.hits_tab = np.zeros((self.num_rows,self.num_banks))
-        #self.miss_tab = np.zeros((self.num_rows,self.num_banks))
-        #if 'row' in self.ddr_stats:
-        #    for j in range(len(self.ddr_stats['row'])):
-        #        if self.ddr_stats['status'][j]=='ROW MISS':
-        #            miss[self.ddr_stats['bank'][j]] +=1
-        #            self.miss_tab[self.ddr_stats['row'][j],self.ddr_stats['bank'][j]] +=1
-        #        else:
-        #            hits[self.ddr_stats['bank']] +=1
-        #            self.hits_tab[self.ddr_stats['row'][j],self.ddr_stats['bank'][j]] +=1
         type2id = lambda type_:0 if type_=='read' else 1
         self.hits_tab = np.zeros((2,self.num_rows,self.num_banks))
         self.miss_tab = np.zeros((2,self.num_rows,self.num_banks))
@@ -181,6 +171,7 @@ class Experiment:
                 'L2_miss_read':self.cache_stats_core_0['L2']['misses_read'],
                 'L2_hit_write':self.cache_stats_core_0['L2']['hits_write'],
                 'L2_hit_read':self.cache_stats_core_0['L2']['hits_read'],
+                'shared_ressource_events':GlobalVar.shared_resource_events,
                 }
 class Env:
     def __init__(self,cycles,
