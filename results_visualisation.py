@@ -10,7 +10,8 @@ from visualisation.visu_plotly import plot_time_diversity_plotly
 from exploration.load_file import load
 from visualisation.visu_total_div import plot_total_diversity, plot_diversity_hist_and_sum, diversity_for_comparaison_bin_method_time
 from visualisation.visu1 import diversity_for_comparaison_bin_method
-from visualisation.plot_for_analysis import diagnostic_plots
+from visualisation.plot_for_inference import diagnostic_plot
+from visualisation.visu_time import scatter_vs_miss
 import os
 import json
 if __name__=='__main__':
@@ -33,6 +34,8 @@ if __name__=='__main__':
 
      
     plot_diversity_hist_and_sum(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
+    diagnostic_plot(name,[(f'{folder}/imgep_run_{k}_{N}',f'imgep k = {k}') for k in k_list])
+
     diversity_for_comparaison_bin_method_time([(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list]+[(content_rand,'random')],name=f'{images}/diversity_comparaison_histogram_seperate')
 
     hist_diversity_misses(content_rand['memory_perf'],
@@ -50,4 +53,6 @@ if __name__=='__main__':
         labels=[f'k={k}' for k in k_list]
     )
 
-    #plot_total_diversity(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
+    plot_total_diversity(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
+
+    scatter_vs_miss([(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list]+[(content_rand,'random')],name,title=None, folder="images")

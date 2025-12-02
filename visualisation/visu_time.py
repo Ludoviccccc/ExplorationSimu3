@@ -59,3 +59,29 @@ def diversity_miss_iteration(list_,name,title=None, folder="images"):
         plt.savefig(f"{folder}/{name}")
     plt.show()
     plt.close()
+def scatter_vs_miss(list_,name,title=None, folder="images"):
+    plt.figure(figsize=(15,10))
+    for j,arg in enumerate(list_):
+        content,label = arg[0],arg[1]
+        fig,(ax0,ax1) = plt.subplots(1,2,sharex=True,figsize=(12,5))
+        x = content['memory_perf']['mutual']['diff_time_core0']
+        y = content['memory_perf']['mutual']['diff_time_core1']
+        z_0 = content['memory_perf']['mutual']['L2_miss_core0']
+        z_0= (z_0 - z_0.min())/(z_0.max()-z_0.min())
+        z_1 = content['memory_perf']['mutual']['L2_miss_core1']
+        z_1= (z_1 - z_1.min())/(z_1.max()-z_1.min())
+        cm = plt.cm.get_cmap('plasma')
+        sc0 = ax0.scatter(x,y,c = z_0,label=label,cmap=cm)
+        sc1 = ax1.scatter(x,y,c = z_1,label=label,cmap=cm)
+        plt.xlabel("iteration",fontsize=19)
+        plt.colorbar(sc0, ax=ax0)
+        plt.colorbar(sc1, ax=ax1)
+        ax0.set_xlabel("time[mutual] - time[iso], core 0",fontsize=19)
+        ax0.set_ylabel("time[mutual] - time[iso], core 0",fontsize=19)
+        ax1.set_xlabel("time[mutual] - time[iso], core 1",fontsize=19)
+        ax1.set_ylabel("time[mutual] - time[iso], core 1",fontsize=19)
+        plt.suptitle("delay vs nb L2 misses",fontsize=19)
+        plt.legend(prop={'size': 19})
+        plt.savefig(f"{folder}/delay_vs_L2_{j}")
+        plt.show()
+        plt.close()
