@@ -3,6 +3,7 @@ sys.path.append('../')
 sys.path.append('../../')
 from exploration.env.func import Env
 from exploration.random.func import RANDOM
+from exploration.random2.func import OPERATORS
 from exploration.history import History
 from exploration.imgep.OptimizationPolicy import OptimizationPolicykNN as OP
 from exploration.imgep.goal_generator import GoalGenerator as G
@@ -25,6 +26,7 @@ if __name__=="__main__":
     max_address_core0 = config['max_address_core0']
     min_address_core1 = config['min_address_core1']
     max_address_core1 = config['max_address_core1']
+    num_parts = config['num_parts']
     num_instructions  = config['num_instructions']
     num_addr = config['num_addr']
     num_addr = config['num_addr']
@@ -55,6 +57,7 @@ if __name__=="__main__":
                     max_address_core0=max_address_core0,
                     min_address_core1=min_address_core1,
                     max_address_core1=max_address_core1,
+                    num_parts = num_parts,
                     num_instructions=num_instructions)
             goal_generator = G()
             imgep = IMGEP(N,N_init,E,H,goal_generator,Pi, periode = periode,
@@ -66,3 +69,21 @@ if __name__=="__main__":
             imgep.take(content_rand,N_init)
             imgep()
             H.save_pickle(f'{folder}/imgep_run_{k}_{N}')
+
+            E =Env(500,num_addr=num_addr)
+            H_operators = History(env=E,capacity=N)
+            operators = OPERATORS(N,
+                            N_init,
+                            k,
+                            num_parts,
+                            num_mutations,
+                            E,
+                            H_operators,
+                            min_address_core0,
+                            max_address_core0,
+                            min_address_core1,
+                            max_address_core1,
+                            num_instructions)
+            operators.take(content_rand,N_init)
+            operators()
+            H_operators.save_pickle(f'{folder}/operators_run_{k}_{N}')
