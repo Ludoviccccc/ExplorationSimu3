@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
+import pandas as pd
 def diversity(data:[np.ndarray,np.ndarray],bins:[np.ndarray, np.ndarray]):
     H,_,_ = np.histogram2d(data[0],data[1],bins)
     divers = np.sum(H>0)
@@ -37,6 +38,14 @@ def hist_diversity_misses(content_random, contents:list, name = None, title = No
     subplot_titles=('Core 0', 'Core 1'),
     horizontal_spacing=0.1
     )
+    data_hist_misses = pd.DataFrame([])
+    data_hist_misses['random_core0'] = A_core0_rand
+    data_hist_misses['random_core1'] = A_core1_rand
+    for j in range(len(labels)):
+        data_hist_misses[['k1','k2','k3'][j]+"core0"] = A_core0_imgep[j]
+        data_hist_misses[['k1','k2','k3'][j]+"core1"] = A_core1_imgep[j]
+    data_hist_misses["idx"] = B_core0_rand
+    data_hist_misses.to_csv("data_hist_misses.csv",header = True)
     
     # Core 0 data
     for j in range(len(contents)):
@@ -80,7 +89,12 @@ def hist_diversity_misses(content_random, contents:list, name = None, title = No
         height=500,
         showlegend=True,
         template='plotly_white',
-        bargap=0.1
+        bargap=0.1,
+        font=dict(
+        #family="Courier New, monospace",
+        size=24,
+        color="Black"
+    )
     )
     
     fig.update_xaxes(title_text='core 0, bank b, row r', row=1, col=1)
@@ -92,6 +106,7 @@ def hist_diversity_misses(content_random, contents:list, name = None, title = No
     
     # Save the combined figure
     fig.write_image(name+'_both_cores.png')
+    fig.write_image(name+'_both_cores.pdf')
 def plot_ddr_miss_ratio_diversity(content_random:dict, content_imgep:dict = None, name = None, title = None,label_algo = 'imgep',num_bank=4,num_row = 2,show=False):
     fig, axs = plt.subplots(num_row*num_bank,4, figsize = (28,80), layout='constrained')
     fontsize = 22
