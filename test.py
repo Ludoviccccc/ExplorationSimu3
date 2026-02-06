@@ -12,6 +12,7 @@ from exploration.load_file import load
 import pickle
 import os
 import json
+import time
 
 if __name__=="__main__":
     with open(sys.argv[1],"rb") as f:
@@ -32,6 +33,7 @@ if __name__=="__main__":
     num_addr = config['num_addr']
     folder = 'results'
     os.system(f'mkdir {folder}')
+    start_time = time.time()
     for _ in range(num_run):
         E =Env(500,num_addr=num_addr)
         H_rand = History(env=E,capacity=N)
@@ -87,3 +89,4 @@ if __name__=="__main__":
             operators.take(content_rand,N_init)
             operators()
             H_operators.save_pickle(f'{folder}/operators_run_{k}_{N}')
+    print('Total time:',(time.time() - start_time)//3600,'H',((time.time()-start_time)%3600)//60,'m',f"{(time.time()-start_time)%3600%60:.2f}",'s')

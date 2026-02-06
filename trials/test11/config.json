@@ -1,0 +1,15 @@
+{"N":10000,
+ "num_run":1,
+"N_init":1000,
+"periode":1,
+"k_values":[1,2,3],
+"num_mutations":5,
+"num_instructions":10,
+"min_address_core0":0,
+"max_address_core0":20,
+"min_address_core1":21,
+"max_address_core1":40,
+"num_parts":2,
+"num_addr":41,
+"max_cycle":400
+}
