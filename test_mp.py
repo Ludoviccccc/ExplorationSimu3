@@ -28,7 +28,8 @@ def make_explorations(a):
     random()
     H_rand.save_pickle(f'{folder}/rand_run_{N}')
     name = f'{folder}/rand_run_{N}'
-    content_rand = load(name)
+    #content_rand = load(name)
+    content_rand = H_rand.content()
     for k in k_values:
         print('k',k)
         E =Env(500,num_addr=num_addr)
@@ -69,9 +70,10 @@ def make_explorations(a):
         operators.take(content_rand,N_init)
         operators()
         H_operators.save_pickle(f'{folder}/operators_run_{k}_{N}')
+    del content_rand
     
 if __name__=="__main__":
-    n_func = 8
+    n_func = 12
     with open(sys.argv[1],"rb") as f:
         config = json.load(f)
     num_run = config['num_run']
@@ -92,7 +94,7 @@ if __name__=="__main__":
     os.system(f'mkdir {folder}')
     start_time = time.time()
     for j in range(1+(num_run//n_func)):
-        with Pool(12) as p:
+        with Pool(16) as p:
             if j==num_run//n_func:
                 p.map(make_explorations,range(num_run%n_func))
             else:
