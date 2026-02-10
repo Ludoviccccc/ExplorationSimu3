@@ -25,27 +25,30 @@ def Sn(diversity_array:np.ndarray):
     """
     computes the sigma estimator of the diversity values
     """
-    out = np.sqrt(np.sum(diversity_array - diversity_array.mean(axis=0),axis=0)**2/(diversity_array.shape[0]-1))
+    out = np.sqrt(np.sum((diversity_array - diversity_array.mean(axis=0))**2,axis=0)/(diversity_array.shape[0]-1))
     return out
 def CI(diversity_array,alpha=.05):
     n = diversity_array.shape[0]
+    print('n',n)
     qt = stdtrit(n-1,1-alpha)
+    print('qt', qt)
     sig = Sn(diversity_array)
+    print('sig',sig)
+    #exit()
     inf = diversity_array.mean(axis=0) - qt*sig*(1.0/np.sqrt(n))
     sup = diversity_array.mean(axis=0) + qt*sig*(1.0/np.sqrt(n))
     return inf,sup
 
 if __name__=='__main__':
-    with open(sys.argv[1],"rb") as f:
-        config = json.load(f)
-    N = config['N']
-    k_values = config['k_values']
-    N_init = config['N_init']
+    N = 10000
+    k_values = [1]
+    N_init = 1000
     folder = 'results' 
     algo = ['imgep_run_1']+['operators_run_1']+['rand_run']
     N = 10000
-    id_ = 0
-    j_list = range(19)
+    id_ = 2
+    M = 10
+    j_list = range(M)
     content_imgep_list = []
     for j in j_list:
         with open(os.path.join('results',f'{algo[id_]}_{N}_{j}.pkl'),'rb') as f:
@@ -58,7 +61,7 @@ if __name__=='__main__':
 
     ll = np.arange(0,N+1,1000)
     print("ll",len(ll))
-    for j in range(19):
+    for j in range(M):
         plt.plot(ll,diversity_list[j])
     plt.xlabel('iterations')
     plt.ylabel('diversity')
@@ -89,9 +92,9 @@ if __name__=='__main__':
     #    #plt.fill_between(x, (y-ci), (y+ci), color='b', alpha=.1)
     #plt.plot(np.arange(0,N+1,1000)[start:],diversities_rand_mean[start:],'-o',label=f'random')
     #plt.grid()
-    #plt.title('Entire space Diversity IMGEP vs RANDOM', fontsize=19)
+    #plt.title('Entire space Diversity IMGEP vs RANDOM', fontsize=M)
     #plt.ylabel('sum of squares of distances between all pairs', fontsize=12)
-    #plt.xlabel('iterations', fontsize=19)
+    #plt.xlabel('iterations', fontsize=M)
     #plt.xticks(range(0,10001,1000)[start:])
-    #plt.legend(prop={'size': 19})
+    #plt.legend(prop={'size': M})
     #plt.show()
