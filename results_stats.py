@@ -5,6 +5,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.special import stdtr, stdtrit
 
 def bin_diversity(content):
     div = 5*np.ones(content.shape[1])
@@ -20,6 +21,20 @@ def evaluate_hist_diversity(content_list):
         diversity = [0]+ [len(bin_diversity(content[:j])) for j in range(0,len(content),step) if j!=0]+ [len(bin_diversity(content))]
         diversity_list.append(diversity)
     return diversity_list
+def Sn(diversity_array:np.ndarray):
+    """
+    computes the sigma estimator of the diversity values
+    """
+    out = np.sqrt(np.sum(diversity_array - diversity_array.mean(axis=0),axis=0)**2/(diversity_array.shape[0]-1))
+    return out
+def CI(diversity_array,alpha=.05):
+    n = diversity_array.shape[0]
+    qt = stdtrit(n-1,1-alpha)
+    sig = Sn(diversity_array)
+    inf = diversity_array.mean(axis=0) - qt*sig*(1.0/np.sqrt(n))
+    sup = diversity_array.mean(axis=0) + qt*sig*(1.0/np.sqrt(n))
+    return inf,sup
+
 if __name__=='__main__':
     with open(sys.argv[1],"rb") as f:
         config = json.load(f)
@@ -27,11 +42,6 @@ if __name__=='__main__':
     k_values = config['k_values']
     N_init = config['N_init']
     folder = 'results' 
-    #os.system('mkdir images')
-    #images = 'images'
-    #excl = 'imgep raw data'
-
-    #name = f'{folder}/rand_run_{N}'
     algo = ['imgep_run_1']+['operators_run_1']+['rand_run']
     N = 10000
     id_ = 0
@@ -53,6 +63,13 @@ if __name__=='__main__':
     plt.xlabel('iterations')
     plt.ylabel('diversity')
     plt.savefig("distinct_imgep.png")
+
+
+
+    sn = Sn(diversity_list)
+    print(sn.shape)
+    print(sn)
+    print(CI(diversity_list))
 
     #diversities_imgep_mean = stats['imgep']['mean']
     #diversities_imgep_var = stats['imgep']['var']
