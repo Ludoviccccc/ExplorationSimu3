@@ -34,6 +34,7 @@ class IMGEP:
                 max_address_core1=21,
                 num_instructions = None,
                 max_cycle:int=60,
+                print_freq:int=1000,
                 ):
         self.max_cycle = max_cycle
         self.N = N
@@ -50,6 +51,7 @@ class IMGEP:
         self.min_address_core1 = min_address_core1
         self.max_address_core1 = max_address_core1
         self.random_explor = RANDOM(self.N_init,self.env,self.H,min_address_core0,max_address_core0,min_address_core1,max_address_core1,self.num_instructions)
+        self.print_freq = print_freq
     def take(self,sample:dict,start:int): 
         """Takes the ``start`` first steps from the ``sample`` dictionnary to initialize the exploration. 
         Then the iterator i is set to ``start`` directly
@@ -74,7 +76,7 @@ class IMGEP:
         if self.start==0:
             self.random_explor()
         for i in range(self.N_init,self.N):
-            if i%1000==0 or i==self.N-1:
+            if i%self.print_freq==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
             if (i-self.N_init)%self.periode==0 and i>=self.N_init:
                 goal,stats = self.G(self.H)

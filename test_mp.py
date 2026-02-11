@@ -24,7 +24,8 @@ def make_explorations(a):
                     max_address_core0,
                     min_address_core1,
                     max_address_core1,
-                    num_instructions)
+                    num_instructions,
+                    print_freq = print_freq)
     random()
     H_rand.save_pickle(f'{folder}/rand_run_{N}')
     name = f'{folder}/rand_run_{N}'
@@ -48,7 +49,8 @@ def make_explorations(a):
                       max_address_core0=max_address_core0,
                       min_address_core1=min_address_core1,
                       max_address_core1=max_address_core1,
-                      num_instructions=num_instructions)
+                      num_instructions=num_instructions,
+                      print_freq = print_freq)
         imgep.take(content_rand,N_init)
         imgep()
         H.save_pickle(f'{folder}/imgep_run_{k}_{N}')
@@ -66,7 +68,8 @@ def make_explorations(a):
                         max_address_core0,
                         min_address_core1,
                         max_address_core1,
-                        num_instructions)
+                        num_instructions,
+                        print_freq = print_freq)
         operators.take(content_rand,N_init)
         operators()
         H_operators.save_pickle(f'{folder}/operators_run_{k}_{N}')
@@ -74,6 +77,7 @@ def make_explorations(a):
     
 if __name__=="__main__":
     n_func = 12
+    print_freq = 2000
     with open(sys.argv[1],"rb") as f:
         config = json.load(f)
     num_run = config['num_run']

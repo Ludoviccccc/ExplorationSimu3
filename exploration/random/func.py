@@ -21,6 +21,7 @@ class RANDOM(test_programs):
                     min_address_core1 = 11,
                     max_address_core1 = 21,
                     num_instructions = None,
+                    print_freq:int=1000,
 
             ):
         """
@@ -39,10 +40,11 @@ class RANDOM(test_programs):
         self.min_address_core1 = min_address_core1
         self.max_address_core1 = max_address_core1
         self.num_instructions = num_instructions
+        self.print_freq = print_freq
     def __call__(self):
         start_time = time.time()
         for i in range(self.N):
-            if i%1000==0 or i==self.N-1:
+            if i%self.print_freq==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
             code0 = generate_instruction_sequence(random.randint(1,
                                                 self.num_instructions),

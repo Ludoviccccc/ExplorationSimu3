@@ -34,7 +34,6 @@ def CI(diversity_array,alpha=.05):
     print('qt', qt)
     sig = Sn(diversity_array)
     print('sig',sig)
-    #exit()
     inf = diversity_array.mean(axis=0) - qt*sig*(1.0/np.sqrt(n))
     sup = diversity_array.mean(axis=0) + qt*sig*(1.0/np.sqrt(n))
     return inf,sup
@@ -73,28 +72,3 @@ if __name__=='__main__':
     print(sn.shape)
     print(sn)
     print(CI(diversity_list))
-
-    #diversities_imgep_mean = stats['imgep']['mean']
-    #diversities_imgep_var = stats['imgep']['var']
-
-    #diversities_rand_mean = stats['random']['mean']
-    #diversities_rand_var = stats['random']['var']
-    #t_crit_interval = stats['t_crit_interval']
-    #m = stats['m']
-    #print(diversities_imgep_mean.shape)
-    #start = 0
-    #for f in range(diversities_imgep_mean.shape[0]):
-    #    y = diversities_imgep_mean[f][start:]
-    #    x = np.arange(0,N+1,1000)[start:]
-    #    ci = diversities_imgep_var[f][start:] *t_crit_interval[1]/np.sqrt(m)
-    #    print('ci shape', ci.shape)
-    #    plt.plot(x,y,'-o',label=[1,2,3][f])
-    #    #plt.fill_between(x, (y-ci), (y+ci), color='b', alpha=.1)
-    #plt.plot(np.arange(0,N+1,1000)[start:],diversities_rand_mean[start:],'-o',label=f'random')
-    #plt.grid()
-    #plt.title('Entire space Diversity IMGEP vs RANDOM', fontsize=M)
-    #plt.ylabel('sum of squares of distances between all pairs', fontsize=12)
-    #plt.xlabel('iterations', fontsize=M)
-    #plt.xticks(range(0,10001,1000)[start:])
-    #plt.legend(prop={'size': M})
-    #plt.show()
