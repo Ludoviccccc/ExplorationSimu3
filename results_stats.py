@@ -33,7 +33,8 @@ def CI(diversity_array,alpha=.05):
     mean_ = diversity_array.mean(axis=0)
     inf = mean_ - qt*sig*(1.0/np.sqrt(n))
     sup = mean_ + qt*sig*(1.0/np.sqrt(n))
-    return {'mean':mean_,'inf':inf,'sup':sup}
+    x_axis = 1000*np.arange(len(mean_))
+    return {'mean':mean_,'inf':inf,'sup':sup,'iterations':x_axis}
 
 if __name__=='__main__':
     N = 10000
@@ -52,6 +53,8 @@ if __name__=='__main__':
                 if algo in ['imgep','operators']:
                     name = f'{algo}_run_{k}_{N}_{j}.pkl'
                 else:
+                    if k>1:
+                        break
                     name = f'{algo}_run_{N}_{j}.pkl'
                 if j%100==0:
                     print(f'opening {name}')
