@@ -54,6 +54,8 @@ if __name__=='__main__':
     for algo in algo_list:
         for k in k_values:
             content_list = []
+            if algo=='rand' and k>1:
+                break
             for j in j_list:
                 if algo in ['imgep','operators']:
                     name = f'{algo}_run_{k}_{N}_{j}.pkl'
