@@ -29,7 +29,6 @@ def make_explorations(a):
     random()
     H_rand.save_pickle(f'{folder}/rand_run_{N}')
     name = f'{folder}/rand_run_{N}'
-    #content_rand = load(name)
     content_rand = H_rand.content()
     for k in k_values:
         print('k',k)
@@ -76,7 +75,7 @@ def make_explorations(a):
     del content_rand
     
 if __name__=="__main__":
-    n_func = 12
+    n_func = 10
     print_freq = 2000
     with open(sys.argv[1],"rb") as f:
         config = json.load(f)
@@ -95,10 +94,11 @@ if __name__=="__main__":
     num_addr = config['num_addr']
     num_addr = config['num_addr']
     folder = 'results'
-    os.system(f'mkdir {folder}')
+    if not os.path.isdir(folder):
+        os.system(f'mkdir {folder}')
     start_time = time.time()
     for j in range(1+(num_run//n_func)):
-        with Pool(16) as p:
+        with Pool(40) as p:
             if j==num_run//n_func:
                 p.map(make_explorations,range(num_run%n_func))
             else:
