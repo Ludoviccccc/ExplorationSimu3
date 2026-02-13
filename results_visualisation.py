@@ -26,11 +26,11 @@ if __name__=='__main__':
 
     name = f'{folder}/rand_run_{N}'
     content_rand = load(name)
-    for k in k_list:
-        name = f'{folder}/imgep_run_{k}_{N}'
-        content_imgep = load(name)
-        plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_plotly', show=False,title=f'diversity for time {excl} k={k}')
-        plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'],f'{images}/ddr_miss_ratio_{k}',title='Miss ratio in ddr',num_bank=4,num_row=3)
+    #for k in k_list:
+    #    name = f'{folder}/imgep_run_{k}_{N}'
+    #    content_imgep = load(name)
+    #    plot_time_diversity_plotly(content_rand,content_imgep, f'{images}/time_k_{k}_plotly', show=False,title=f'diversity for time {excl} k={k}')
+    #    plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'],f'{images}/ddr_miss_ratio_{k}',title='Miss ratio in ddr',num_bank=4,num_row=3)
 
      
     #plot_diversity_hist_and_sum(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison.pdf')

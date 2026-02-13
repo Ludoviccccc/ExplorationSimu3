@@ -36,10 +36,28 @@ def CI(diversity_array,alpha=.05):
     sup = mean_ + qt*sig*(1.0/np.sqrt(n))
     x_axis = 1000*np.arange(len(mean_))
     return {'mean':mean_,'inf':inf,'sup':sup,'iterations':x_axis}
-
+def open_content_list(j_list,k,algo):
+    for j in j_list:
+        if algo in ['imgep','operators']:
+            name = f'{algo}_run_{k}_{N}_{j}.pkl'
+        else:
+            if k>1:
+                break
+            name = f'{algo}_run_{N}_{j}.pkl'
+        if j%100==0:
+            print(f'opening {name}')
+        try:
+            with open(os.path.join(folder,name),'rb') as f:
+                stats = pickle.load(f)
+                content_list.append(stats['tabular_view'])
+                idx_time = np.array([j for j in range(len(stats['names'])) if stats['names'][j] in time_var])
+                idx_remain = np.array([j for j in range(len(stats['names'])) if not (stats['names'][j] not in time_var)])
+        except:
+            print(f'fail at opening {name}')
+    return content_list,idx_time,idx_remain
 if __name__=='__main__':
     N = 10000
-    k_values = [1,2,3]
+    k_values = [1]
     folder = 'results' 
     algo_list = ['imgep','operators','rand']
     CI_algo_time = {algo:{k:[] for k in k_values} for algo in algo_list}
@@ -56,24 +74,7 @@ if __name__=='__main__':
             content_list = []
             if algo=='rand' and k>1:
                 break
-            for j in j_list:
-                if algo in ['imgep','operators']:
-                    name = f'{algo}_run_{k}_{N}_{j}.pkl'
-                else:
-                    if k>1:
-                        break
-                    name = f'{algo}_run_{N}_{j}.pkl'
-                if j%100==0:
-                    print(f'opening {name}')
-                try:
-                    with open(os.path.join(folder,name),'rb') as f:
-                        stats = pickle.load(f)
-                        content_list.append(stats['tabular_view'])
-                        idx_time = np.array([j for j in range(len(stats['names'])) if stats['names'][j] in time_var])
-                        idx_remain = np.array([j for j in range(len(stats['names'])) if not (stats['names'][j] not in time_var)])
-                except:
-                    print(f'fail at opening {name}')
-
+            content_list,idx_time,idx_remain = open_content_list(j_list,k,algo)
             diversity_list = []
             n_func = 10
             for j in range(len(content_list)//n_func):

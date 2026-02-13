@@ -36,9 +36,28 @@ def CI(diversity_array,alpha=.05):
     x_axis = 1000*np.arange(len(mean_))
     return {'mean':mean_,'inf':inf,'sup':sup,'iterations':x_axis}
 
+def open_content_list(j_list,k,algo):
+    content_list = []
+    for j in j_list:
+        if algo in ['imgep','operators']:
+            name = f'{algo}_run_{k}_{N}_{j}.pkl'
+        else:
+            if k>1:
+                break
+            name = f'{algo}_run_{N}_{j}.pkl'
+        if j%100==0:
+            print(f'opening {name}')
+        try:
+            with open(os.path.join(folder,name),'rb') as f:
+                stats = pickle.load(f)
+                content_list.append(stats['tabular_view'])
+        except:
+            print(f'fail at opening {name}')
+    return content_list
+
 if __name__=='__main__':
     N = 10000
-    k_values = [1,2,3]
+    k_values = [1]
     folder = 'results' 
     algo_list = ['imgep','operators','rand']
     CI_algo = {algo:{k:[] for k in k_values} for algo in algo_list}
@@ -48,23 +67,7 @@ if __name__=='__main__':
     print('start opening files')
     for algo in algo_list:
         for k in k_values:
-            content_list = []
-            for j in j_list:
-                if algo in ['imgep','operators']:
-                    name = f'{algo}_run_{k}_{N}_{j}.pkl'
-                else:
-                    if k>1:
-                        break
-                    name = f'{algo}_run_{N}_{j}.pkl'
-                if j%100==0:
-                    print(f'opening {name}')
-                try:
-                    with open(os.path.join(folder,name),'rb') as f:
-                        stats = pickle.load(f)
-                        content_list.append(stats['tabular_view'])
-                except:
-                    print(f'fail at opening {name}')
-            content_list = content_list
+            content_list = open_content_list(j_list,k,algo)
             diversity_list = []
             n_func = 10
             for j in range(len(content_list)//n_func):
