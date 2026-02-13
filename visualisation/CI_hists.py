@@ -41,6 +41,7 @@ def hist_diversity_misses(content:list,
             Diversity_DDR_core0.append(diversity_ratio0)
             Diversity_DDR_core1.append(diversity_ratio1)
             #labels.append(f'b{j},r{row}')
+    print('div computed')
     return Diversity_DDR_core0,Diversity_DDR_core1
 
 def open_content_list(algo,k):
@@ -54,31 +55,34 @@ def open_content_list(algo,k):
             name = f'{algo}_run_{N}_{j}.pkl'
         try:
             with open(os.path.join(folder,name),'rb') as f:
-                stats = pickle.load(f)
-                content_list.append(stats['tabular_view'])
+                content = pickle.load(f)
+                content_list.append(content)
         except:
             print(f'fail at opening {name}')
     return content_list
-if __name__='__main__':
+if __name__=='__main__':
     N = 10000
     k_values = [1,2,3]
     folder = 'results'
     algo_list = ['imgep','operators','rand']
     CI_diversity_algo_core0 = {algo:{k:[] for k in k_values} for algo in algo_list}
     CI_diversity_algo_core1 = {algo:{k:[] for k in k_values} for algo in algo_list}
-    M = 499
-    n_func = 10
+    M = 20
+    n_func = 3
     j_list = range(M)
     for algo in algo_list:
         for k in k_values:
             if algo=='rand' and k>1:
                 break
+            print('opening data',algo,f'k={k}')
             content_list = open_content_list(algo,k) 
             diversity_list = []
+            print('computing diversity in parallel')
             for j in range(len(content_list)//n_func):
                 with Pool(40) as p:
                     batch_div = p.map(hist_diversity_misses,content_list[j*n_func:(j+1)*n_func])
                 diversity_list+=batch_div
+            print('diversity computeted',algo,f'k={k}')
             diversity_list = np.array(diversity_list)
             diversity_core0 = diversity_list[:,0,:]
             diversity_core1 = diversity_list[:,1,:]
