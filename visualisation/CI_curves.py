@@ -17,9 +17,10 @@ def visu_div_iterations(data,title=None):
             sup = data[algo][k]['sup']
             if algo=='rand':
                 plt.plot(x,mean_,'-o',label=f'mean value {algo}')
+                plt.fill_between(x, inf, sup,  alpha=0.5)
             else:
                 plt.plot(x,mean_,'-o',label=f'mean value {algo}, k={k}')
-            plt.fill_between(x, inf, sup,  alpha=.1)
+                plt.fill_between(x, inf, sup,  alpha=0.5)
             plt.legend()
     if title:
         plt.title(title+' mean diversity, 95 % asymptotic CI interval, 500 runs')
@@ -30,18 +31,18 @@ if __name__=='__main__':
     with open('ci_diversity.pkl','rb') as f:
         data = pickle.load(f)
     visu_div_iterations(data,title='entire space')
-    plt.savefig('entire_space_div.png')
+    plt.savefig('entire_space_div.pdf')
     plt.show()
 
     with open('ci_diversity_time.pkl','rb') as f:
         data = pickle.load(f)
     print(data['imgep'][1].keys())
     visu_div_iterations(data,title='Time subspace')
-    plt.savefig('time_space_div.png')
+    plt.savefig('time_space_div.pdf')
     plt.show()
 
     with open('ci_diversity_remain.pkl','rb') as f:
         data = pickle.load(f)
     visu_div_iterations(data,title='Miss and hit subspace')
-    plt.savefig('miss_hit_space_div.png')
+    plt.savefig('miss_hit_space_div.pdf')
     plt.show()
