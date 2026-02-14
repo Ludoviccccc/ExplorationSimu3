@@ -6,6 +6,7 @@ import numpy as np
 from scipy.special import stdtr, stdtrit
 from multiprocessing import Pool
 import time
+from exploration.load_file import open_content_list
 # This codes loads results of multiple IMGEP/RANDOM exploration runs in parallel (using Pool)
 # and evaluates the diversity evolution in parallel and determines asymptotic confidence intervals for each point of the curves
 
@@ -37,38 +38,22 @@ def CI(diversity_array,alpha=.05):
     x_axis = 1000*np.arange(len(mean_))
     return {'mean':mean_,'inf':inf,'sup':sup,'iterations':x_axis}
 
-def open_content_list(j_list)->list:
-    content_list = []
-    for j in j_list:
-        if algo in ['imgep','operators']:
-            name = f'{algo}_run_{k}_{N}_{j}.pkl'
-        else:
-            if k>1:
-                break
-            name = f'{algo}_run_{N}_{j}.pkl'
-        if j%100==0:
-            print(f'opening {name}')
-        try:
-            with open(os.path.join(folder,name),'rb') as f:
-                stats = pickle.load(f)
-                content_list.append(stats['tabular_view'])
-        except:
-            print(f'failed at opening {name}')
-    return content_list
 
 if __name__=='__main__':
     N = 10000
-    k_values = [1,2,3]
-    folder = 'results_20' 
+    k_values = [1]
+    folder = 'results' 
     algo_list = ['imgep','operators','rand']
     CI_algo = {algo:{k:[] for k in k_values} for algo in algo_list}
     N = 10000
-    M = 500
+    M = 20
+    output_name = 'ci_diversity_20.pkl'
     j_list = range(M)
     print('start opening files')
     start_time = time.time()
     for algo in algo_list:
         for k in k_values:
+            print(algo, f'k ={k}')
             if k>1 and algo=='rand':
                 break
             n_p = 5
@@ -77,12 +62,14 @@ if __name__=='__main__':
             for l in range(1+M//(n_func*n_p)):
                 if l ==M//(n_func*n_p):
                     with Pool(70) as p: 
-                        content_list_temp = [open_content_list(range(l,l+M%(n_p*n_func)))]
+                        content_list_temp = [open_content_list(folder,k,N,algo)(range(l,l+M%(n_p*n_func)))]
                 else:
                     with Pool(70) as p: 
-                        content_list_temp = p.map(open_content_list,[range(n_func*n_p*l+m*n_p,n_func*n_p*l+(m+1)*n_p) for m in range(n_func)])
+                        content_list_temp = p.map(open_content_list(folder,k,N,algo),[range(n_func*n_p*l+m*n_p,n_func*n_p*l+(m+1)*n_p) for m in range(n_func)])
                 for element in content_list_temp:
                     content_list +=element
+            if len(content_list)==0:
+                raise ValueError('empty content list')
             diversity_list = []
             n_func = 8
             for j in range(1+len(content_list)//n_func):
@@ -96,7 +83,7 @@ if __name__=='__main__':
             diversity_list = np.array(diversity_list)
             print('diversity_list', diversity_list.shape,algo,f'k={k}')
             CI_algo[algo][k] = CI(diversity_list)
-    with open('ci_diversity_20.pkl','wb') as f:
+    with open(output_name,'wb') as f:
         pickle.dump(CI_algo,f)
-    print('dumped!')
+    print(f'{output_name} dumped!')
     print('Total time:',(time.time() - start_time)//3600,'H',((time.time()-start_time)%3600)//60,'    m',f"{(time.time()-start_time)%3600%60:.2f}",'s')
