@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 from multiprocessing import Pool
 import pickle
 import os
+import sys
+sys.path.append('../')
+from exploration.load_file import open_content_all_list
+from scipy.special import stdtr,stdtrit
 
 def Sn(diversity_array:np.ndarray):
     """
@@ -41,29 +45,12 @@ def hist_diversity_misses(content:list,
             Diversity_DDR_core0.append(diversity_ratio0)
             Diversity_DDR_core1.append(diversity_ratio1)
             #labels.append(f'b{j},r{row}')
-    print('div computed')
     return Diversity_DDR_core0,Diversity_DDR_core1
 
-def open_content_list(algo,k):
-    content_list = []
-    for j in j_list:
-        if algo in ['imgep','operators']:
-            name = f'{algo}_run_{k}_{N}_{j}.pkl'
-        else:
-            if k>1:
-                break
-            name = f'{algo}_run_{N}_{j}.pkl'
-        try:
-            with open(os.path.join(folder,name),'rb') as f:
-                content = pickle.load(f)
-                content_list.append(content)
-        except:
-            print(f'fail at opening {name}')
-    return content_list
 if __name__=='__main__':
     N = 10000
-    k_values = [1,2,3]
-    folder = 'results'
+    k_values = [1]
+    folder = '../results'
     algo_list = ['imgep','operators','rand']
     CI_diversity_algo_core0 = {algo:{k:[] for k in k_values} for algo in algo_list}
     CI_diversity_algo_core1 = {algo:{k:[] for k in k_values} for algo in algo_list}
@@ -75,7 +62,20 @@ if __name__=='__main__':
             if algo=='rand' and k>1:
                 break
             print('opening data',algo,f'k={k}')
-            content_list = open_content_list(algo,k) 
+            n_p = 5
+            n_func = 10
+            content_list = []
+            for l in range(1+M//(n_func*n_p)):
+                if l ==M//(n_func*n_p):
+                    with Pool(70) as p: 
+                        content_list_temp = [open_content_all_list(folder,k,N,algo)(range(l,l+M%(n_p*n_func)))]
+                else:
+                    with Pool(70) as p: 
+                        content_list_temp = p.map(open_content_all_list(folder,k,N,algo),[range(n_func*n_p*l+m*n_p,n_func*n_p*l+(m+1)*n_p) for m in range(n_func)])
+                for element in content_list_temp:
+                    content_list +=element
+            if len(content_list)==0:
+                raise ValueError('empty content list')
             diversity_list = []
             print('computing diversity in parallel')
             for j in range(len(content_list)//n_func):
@@ -84,14 +84,16 @@ if __name__=='__main__':
                 diversity_list+=batch_div
             print('diversity computeted',algo,f'k={k}')
             diversity_list = np.array(diversity_list)
-            diversity_core0 = diversity_list[:,0,:]
-            diversity_core1 = diversity_list[:,1,:]
-            CI_diversity_algo_core0[algo][k] = CI(diversity_ratio0)
-            CI_diversity_algo_core1[algo][k] = CI(diversity_ratio1)
+            diversity_0 = diversity_list[:,0,:]
+            diversity_1 = diversity_list[:,1,:]
+            CI_diversity_algo_core0[algo][k] = CI(diversity_0)
+            CI_diversity_algo_core1[algo][k] = CI(diversity_1)
 
-    with open('ci_histogram_diveristy_core0.pkl','wb') as f:
+    name0  = 'ci_histogram_diveristy_core0.pkl'
+    with open(f'../{name0}','wb') as f:
         pickle.dump(CI_diversity_algo_core0,f)
-    print('dumped!')
-    with open('ci_histogram_diveristy_core1.pkl','wb') as f:
+    print(f'{name0} dumped!')
+    name1  = 'ci_histogram_diveristy_core1.pkl'
+    with open('../{name1}','wb') as f:
         pickle.dump(CI_diversity_algo_core1,f)
-    print('dumped!')
+    print(f'{name1} dumped!')
