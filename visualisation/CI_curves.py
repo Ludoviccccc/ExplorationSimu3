@@ -16,11 +16,11 @@ def visu_div_iterations(data,k_values = [1,2,3],title=None):
             inf = data[algo][k]['inf']
             sup = data[algo][k]['sup']
             if algo=='rand':
-                plt.plot(x,mean_,'--',label=f'mean value {algo}')
-                plt.fill_between(x,inf, sup,  alpha=0.5)
+                plt.plot(x,mean_,':',label=f'mean value {algo}')
+                plt.fill_between(x,inf, sup,  alpha=0.6,color='black')
             else:
-                plt.plot(x,mean_,'--',label=f'mean value {algo}, k={k}')
-                plt.fill_between(x, inf, sup,  alpha=0.5)
+                plt.plot(x,mean_,':',label=f'mean value {algo}, k={k}')
+                plt.fill_between(x, inf, sup,  alpha=0.6,color='black')
             plt.legend()
     if title:
         plt.title(title+' mean diversity, 95 % asymptotic CI interval, 500 runs')
@@ -29,9 +29,9 @@ def visu_div_iterations(data,k_values = [1,2,3],title=None):
     plt.grid()
 if __name__=='__main__':
     k_values = [1]
-    with open('ci_diversity.pkl','rb') as f:
+    with open('ci_diversity_20.pkl','rb') as f:
         data = pickle.load(f)
-    visu_div_iterations(data,k_values,title='entire space')
+    visu_div_iterations(data,k_values = [1,2,3],title='entire space')
     plt.savefig('entire_space_div.pdf')
     plt.show()
 
