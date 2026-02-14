@@ -13,4 +13,61 @@ def load(name,k=None):
     print(f'{name}_{k}.pkl')
 
     return contentbis
+class open_content_list:
+    def __init__(self,folder,k,N,algo):
+        self.k = k
+        self.N = N
+        self.algo = algo
+        self.folder = folder
+        self.time_var = ['mutual_diff_time_core0','mutual_diff_time_core1','mutual_diff_time']
+    def __call__(self,j_list:list)->list:
+        content_list = []
+        for j in j_list:
+            if self.algo in ['imgep','operators']:
+                name = f'{self.algo}_run_{self.k}_{self.N}_{j}.pkl'
+            else:
+                if self.k>1:
+                    break
+                name = f'{self.algo}_run_{self.N}_{j}.pkl'
+            if j%100==0:
+                print(f'opening {name}')
+            try:
+                with open(os.path.join(self.folder,name),'rb') as f:
+                    stats = pickle.load(f)
+                    content_list.append(stats['tabular_view'])
+                    self.idx_time = np.array([j for j in range(len(stats['names'])) if stats['names'][j] in     self.time_var])
+                    self.idx_remain = np.array([j for j in range(len(stats['names'])) if not (stats['names'    ][j] not in self.time_var)])
 
+            except:
+                print(f'failed at opening {name}')
+        return content_list
+
+class open_content_all_list:
+    def __init__(self,folder,k,N,algo):
+        self.k = k
+        self.N = N
+        self.algo = algo
+        self.folder = folder
+        self.time_var = ['mutual_diff_time_core0','mutual_diff_time_core1','mutual_diff_time']
+    def __call__(self,j_list:list)->list:
+        content_list = []
+        for j in j_list:
+            if self.algo in ['imgep','operators']:
+                name = f'{self.algo}_run_{self.k}_{self.N}_{j}.pkl'
+            else:
+                if self.k>1:
+                    break
+                name = f'{self.algo}_run_{self.N}_{j}.pkl'
+            if j%100==0:
+                print(f'opening {name}')
+            try:
+                with open(os.path.join(self.folder,name),'rb') as f:
+                    stats = pickle.load(f)
+                    #print(stats.keys())
+                    content_list.append(stats['memory_perf'])
+                    self.idx_time = np.array([j for j in range(len(stats['names'])) if stats['names'][j] in     self.time_var])
+                    self.idx_remain = np.array([j for j in range(len(stats['names'])) if not (stats['names'    ][j] not in self.time_var)])
+
+            except:
+                print(f'failed at opening {name}')
+        return content_list
