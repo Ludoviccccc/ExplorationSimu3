@@ -66,7 +66,7 @@ class open_content_all_list:
                     #print(stats.keys())
                     content_list.append(stats['memory_perf'])
                     self.idx_time = np.array([j for j in range(len(stats['names'])) if stats['names'][j] in     self.time_var])
-                    self.idx_remain = np.array([j for j in range(len(stats['names'])) if not (stats['names'    ][j] not in self.time_var)])
+                    self.idx_remain = np.array([j for j in range(len(stats['names'])) if not (stats['names'][j] in self.time_var)])
 
             except:
                 print(f'failed at opening {name}')
