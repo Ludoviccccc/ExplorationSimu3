@@ -94,6 +94,6 @@ if __name__=='__main__':
         pickle.dump(CI_diversity_algo_core0,f)
     print(f'{name0} dumped!')
     name1  = 'ci_histogram_diveristy_core1.pkl'
-    with open('../{name1}','wb') as f:
+    with open(f'../{name1}','wb') as f:
         pickle.dump(CI_diversity_algo_core1,f)
     print(f'{name1} dumped!')
