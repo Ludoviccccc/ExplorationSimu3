@@ -48,7 +48,6 @@ class open_content_all_list:
         self.N = N
         self.algo = algo
         self.folder = folder
-        self.time_var = ['mutual_diff_time_core0','mutual_diff_time_core1','mutual_diff_time']
     def __call__(self,j_list:list)->list:
         content_list = []
         for j in j_list:
@@ -62,12 +61,9 @@ class open_content_all_list:
                 print(f'opening {name}')
             try:
                 with open(os.path.join(self.folder,name),'rb') as f:
-                    stats = pickle.load(f)
-                    #print(stats.keys())
-                    content_list.append(stats['memory_perf'])
-                    self.idx_time = np.array([j for j in range(len(stats['names'])) if stats['names'][j] in     self.time_var])
-                    self.idx_remain = np.array([j for j in range(len(stats['names'])) if not (stats['names'][j] in self.time_var)])
-
+                    stats = pickle.load(f)['memory_perf']
+                    dict_ = {key:{'miss_ratios_detailled':stats[key]['miss_ratios_detailled']} for key in ['mutual','core0','core1']}
+                    content_list.append(dict_)
             except:
                 print(f'failed at opening {name}')
         return content_list
