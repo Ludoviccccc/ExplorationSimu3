@@ -49,13 +49,14 @@ def hist_diversity_misses(content:list,
     return Diversity_DDR_core0,Diversity_DDR_core1
 
 if __name__=='__main__':
+    labels = [f'b{j},r{row}' for j in range(4) for row in range(2)]
     N = 10000
-    k_values = [1,2,3]
-    folder = '../results_20'
+    k_values = [1]
+    folder = '../results'
     algo_list = ['imgep','operators','rand']
-    CI_diversity_algo_core0 = pd.DataFrame([])
-    CI_diversity_algo_core1 = pd.DataFrame([])
-    M = 500
+    CI_diversity_algo_core0 = pd.DataFrame([],index=labels)
+    CI_diversity_algo_core1 = pd.DataFrame([],index=labels)
+    M = 6
     n_func = 3
     j_list = range(M)
     for algo in algo_list:
@@ -68,10 +69,10 @@ if __name__=='__main__':
             content_list = []
             for l in range(1+M//(n_func*n_p)):
                 if l ==M//(n_func*n_p):
-                    with Pool(70) as p: 
+                    with Pool(30) as p: 
                         content_list_temp = [open_content_all_list(folder,k,N,algo)(range(l,l+M%(n_p*n_func)))]
                 else:
-                    with Pool(70) as p: 
+                    with Pool(30) as p: 
                         content_list_temp = p.map(open_content_all_list(folder,k,N,algo),[range(n_func*n_p*l+m*n_p,n_func*n_p*l+(m+1)*n_p) for m in range(n_func)])
                 for element in content_list_temp:
                     content_list +=element
@@ -92,11 +93,15 @@ if __name__=='__main__':
                 diversity_list+=batch_div
             print('diversity computeted',algo,f'k={k}')
             diversity_list = np.array(diversity_list)
+            print('diversity shape', diversity_list.shape)
+            #exit()
             diversity_0 = diversity_list[:,0,:]
             diversity_1 = diversity_list[:,1,:]
-            CI_diversity_algo_core0[f'{algo}_{k}'] = CI(diversity_0)
-            CI_diversity_algo_core1[f'{algo}_{k}'] = CI(diversity_1)
-
+            CI_core0 = CI(diversity_0)
+            CI_core1 = CI(diversity_1)
+            for key in CI_core0:
+                CI_diversity_algo_core0[f'{algo}_{k}_{key}'] = CI_core0[key][:]
+                CI_diversity_algo_core1[f'{algo}_{k}_{key}'] = CI_core1[key][:]
     name0  = 'ci_histogram_diveristy_core0.csv'
     CI_diversity_algo_core0.to_csv(name0)
     print(f'{name0} written!')
