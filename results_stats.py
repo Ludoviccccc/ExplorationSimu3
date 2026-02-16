@@ -7,6 +7,7 @@ from scipy.special import stdtr, stdtrit
 from multiprocessing import Pool
 import time
 from exploration.load_file import open_content_list
+import pandas as pd
 # This codes loads results of multiple IMGEP/RANDOM exploration runs in parallel (using Pool)
 # and evaluates the diversity evolution in parallel and determines asymptotic confidence intervals for each point of the curves
 
@@ -41,13 +42,13 @@ def CI(diversity_array,alpha=.05):
 
 if __name__=='__main__':
     N = 10000
-    k_values = [1]
-    folder = 'results' 
+    k_values = [1,2,3]
+    folder = 'results_20' 
     algo_list = ['imgep','operators','rand']
-    CI_algo = {algo:{k:[] for k in k_values} for algo in algo_list}
+    CI_algo = pd.DataFrame([])
     N = 10000
-    M = 20
-    output_name = 'ci_diversity_20.pkl'
+    M = 500
+    output_name = 'ci_diversity.csv'
     j_list = range(M)
     print('start opening files')
     start_time = time.time()
@@ -57,7 +58,7 @@ if __name__=='__main__':
             if k>1 and algo=='rand':
                 break
             n_p = 5
-            n_func = 10
+            n_func = 20
             content_list = []
             for l in range(1+M//(n_func*n_p)):
                 if l ==M//(n_func*n_p):
@@ -71,7 +72,7 @@ if __name__=='__main__':
             if len(content_list)==0:
                 raise ValueError('empty content list')
             diversity_list = []
-            n_func = 8
+            n_func = 15
             for j in range(1+len(content_list)//n_func):
                 if j==len(content_list)//n_func:
                     with Pool(70) as p: 
@@ -82,8 +83,9 @@ if __name__=='__main__':
                 diversity_list+=batch_div
             diversity_list = np.array(diversity_list)
             print('diversity_list', diversity_list.shape,algo,f'k={k}')
-            CI_algo[algo][k] = CI(diversity_list)
-    with open(output_name,'wb') as f:
-        pickle.dump(CI_algo,f)
-    print(f'{output_name} dumped!')
+            div = CI(diversity_list)
+            for key in div:
+                CI_algo[f'{algo}_{k}_{key}'] = div[key]
+    CI_algo.to_csv(output_name)
+    print(f'{output_name} written!')
     print('Total time:',(time.time() - start_time)//3600,'H',((time.time()-start_time)%3600)//60,'    m',f"{(time.time()-start_time)%3600%60:.2f}",'s')
