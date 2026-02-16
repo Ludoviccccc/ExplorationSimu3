@@ -7,6 +7,7 @@ import sys
 sys.path.append('../')
 from exploration.load_file import open_content_all_list
 from scipy.special import stdtr,stdtrit
+import pandas as pd
 
 def Sn(diversity_array:np.ndarray):
     """
@@ -49,12 +50,12 @@ def hist_diversity_misses(content:list,
 
 if __name__=='__main__':
     N = 10000
-    k_values = [1]
-    folder = '../results'
+    k_values = [1,2,3]
+    folder = '../results_20'
     algo_list = ['imgep','operators','rand']
-    CI_diversity_algo_core0 = {algo:{k:[] for k in k_values} for algo in algo_list}
-    CI_diversity_algo_core1 = {algo:{k:[] for k in k_values} for algo in algo_list}
-    M = 20
+    CI_diversity_algo_core0 = pd.DataFrame([])
+    CI_diversity_algo_core1 = pd.DataFrame([])
+    M = 500
     n_func = 3
     j_list = range(M)
     for algo in algo_list:
@@ -63,7 +64,7 @@ if __name__=='__main__':
                 break
             print('opening data',algo,f'k={k}')
             n_p = 5
-            n_func = 10
+            n_func = 20
             content_list = []
             for l in range(1+M//(n_func*n_p)):
                 if l ==M//(n_func*n_p):
@@ -76,24 +77,29 @@ if __name__=='__main__':
                     content_list +=element
             if len(content_list)==0:
                 raise ValueError('empty content list')
+            else:
+                print(f"{len(content_list)} elements in content list")
             diversity_list = []
             print('computing diversity in parallel')
-            for j in range(len(content_list)//n_func):
-                with Pool(40) as p:
-                    batch_div = p.map(hist_diversity_misses,content_list[j*n_func:(j+1)*n_func])
+            n_func = 20
+            for j in range(1+len(content_list)//n_func):
+                if j==len(content_list)//n_func:
+                    with Pool(70) as p:
+                        batch_div = p.map(hist_diversity_misses,content_list[j*n_func:])
+                else:
+                    with Pool(70) as p:
+                        batch_div = p.map(hist_diversity_misses,content_list[j*n_func:(j+1)*n_func])
                 diversity_list+=batch_div
             print('diversity computeted',algo,f'k={k}')
             diversity_list = np.array(diversity_list)
             diversity_0 = diversity_list[:,0,:]
             diversity_1 = diversity_list[:,1,:]
-            CI_diversity_algo_core0[algo][k] = CI(diversity_0)
-            CI_diversity_algo_core1[algo][k] = CI(diversity_1)
+            CI_diversity_algo_core0[f'{algo}_{k}'] = CI(diversity_0)
+            CI_diversity_algo_core1[f'{algo}_{k}'] = CI(diversity_1)
 
-    name0  = 'ci_histogram_diveristy_core0.pkl'
-    with open(f'../{name0}','wb') as f:
-        pickle.dump(CI_diversity_algo_core0,f)
-    print(f'{name0} dumped!')
-    name1  = 'ci_histogram_diveristy_core1.pkl'
-    with open(f'../{name1}','wb') as f:
-        pickle.dump(CI_diversity_algo_core1,f)
-    print(f'{name1} dumped!')
+    name0  = 'ci_histogram_diveristy_core0.csv'
+    CI_diversity_algo_core0.to_csv(name0)
+    print(f'{name0} written!')
+    name1  = 'ci_histogram_diveristy_core1.csv'
+    CI_diversity_algo_core1.to_csv(name1)
+    print(f'{name1} written!')
