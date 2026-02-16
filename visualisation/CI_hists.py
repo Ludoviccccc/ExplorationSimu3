@@ -51,13 +51,12 @@ def hist_diversity_misses(content:list,
 if __name__=='__main__':
     labels = [f'b{j},r{row}' for j in range(4) for row in range(2)]
     N = 10000
-    k_values = [1]
-    folder = '../results'
+    k_values = [1,2,3]
+    folder = '../results_20'
     algo_list = ['imgep','operators','rand']
     CI_diversity_algo_core0 = pd.DataFrame([],index=labels)
     CI_diversity_algo_core1 = pd.DataFrame([],index=labels)
-    M = 6
-    n_func = 3
+    M = 500
     j_list = range(M)
     for algo in algo_list:
         for k in k_values:
@@ -69,10 +68,10 @@ if __name__=='__main__':
             content_list = []
             for l in range(1+M//(n_func*n_p)):
                 if l ==M//(n_func*n_p):
-                    with Pool(30) as p: 
+                    with Pool(70) as p: 
                         content_list_temp = [open_content_all_list(folder,k,N,algo)(range(l,l+M%(n_p*n_func)))]
                 else:
-                    with Pool(30) as p: 
+                    with Pool(70) as p: 
                         content_list_temp = p.map(open_content_all_list(folder,k,N,algo),[range(n_func*n_p*l+m*n_p,n_func*n_p*l+(m+1)*n_p) for m in range(n_func)])
                 for element in content_list_temp:
                     content_list +=element
