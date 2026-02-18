@@ -20,18 +20,18 @@ def hist_diversity_misses(content_random, contents:list, name = None, title = No
     bins = np.arange(-1.0,1.0,0.05)
     for j in range(num_bank):
         for row in range(num_row):
-            diversity_ratio_random0 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+            diversity_ratio_random0 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row-1,j],  content_random['core0']['miss_ratios_detailled'][:,row-1,j]], [bins, bins])
             A_core0_rand.append(diversity_ratio_random0)
             B_core0_rand.append(f'b{j},r{row}')
 
-            diversity_ratio_random1 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row,j],  content_random['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+            diversity_ratio_random1 = diversity([content_random['mutual']['miss_ratios_detailled'][:,row-1,j],  content_random['core1']['miss_ratios_detailled'][:,row-1,j]], [bins, bins])
             A_core1_rand.append(diversity_ratio_random1)
             B_core1_rand.append(f'b{j},r{row}')
             for j_c,content_imgep in enumerate(contents):
-                diversity_ratio_imgep0 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core0']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+                diversity_ratio_imgep0 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row-1,j],  content_imgep['core0']['miss_ratios_detailled'][:,row-1,j]], [bins, bins])
                 A_core0_imgep[j_c].append(diversity_ratio_imgep0)
 
-                diversity_ratio_imgep1 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row,j],  content_imgep['core1']['miss_ratios_detailled'][:,row,j]], [bins, bins])
+                diversity_ratio_imgep1 = diversity([content_imgep['mutual']['miss_ratios_detailled'][:,row-1,j],  content_imgep['core1']['miss_ratios_detailled'][:,row-1,j]], [bins, bins])
                 A_core1_imgep[j_c].append(diversity_ratio_imgep1)
     fig = make_subplots(
     rows=1, cols=2,
