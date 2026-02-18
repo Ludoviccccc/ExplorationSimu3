@@ -27,7 +27,6 @@ def diagnostic_plot(content_rand_name,content_names):
     y_rand_0 = content_rand['memory_perf']['mutual']['diff_time_core0']
     y_rand_1 = content_rand['memory_perf']['mutual']['diff_time_core1']
     c_rand = np.abs(a_rand-b_rand).sum(axis=(1,2))
-    print(c_rand.shape)
     for j,vec in enumerate(content_names):
         name = vec[0]
         label = vec[1]
@@ -39,6 +38,8 @@ def diagnostic_plot(content_rand_name,content_names):
         y_0 = content['memory_perf']['mutual']['diff_time_core0']
         y_1 = content['memory_perf']['mutual']['diff_time_core1']
         fig,(ax0,ax1) = plt.subplots(1,2,sharex=True,figsize=(12,5))
+        ax0.scatter(c_rand,y_rand_0,label="random")
+        ax1.scatter(c_rand,y_rand_1,label="random")
         ax0.scatter(c,y_0,label=label)
         ax1.scatter(c,y_1,label=label)
         ax0.set_xlabel(f'non-overlap',fontsize=18)
@@ -51,7 +52,10 @@ def diagnostic_plot(content_rand_name,content_names):
         plt.show()
 
         data = pd.DataFrame([])
-        data['diff_time_core0'] = y_0
-        data['diff_time_core1'] = y_1
-        data['over_lap'] = c
+        data['imgep_diff_time_core0'] = y_0
+        data['imgep_diff_time_core1'] = y_1
+        data['rand_diff_time_core0'] = y_rand_0
+        data['rand_diff_time_core1'] = y_rand_1
+        data['imgep_over_lap'] = c
+        data['rand_over_lap'] = c_rand
         data.to_csv("data_diagnostic",header = True)
