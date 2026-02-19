@@ -31,7 +31,7 @@ def diversity(data:[np.ndarray,np.ndarray],bins:[np.ndarray, np.ndarray]):
     return divers
 def hist_diversity_misses(content:list,
                           num_bank=4,
-                          num_row = 2,
+                          num_row = 3,
                           ):
     Diversity_DDR_core0 = []
     Diversity_DDR_core1 = []
@@ -49,7 +49,9 @@ def hist_diversity_misses(content:list,
     return Diversity_DDR_core0,Diversity_DDR_core1
 
 if __name__=='__main__':
-    labels = [f'b{j},r{row}' for j in range(4) for row in range(2)]
+    num_rows = 3
+    num_banks = 4
+    labels = [f'b{j},r{row}' for j in range(num_banks) for row in range(num_rows)]
     N = 10000
     k_values = [1,2,3]
     folder = '../results_20'
