@@ -39,4 +39,4 @@ In order to provide a proof of concept for applying automated discovery framewor
 
 This will require finding sequences of code that generate a maximal diversity of interference mechanisms. The following curiosity-driven exploration method will be applied to identify hardware interference patterns. It relies on the construction of an autonomous AI agent that can learn to represent, generate, select, and solve its own problems to efficiently explore the vast outcome space of artificial or natural complex systems. These methods aim to address the knowledge gap between our ability to manipulate low-level inputs of complex systems and our on the construction of an autonomous AI agent that can learn to represent, generate, select, and solve its own
 
-Further work discriptions can be found in `works_description.pdf`.
+* Further work discriptions can be found in `works_description.pdf`.
