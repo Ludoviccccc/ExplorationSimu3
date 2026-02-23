@@ -103,9 +103,9 @@ if __name__=='__main__':
             for key in CI_core0:
                 CI_diversity_algo_core0[f'{algo}_{k}_{key}'] = CI_core0[key][:]
                 CI_diversity_algo_core1[f'{algo}_{k}_{key}'] = CI_core1[key][:]
-    name0  = 'ci_histogram_diveristy_core0.csv'
+    name0  = 'ci_histogram_diversity_core0.csv'
     CI_diversity_algo_core0.to_csv(name0)
     print(f'{name0} written!')
-    name1  = 'ci_histogram_diveristy_core1.csv'
+    name1  = 'ci_histogram_diversity_core1.csv'
     CI_diversity_algo_core1.to_csv(name1)
     print(f'{name1} written!')

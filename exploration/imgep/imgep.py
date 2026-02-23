@@ -7,7 +7,6 @@ from exploration.imgep.OptimizationPolicy import OptimizationPolicykNN
 from exploration.imgep.goal_generator import GoalGenerator
 from exploration.codegeneration import generate_instruction_sequence
 import random
-
 from exploration.codegeneration import generate_instruction_sequence
 from exploration.random.func import RANDOM
 import time
