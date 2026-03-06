@@ -21,21 +21,9 @@ import numpy as np
 class GlobalVar:
     global_cycle = 0
     # New: Track shared resource contention
-    shared_resource_events = []
     l2_access_log = []  # Track L2 cache accesses
     ddr_access_log = []  # Track DDR memory accesses
     
-    @classmethod
-    def log_shared_resource_event(cls, event_type, resource_type, initiators, details,cycle):
-        """Log when multiple initiators access shared resources simultaneously"""
-        event = {
-            'cycle': cycle,
-            'type': event_type,
-            'resource': resource_type,
-            'initiators': initiators.copy(),  # Core IDs involved
-            'details': details.copy()
-        }
-        cls.shared_resource_events.append(event)
     
     @classmethod
     def log_l2_access(cls, core_id, addr, operation, set_index, way, hit):
@@ -70,7 +58,6 @@ class GlobalVar:
     @classmethod
     def clear_history(cls):
         cls.global_cycle = 0
-        cls.shared_resource_events = []
         cls.l2_access_log = []  # Track L2 cache accesses
         cls.ddr_access_log = []  # Track DDR memory accesses
 # -----------------------------------------------------
@@ -873,98 +860,3 @@ class Core:
             pass
 
 
-# Add a new analysis function to detect contention
-def analyze_shared_resource_contention():
-    """Analyze logged accesses to detect shared resource contention"""
-
-    # Analyze L2 cache contention
-    l2_contention_cycles = set()
-    l2_access_by_cycle = {}
-
-    for access in GlobalVar.l2_access_log:
-        cycle = access['cycle']
-        if cycle not in l2_access_by_cycle:
-            l2_access_by_cycle[cycle] = []
-        l2_access_by_cycle[cycle].append(access)
-
-    for cycle, accesses in l2_access_by_cycle.items():
-        if len(accesses) > 1:
-            # Multiple accesses in same cycle - potential contention
-            cores_involved = set(access['core_id'] for access in accesses)
-            if len(cores_involved) > 1:
-                l2_contention_cycles.add(cycle)
-                # Log detailed contention event
-                details = {
-                    'set_indices': [access['set_index'] for access in accesses],
-                    'operations': [access['operation'] for access in accesses],
-                    'addresses': [access['addr'] for access in accesses],
-                    'ways':[access['way'] for access in accesses],
-                }
-                GlobalVar.log_shared_resource_event(
-                    'L2_CACHE_CONTENTION', 'L2_CACHE', list(cores_involved), details,cycle
-                )
-
-    # Analyze DDR memory contention
-    ddr_contention_cycles = set()
-    ddr_access_by_cycle = {}
-
-    for access in GlobalVar.ddr_access_log:
-        cycle = access['cycle']
-        if cycle not in ddr_access_by_cycle:
-            ddr_access_by_cycle[cycle] = []
-        ddr_access_by_cycle[cycle].append(access)
-
-    for cycle, accesses in ddr_access_by_cycle.items():
-        if len(accesses) > 1:
-            # Multiple DDR accesses in same cycle - bank/row level analysis
-            cores_involved = set(access['core_id'] for access in accesses)
-            banks_accessed = set(access['bank'] for access in accesses)
-
-            # Check for bank conflicts
-            bank_conflicts = len(accesses) > len(banks_accessed)
-
-            # Check for row buffer conflicts
-            row_conflicts = False
-            bank_row_map = {}
-            for access in accesses:
-                bank = access['bank']
-                row = access['row']
-                if bank in bank_row_map and bank_row_map[bank] != row:
-                    row_conflicts = True
-                bank_row_map[bank] = row
-
-            if len(cores_involved) > 1 and (bank_conflicts or row_conflicts):
-                ddr_contention_cycles.add(cycle)
-                details = {
-                    'banks': [access['bank'] for access in accesses],
-                    'rows': [access['row'] for access in accesses],
-                    'operations': [access['operation'] for access in accesses],
-                    'statuses': [access['status'] for access in accesses],
-                    'bank_conflicts': bank_conflicts,
-                    'row_conflicts': row_conflicts
-                }
-                GlobalVar.log_shared_resource_event(
-                    #'DDR_MEMORY_CONTENTION', 'DDR_MEMORY', list(cores_involved), details
-                    'DDR_MEMORY_CONTENTION', 'DDR_MEMORY', [access['core_id'] for access in accesses], details,cycle)
-
-    return {
-        'l2_contention_cycles': sorted(list(l2_contention_cycles)),
-        'ddr_contention_cycles': sorted(list(ddr_contention_cycles)),
-        'total_contention_events': len(GlobalVar.shared_resource_events)
-    }
-
-# Example usage after simulation:
-def print_contention_analysis():
-    """Print detailed analysis of shared resource contention"""
-    analysis = analyze_shared_resource_contention()
-
-    print("\n=== SHARED RESOURCE CONTENTION ANALYSIS ===")
-    print(f"Total contention events: {analysis['total_contention_events']}")
-    print(f"L2 cache contention cycles: {len(analysis['l2_contention_cycles'])}")
-    print(f"DDR memory contention cycles: {len(analysis['ddr_contention_cycles'])}")
-
-    print("\n=== DETAILED CONTENTION EVENTS ===")
-    for event in GlobalVar.shared_resource_events:
-        print(f"Cycle {event['cycle']}: {event['type']}")
-        print(f"  Cores involved: {event['initiators']}")
-        print(f"  Details: {event['details']}")

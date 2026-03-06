@@ -64,7 +64,6 @@ class IMGEP:
         self.H.memory_program["core0"] = sample["memory_program"]["core0"][:start]
         self.H.memory_program["core1"] = sample["memory_program"]["core1"][:start]
         self.H.tab = list(sample['tabular_view'][:start])
-        self.H.shared_resource_list = sample['shared_resource_list'][:start]
         self.start = start
         self.N_init = start
         self.H.j = start

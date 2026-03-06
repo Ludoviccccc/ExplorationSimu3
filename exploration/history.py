@@ -3,16 +3,13 @@ import pickle
 import os.path
 import copy
 class History:
-    def __init__(self,env=None,capacity=10000):
+    def __init__(self,capacity=10000):
         self.memory_program = {"core0":[],"core1":[]}
         self.memory_perf = {'mutual':{},
                             'core0':{},
                             'core1':{}}
         self.j = 0
         self.capacity = capacity
-        self.shared_resource_list = []
-        self.shared_resource_coords = []
-        self.env = env
         self.tab = []
         self.names = []
         self.selection = ['miss_core0',
@@ -35,15 +32,10 @@ class History:
         fill_names = len(self.names)==0
         for key1 in self.memory_perf.keys():
             for key2 in sample[key1].keys():
-                if key2== 'shared_ressource_events':
-                    if key1=='mutual':
-                        self.shared_resource_list.append(sample[key1][key2])
-                    continue 
                 value = np.array(sample[key1][key2]).reshape((-1))
                 if key2 in self.selection:
                     observation_vec.append(value)
                 if fill_names:
-                    #print('value',len(value))
                     if key2 in self.selection:
                         self.names +=[f'{key1}_{key2}'for j in range(len(value))]
                 if self.j==0:
@@ -66,7 +58,6 @@ class History:
                 "memory_program":self.memory_program,
                 "tabular_view":self.as_tab(),
                 "names":self.names,
-                "shared_resource_list":self.shared_resource_list,
                 }
     def save_pickle(self, name:str=None):
         k = 0

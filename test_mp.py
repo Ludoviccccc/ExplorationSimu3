@@ -3,7 +3,7 @@ sys.path.append('../')
 sys.path.append('../../')
 from exploration.env.func import Env
 from exploration.random.func import RANDOM
-from exploration.random2.func import OPERATORS
+from exploration.operators.func import OPERATORS
 from exploration.history import History
 from exploration.imgep.OptimizationPolicy import OptimizationPolicykNN as OP
 from exploration.imgep.goal_generator import GoalGenerator as G
@@ -16,7 +16,7 @@ import time
 from multiprocessing import Pool
 def make_explorations(a):
     E =Env(500,num_addr=num_addr)
-    H_rand = History(env=E,capacity=N)
+    H_rand = History(capacity=N)
     random = RANDOM(N,
                     E,
                     H_rand,
@@ -33,7 +33,7 @@ def make_explorations(a):
     for k in k_values:
         print('k',k)
         E =Env(500,num_addr=num_addr)
-        H = History(env=E,capacity=N)
+        H = History(capacity=N)
         Pi = OP(num_mutations = num_mutations,
                 k=k,
                 min_address_core0=min_address_core0,
@@ -55,7 +55,7 @@ def make_explorations(a):
         H.save_pickle(f'{folder}/imgep_run_{k}_{N}')
     
         E =Env(500,num_addr=num_addr)
-        H_operators = History(env=E,capacity=N)
+        H_operators = History(capacity=N)
         operators = OPERATORS(N,
                         N_init,
                         k,

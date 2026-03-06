@@ -124,7 +124,7 @@ class Experiment:
         denominator[denominator==0] = -1
         self.ratios = miss/(denominator)
         self.ratios[self.ratios<=0] = -1
-        self.analyze_interference_events = analyze_shared_resource_contention()
+        #self.analyze_interference_events = analyze_shared_resource_contention()
         if (np.sum(miss)+np.sum(hits))==0:
             self.miss_ratio_global =-1
         else:
@@ -171,7 +171,7 @@ class Experiment:
                 'L2_miss_read':self.cache_stats_core_0['L2']['misses_read'],
                 'L2_hit_write':self.cache_stats_core_0['L2']['hits_write'],
                 'L2_hit_read':self.cache_stats_core_0['L2']['hits_read'],
-                'shared_ressource_events':GlobalVar.shared_resource_events,
+                #'shared_ressource_events':GlobalVar.shared_resource_events,
                 }
 class Env:
     def __init__(self,cycles,

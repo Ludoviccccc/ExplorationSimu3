@@ -29,7 +29,7 @@ def visu_div_iterations(data,k_values = [1,2,3],title=None):
     plt.grid()
 if __name__=='__main__':
     k_values = [1,2,3]
-    with open('ci_diversity_20.pkl','rb') as f:
+    with open('ci_diversity.pkl','rb') as f:
         data = pickle.load(f)
     visu_div_iterations(data,k_values = [1,2,3],title='entire space')
     plt.savefig('entire_space_div.pdf')
