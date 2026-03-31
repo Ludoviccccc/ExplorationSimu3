@@ -12,6 +12,12 @@ import time
 from exploration.test_addr import test_programs
 
 class RANDOM(test_programs):
+    """
+    N: int. The experimental budget
+    H: History. Buffer containing codes and signature pairs
+    max_l: int. Max length for of the instruction sequences
+    E: Env. The environnement.
+    """
     def __init__(self,
                     N:int,
                     E:Env,
@@ -24,12 +30,6 @@ class RANDOM(test_programs):
                     print_freq:int=1000,
 
             ):
-        """
-        N: int. The experimental budget
-        H: History. Buffer containing codes and signature pairs
-        max_l: int. Max length for of the instruction sequences
-        E: Env. The environnement.
-        """
         super().__init__()
         self.env = E
         self.H = H
@@ -42,6 +42,8 @@ class RANDOM(test_programs):
         self.num_instructions = num_instructions
         self.print_freq = print_freq
     def __call__(self):
+        """Performs ``self.N`` steps of random exploration
+        """
         start_time = time.time()
         for i in range(self.N):
             if i%self.print_freq==0 or i==self.N-1:

@@ -4,7 +4,8 @@ import sys
 sys.path.append("../../")
 from exploration.imgep.mutation import mutate_instruction_sequence
 from exploration.history import History
-from exploration.imgep.mix2 import mix_sequences
+from exploration.imgep.mix_preserving_time_strucuture import mix_sequences as mix_sequences_preserv
+from exploration.imgep.mix import mix_sequences
 from exploration.test_addr import test_programs
 class OptimizationPolicykNN(test_programs):
     def __init__(self,
@@ -16,16 +17,16 @@ class OptimizationPolicykNN(test_programs):
                 min_address_core1 = 11,
                 max_address_core1 = 21,
                 num_parts = 2,
-                segment_method=True,
                 num_instructions=None,
+                preserv = False,
                 ):
         super().__init__()
-        self.segment_method = segment_method
         self.min_address_core0 = min_address_core0
         self.max_address_core0 = max_address_core0
         self.min_address_core1 = min_address_core1
         self.max_address_core1 = max_address_core1
         self.num_parts = num_parts
+        self.preserv = preserv
         self.k = k
         self.j = 0#counter to fix self.sup and self.inf
         self.num_mutations = num_mutations
@@ -41,8 +42,12 @@ class OptimizationPolicykNN(test_programs):
         #self._test_program_addr(mutated0,mutated1) 
         return output
     def mix(self,programs:list[dict]):
-        mix0 = mix_sequences(programs["core0"],max_cycle=self.max_cycle,num_parts = self.num_parts)
-        mix1 = mix_sequences(programs["core1"],max_cycle=self.max_cycle,num_parts = self.num_parts)
+        if not self.preserv:
+            mix0 = mix_sequences(programs["core0"],max_cycle=self.max_cycle,num_parts = self.num_parts)
+            mix1 = mix_sequences(programs["core1"],max_cycle=self.max_cycle,num_parts = self.num_parts)
+        else:
+            mix0 = mix_sequences_preserv(programs["core0"],max_cycle=self.max_cycle,num_parts = self.num_parts)
+            mix1 = mix_sequences_preserv(programs["core1"],max_cycle=self.max_cycle,num_parts = self.num_parts)
         return {'core0':[mix0],'core1':[mix1]}
     def loss(self,goal:np.ndarray, elements:dict):
         a = np.array([goal]).reshape(1,-1)#size (dim,N), N=1 individual
