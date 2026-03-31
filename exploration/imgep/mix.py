@@ -1,80 +1,60 @@
-#import random
-
-
-
 import random
 
 def mix_sequences(sequences, num_parts=2, seed=None, max_cycle=60):
     """
-    Mix contiguous parts from multiple instruction sequences, preserving timing,
-    and ensuring the resulting sequence fits within a maximum cycle range.
+    Randomly mixes multiple instruction programs into one.
 
     Args:
-        sequences (list[dict]): list of input sequences, each {cycle: (type, address)}
-        num_parts (int): number of contiguous parts to extract and mix
-        seed (int, optional): random seed for reproducibility
-        max_cycle (int): maximum allowed cycle for final mixed sequence
+        sequences (list[dict]): List of programs {cycle: (type, address)}
+        num_parts (int): Number of chunks to split each program into
+        seed (int | None): Random seed
+        max_cycle (int): Maximum cycle number in output
 
     Returns:
-        dict: new mixed sequence {cycle: (type, address)}
+        dict: Mixed program {cycle: (type, address)}
     """
-    if seed is not None:
-        random.seed(seed)
 
-    mixed = {}
-    current_time = 0
+    rng = random.Random(seed)
 
-    for _ in range(num_parts):
-        # Stop if we’ve reached or exceeded the cycle limit
-        if current_time >= max_cycle:
-            break
+    # Step 1: sort each program by cycle
+    sorted_programs = []
+    for program in sequences:
+        instrs = sorted(program.items(), key=lambda x: x[0])
+        sorted_programs.append(instrs)
 
-        # Choose a random sequence
-        seq = random.choice(sequences)
-        if not seq:
+    # Step 2: split each program into num_parts chunks
+    chunks = []
+    for instrs in sorted_programs:
+        if not instrs:
             continue
 
-        # Sort cycles
-        cycles = sorted(seq.keys())
-        if not cycles:
-            continue
+        chunk_size = max(1, len(instrs) // num_parts)
+        for i in range(0, len(instrs), chunk_size):
+            chunk = instrs[i:i + chunk_size]
+            chunks.append(chunk)
 
-        # Choose random start
-        start = random.choice(cycles)
+    # Step 3: shuffle chunks
+    rng.shuffle(chunks)
 
-        # Choose random contiguous slice length
-        max_len = len(cycles) - cycles.index(start)
-        if max_len <= 0:
-            continue
-        length = random.randint(1, max_len)
+    # Step 4: flatten chunks into a single instruction list
+    mixed_instrs = []
+    for chunk in chunks:
+        mixed_instrs.extend(chunk)
 
-        # Extract contiguous block
-        block_cycles = cycles[cycles.index(start):cycles.index(start) + length]
-        block = {c: seq[c] for c in block_cycles}
+    if not mixed_instrs:
+        return {}
 
-        # Compute relative timing for this block
-        min_cycle = block_cycles[0]
-        shifted_block = {
-            current_time + (c - min_cycle): op for c, op in block.items()
-        }
+    # Step 5: assign new increasing random cycles
+    num_instrs = len(mixed_instrs)
+    available_cycles = sorted(
+        rng.sample(range(1, max_cycle + 1), k=num_instrs)
+    )
 
-        # Filter out instructions exceeding max_cycle
-        shifted_block = {
-            c: op for c, op in shifted_block.items() if c <= max_cycle
-        }
+    # Step 6: build final program
+    mixed_program = {
+        cycle: instr
+        for cycle, (_, instr) in zip(available_cycles, mixed_instrs)
+    }
 
-        # Stop if no valid instruction fits
-        if not shifted_block:
-            break
-
-        # Add to mixed sequence
-        mixed.update(shifted_block)
-
-        # Update current_time with random gap, but not beyond max_cycle
-        next_time = max(shifted_block.keys()) + random.randint(1, 5)
-        if next_time > max_cycle:
-            break
-        current_time = next_time
-
-    return dict(sorted(mixed.items()))
+    return mixed_program
 
