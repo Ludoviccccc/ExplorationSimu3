@@ -50,7 +50,7 @@ if __name__=="__main__":
         name = f'{folder}/rand_run_{N}'
         content_rand = load(name)
         for k in k_values:
-            for jp,p in enumerate([True,False]):
+            for jp,p in enumerate(['chunks','preserv','interleaving']):
                 print('k',k)
                 E =Env(500,num_addr=num_addr)
                 H = History(capacity=N)
@@ -62,7 +62,7 @@ if __name__=="__main__":
                         max_address_core1=max_address_core1,
                         num_parts = num_parts,
                         num_instructions=num_instructions,
-                        preserv = p)
+                        mix_type = p)
                 goal_generator = G()
                 imgep = IMGEP(N,N_init,E,H,goal_generator,Pi, periode = periode,
                               min_address_core0=min_address_core0,
@@ -72,10 +72,7 @@ if __name__=="__main__":
                               num_instructions=num_instructions)
                 imgep.take(content_rand,N_init)
                 imgep()
-                if jp==1:
-                    H.save_pickle(f'{folder}/imgep_run_{k}_{N}')
-                else:
-                    H.save_pickle(f'{folder}/imgep_run_preserv_{k}_{N}')
+                H.save_pickle(f'{folder}/imgep_{p}_run_{k}_{N}')
                 E =Env(500,num_addr=num_addr)
                 H_operators = History(capacity=N)
                 operators = OPERATORS(N,
@@ -90,11 +87,8 @@ if __name__=="__main__":
                                 min_address_core1,
                                 max_address_core1,
                                 num_instructions,
-                                preserv = p)
+                                mix_type = p)
                 operators.take(content_rand,N_init)
                 operators()
-                if jp==1:
-                    H_operators.save_pickle(f'{folder}/operators_run_{k}_{N}')
-                else:
-                    H_operators.save_pickle(f'{folder}/operators_run_preserv_{k}_{N}')
+                H_operators.save_pickle(f'{folder}/operators_{p}_run_{k}_{N}')
     print('Total time:',(time.time() - start_time)//3600,'H',((time.time()-start_time)%3600)//60,'m',f"{(time.time()-start_time)%3600%60:.2f}",'s')

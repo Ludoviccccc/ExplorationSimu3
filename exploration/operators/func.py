@@ -12,6 +12,7 @@ import time
 from exploration.test_addr import test_programs
 from exploration.imgep.mix import mix_sequences
 from exploration.imgep.mix_preserving_time_strucuture import mix_sequences as mix_sequences_preserv
+from exploration.imgep.mix_interleaving import mix_sequences_interleaved as mix_interleaving
 from exploration.imgep.mutation import mutate_instruction_sequence
 import numpy as np
 class OPERATORS(test_programs):
@@ -36,7 +37,7 @@ class OPERATORS(test_programs):
                     num_instructions = None,
                     max_cycle:int=60,
                     print_freq:int=1000,
-                    preserv = False,
+                    mix_type = False,
 
             ):
         """
@@ -46,7 +47,7 @@ class OPERATORS(test_programs):
         E: Env. The environnement.
         """
         super().__init__()
-        self.preserv = preserv
+        self.mix_type = mix_type
         self.start = 0
         self.env = E
         self.H = H
@@ -75,12 +76,17 @@ class OPERATORS(test_programs):
             output["program"]["core1"].append(self.H.memory_program["core1"][id_])
         return output
     def mix(self,programs:dict[dict]):
-        if not self.preserv:
+        if self.mix_type=="chunks":
             mix0 = mix_sequences(programs["core0"],max_cycle=self.max_cycle,num_parts = self.num_parts    )
             mix1 = mix_sequences(programs["core1"],max_cycle=self.max_cycle,num_parts = self.num_parts    )
-        else:
+        elif self.mix_type=="preserv":
             mix0 = mix_sequences_preserv(programs["core0"],max_cycle=self.max_cycle,num_parts = self.num_parts    )
             mix1 = mix_sequences_preserv(programs["core1"],max_cycle=self.max_cycle,num_parts = self.num_parts    )
+        elif self.mix_type =="interleaving":
+
+            mix0 = mix_interleaving(programs["core0"],max_cycle=self.max_cycle)
+            mix1 = mix_interleaving(programs["core1"],max_cycle=self.max_cycle)
+
         return {'core0':[mix0],'core1':[mix1]}
     def light_code_mutation(self,programs:dict[list[dict]]):
         mutated0 = mutate_instruction_sequence(programs['core0'][0],

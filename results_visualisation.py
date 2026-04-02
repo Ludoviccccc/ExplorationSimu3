@@ -25,6 +25,7 @@ if __name__=='__main__':
     excl = 'imgep raw data'
 
     name = f'{folder}/rand_run_{N}'
+    imgep_paths = [f'{folder}/imgep_run_{k}_{N}' for k in k_list]
     content_rand = load(name)
     #for k in k_list:
     #    name = f'{folder}/imgep_run_{k}_{N}'
@@ -33,23 +34,29 @@ if __name__=='__main__':
     #    plot_ddr_miss_ratio_diversity(content_rand['memory_perf'],content_imgep['memory_perf'],f'{images}/ddr_miss_ratio_{k}',title='Miss ratio in ddr',num_bank=4,num_row=3)
 
      
-    #plot_diversity_hist_and_sum(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison.pdf')
+    plot_diversity_hist_and_sum(content_rand,
+            [(load(f'{folder}/imgep_chunks_run_{k}_{N}'),f'imgep-operator 1 k = {k}') for k in k_list]+
+            [(load(f'{folder}/imgep_preserv_run_{k}_{N}'),f'imgep-operator 2 k = {k}') for k in k_list]+
+            [(load(f'{folder}/imgep_interleaving_run_{k}_{N}'),f'imgep-operator 3 k = {k}') for k in k_list],
+            name=f'{images}/diversity_comparaison_mix_model.pdf')
 
     #plot_diversity_hist_and_sum(content_rand,
     #        [(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list]+
     #        [(load(f'{folder}/operators_run_{k}_{N}'),f'operators k = {k}') for k in k_list],
     #        name=f'{images}/diversity_comparaison.pdf')
-    diagnostic_plot(name,[(f'{folder}/imgep_run_{k}_{N}',f'imgep k = {k}') for k in k_list])
+
+    #diagnostic_plot(name,[(f'{folder}/imgep_run_{k}_{N}',f'imgep k = {k}') for k in k_list])
 
 #    diversity_for_comparaison_bin_method_time([(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list]+[(content_rand,'random')]+[(load(f'{folder}/operators_run_{k}_{N}'),f'Operators k = {k}') for k in k_list],name=f'{images}/diversity_comparaison_histogram_seperate.pdf')
 #
-    hist_diversity_misses(content_rand['memory_perf'],
-        [load(f'{folder}/imgep_run_{k}_{N}')['memory_perf'] for k in k_list],
-        name=f"{images}/misses",
-        num_row=3,
-        title=f"Diveristy ddr miss ratio mutual vs isolation with N={N} iterations. b:bank, r:row",
-        labels=[f'k={k}' for k in k_list]
-    )
+    #hist_diversity_misses(content_rand['memory_perf'],
+    #    [load(f'{folder}/imgep_run_{k}_{N}')['memory_perf'] for k in k_list],
+    #    name=f"{images}/misses",
+    #    num_row=3,
+    #    title=f"Diveristy ddr miss ratio mutual vs isolation with N={N} iterations. b:bank, r:row",
+    #    labels=[f'k={k}' for k in k_list]
+    #)
+
     #hist_diversity_misses_seperate(content_rand['memory_perf'],
     #    [load(f'{folder}/imgep_run_{k}_{N}')['memory_perf'] for k in k_list],
     #    name=f"{images}/misses",
@@ -60,5 +67,5 @@ if __name__=='__main__':
 
     #plot_total_diversity(content_rand,[(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list],name=f'{images}/diversity_comparaison')
 
-    scatter_vs_miss([(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list[0:1]],name,title=None, folder="images")
-    scatter_vs_miss([(load(f'{folder}/rand_run_{N}'),f'imgep k = {k}') for k in k_list[0:1]],name,title=None, folder="images")
+    #scatter_vs_miss([(load(f'{folder}/imgep_run_{k}_{N}'),f'imgep k = {k}') for k in k_list[0:1]],name,title=None, folder="images")
+    #scatter_vs_miss([(load(f'{folder}/rand_run_{N}'),f'imgep k = {k}') for k in k_list[0:1]],name,title=None, folder="images")
