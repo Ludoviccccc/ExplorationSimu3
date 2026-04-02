@@ -135,7 +135,7 @@ def plot_diversity_hist_and_sum(content_rand,content_list,name='diversity_compar
 
 
     # plot hist diversity for random
-    ax2.plot(range(0,len(content_rand['tabular_view'])+1,step),diversity,'-o',label=label)
+    ax2.plot(range(0,len(content_rand['tabular_view'])+1,step),diversity,'-o',label="random")
     ax1.grid()
     ax2.grid()
     ax1.set_title('Entire space Diversity', fontsize=19)
@@ -145,5 +145,6 @@ def plot_diversity_hist_and_sum(content_rand,content_list,name='diversity_compar
     ax1.set_xlabel('iterations', fontsize=19)
     ax2.set_xlabel('iterations', fontsize=19)
     ax1.legend(prop={'size': 19})
+    ax2.legend(prop={'size': 19})
     plt.savefig(name)
     plt.show()
