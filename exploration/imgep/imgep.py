@@ -14,7 +14,7 @@ import numpy as np
 class IMGEP:
     """
     N: int. The experimental budget
-    N_init: int. Number of experiments at random
+    N_init: int. Number of experiments with random parameters
     H: History. Buffer containing codes and signature pairs
     G: GoalGenerator.
     Pi: OptimizationPolicy.
@@ -38,7 +38,7 @@ class IMGEP:
         self.max_cycle = max_cycle
         self.N = N
         self.env = E
-        self.H = H
+        self.history = H
         self.G = G
         self.N_init = N_init
         self.Pi = Pi
@@ -49,7 +49,7 @@ class IMGEP:
         self.max_address_core0 = max_address_core0
         self.min_address_core1 = min_address_core1
         self.max_address_core1 = max_address_core1
-        self.random_explor = RANDOM(self.N_init,self.env,self.H,min_address_core0,max_address_core0,min_address_core1,max_address_core1,self.num_instructions)
+        self.random_explor = RANDOM(self.N_init,self.env,self.history,min_address_core0,max_address_core0,min_address_core1,max_address_core1,self.num_instructions)
         self.print_freq = print_freq
     def take(self,sample:dict,start:int): 
         """Takes the ``start`` first steps from the ``sample`` dictionnary to initialize the exploration. 
@@ -60,13 +60,13 @@ class IMGEP:
                 shape = sample['memory_perf'][key1][key2].shape
                 in_ = np.zeros(shape)
                 in_[:start] = sample['memory_perf'][key1][key2][:start]  
-                self.H.memory_perf[key1][key2] = in_
-        self.H.memory_program["core0"] = sample["memory_program"]["core0"][:start]
-        self.H.memory_program["core1"] = sample["memory_program"]["core1"][:start]
-        self.H.tab = list(sample['tabular_view'][:start])
+                self.history.memory_perf[key1][key2] = in_
+        self.history.memory_program["core0"] = sample["memory_program"]["core0"][:start]
+        self.history.memory_program["core1"] = sample["memory_program"]["core1"][:start]
+        self.history.tab = list(sample['tabular_view'][:start])
         self.start = start
         self.N_init = start
-        self.H.j = start
+        self.history.j = start
     def __call__(self):
         start_time = time.time()
         """Performs the exploration.
@@ -77,8 +77,8 @@ class IMGEP:
             if i%self.print_freq==0 or i==self.N-1:
                 print(f'step {i}/{self.N-1}')
             if (i-self.N_init)%self.periode==0 and i>=self.N_init:
-                goal,stats = self.G(self.H)
-            parameter = self.Pi(goal,self.H,stats)
+                goal,stats = self.G(self.history)
+            parameter = self.Pi(goal,self.history,stats)
             observation = self.env(parameter)
-            self.H.store({"program":parameter}|observation)
+            self.history.store({"program":parameter}|observation)
         print(time.time() - start_time)
