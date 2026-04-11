@@ -21,7 +21,7 @@ class OptimizationPolicykNN(test_programs):
                 max_address_core1 = 21,
                 num_parts = 2,
                 num_instructions=None,
-                mix_type = False,
+                mix_type = 'chunks',
                 ):
         super().__init__()
         self.min_address_core0 = min_address_core0

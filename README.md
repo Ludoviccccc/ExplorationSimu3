@@ -22,7 +22,6 @@ pip install -r requirements.txt
 "N_init":1000,
 "periode":1,
 "k_values":[1,2,3],
-"s_values":[0],
 "num_mutations":5,
 "num_instructions":10,
 "min_address_core0":0,

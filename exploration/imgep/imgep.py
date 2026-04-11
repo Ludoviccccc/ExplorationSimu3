@@ -14,7 +14,7 @@ import numpy as np
 class IMGEP:
     """
     N: int. The experimental budget
-    N_init: int. Number of experiments with random parameters
+    N_init: int. Number of experiments with randomly generated parameters
     H: History. Buffer containing codes and signature pairs
     G: GoalGenerator.
     Pi: OptimizationPolicy.

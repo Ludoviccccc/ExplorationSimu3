@@ -37,7 +37,7 @@ class OPERATORS(test_programs):
                     num_instructions = None,
                     max_cycle:int=60,
                     print_freq:int=1000,
-                    mix_type = False,
+                    mix_type = 'chunks',
 
             ):
         """
